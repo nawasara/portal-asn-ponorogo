@@ -4,10 +4,11 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Laravel\Socialite\Facades\Socialite;
+use App\Livewire\Pages\PortalDashboard\Index;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+
+Route::get('/', Index::class)->name('portal.index');
+
 
 Route::get('/login', function () {
     return Socialite::driver('keycloak')->redirect();
