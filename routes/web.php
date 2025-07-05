@@ -27,7 +27,10 @@ Route::post('/logout', function () {
 })->name('logout');
 
 Route::get('/login', function () {
-    return Socialite::driver('keycloak')->redirect();
+    if (!Auth::check()) {
+        return Socialite::driver('keycloak')->redirect();
+    }
+    return redirect('/'); 
 });
 
 Route::get('/login/keycloak/callback', function () {
