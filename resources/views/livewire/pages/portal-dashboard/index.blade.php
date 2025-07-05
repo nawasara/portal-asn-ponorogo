@@ -60,7 +60,7 @@
                     <div class="font-semibold text-gray-800 text-sm">{{ Auth::user()->name }}</div>
                     <div class="text-xs text-gray-500">{{ Auth::user()->email }}</div>
                 </div>
-                <form method="POST" action="{{ url('/') }}">
+                <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <button type="submit"
                         class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Logout</button>
@@ -73,7 +73,20 @@
                 </form>
             </div>
         </div>
+    @else
+        <div class="fixed top-6 right-8 z-50">
+            <a href="{{ url('/login') }}"
+                class="flex items-center gap-2 shadow-md rounded-full bg-white px-2 py-1 hover:bg-blue-50 transition">
+                <div
+                    class="w-9 h-9 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-base">
+                    L
+                </div>
+                <span class="font-medium text-gray-800 text-sm">Login</span>
+            </a>
+        </div>
     @endif
+
+
 
     <main class="max-w-6xl mx-auto p-6">
         <div class="mb-8">
