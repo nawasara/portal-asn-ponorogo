@@ -29,7 +29,6 @@ Route::post('/logout', function () {
 Route::get('/login', function () {
     if (!Auth::check()) {
         return Socialite::driver('keycloak')
-        ->with(['prompt' => 'none'])
         ->redirect();
     }
     return redirect('/'); 
