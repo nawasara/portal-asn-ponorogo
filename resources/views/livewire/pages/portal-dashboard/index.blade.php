@@ -39,7 +39,7 @@
     {{-- User info floating di pojok kanan atas --}}
     @if (Auth::check())
         <div class="fixed top-6 right-8 z-50" x-data="{ open: false }">
-            <button @click="open = !open"
+            <button x-cloak @click="open = !open"
                 class="flex items-center gap-2 focus:outline-none group shadow-md rounded-full bg-white px-2 py-1 hover:bg-blue-50 transition">
                 <div
                     class="w-9 h-9 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-base group-hover:ring-2 group-hover:ring-blue-400 transition">
