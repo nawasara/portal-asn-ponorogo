@@ -2,23 +2,23 @@
 @props([
     'apps' => [
         [
-            'name' => 'Simas Hebat',
-            'icon' => '🤹',
-            'description' => 'Aplikasi kepegawaian BKPSDM (Badan Kepegawaian dan Pengembangan Sumber Daya Manusia).',
+            'name' => 'E-Arsip',
+            'icon' => '📂',
+            'description' => 'Sistem pengarsipan elektronik Dinas Kearsipan.',
             'status' => 'connected',
-            'category' => 'Kepegawaian',
+            'category' => 'Dokumen',
         ],
         [
-            'name' => 'Sadap',
-            'icon' => '📊',
-            'description' => 'Sistem satu data Pemkab. Ponorogo.',
+            'name' => 'E-Surat',
+            'icon' => '✉️',
+            'description' => 'Aplikasi surat-menyurat internal pemerintah.',
             'status' => 'connected',
             'category' => 'Komunikasi',
         ],
         [
-            'name' => 'Jathilan Presensi',
+            'name' => 'Absensi Pegawai',
             'icon' => '🕒',
-            'description' => 'Sistem kehadiran pegawai Pemkab. Ponorogo.',
+            'description' => 'Sistem kehadiran pegawai Diskominfo.',
             'status' => 'disconnected',
             'category' => 'Kepegawaian',
         ],
