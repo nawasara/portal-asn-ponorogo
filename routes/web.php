@@ -31,27 +31,45 @@ Route::get('/login', function () {
         return redirect('/');
     }
 
-    // Coba silent login dulu via prompt=none
+    // Jika belum login di Laravel, redirect ke login.silent (biar Keycloak yang tentukan)
+    return redirect()->route('login.silent');
+});
+
+Route::get('/login/silent', function () {
     return Socialite::driver('keycloak')
         ->with(['prompt' => 'none'])
         ->redirect();
-});
+})->name('login.silent');
+
+Route::get('/force-login', function () {
+    return Socialite::driver('keycloak')
+        ->with(['prompt' => 'login'])
+        ->redirect();
+})->name('force.login');
+
 
 Route::get('/login/keycloak/callback', function () {
-    $user = Socialite::driver('keycloak')->user();
-    // dd($user); // Debugging: tampilkan informasi user yang didapat dari Keycloak
 
-    // Buat login ke aplikasi Laravel, bisa pakai email / ID dari Keycloak
-    $authUser = \App\Models\User::firstOrCreate([
-        'email' => $user->getEmail(),
-    ], [
-        'name' => $user->getName(),
-        'password' => bcrypt(Str::random(16)), // password random
-    ]);
+    try {
+        $user = Socialite::driver('keycloak')->user();
+        // dd($user); // Debugging: tampilkan informasi user yang didapat dari Keycloak
 
-    Auth::login($authUser, true);
+        // Buat login ke aplikasi Laravel, bisa pakai email / ID dari Keycloak
+        $authUser = \App\Models\User::firstOrCreate([
+            'email' => $user->getEmail(),
+        ], [
+            'name' => $user->getName(),
+            'password' => bcrypt(Str::random(16)), // password random
+        ]);
 
-    Session::put('keycloak_id_token', $user->accessTokenResponseBody['id_token'] ?? null);
+        Auth::login($authUser, true);
 
-    return redirect('/');
+        Session::put('keycloak_id_token', $user->accessTokenResponseBody['id_token'] ?? null);
+
+        return redirect('/');
+    } catch (\Exception $e) {
+        // Silent login gagal (karena user belum login di Keycloak)
+        return redirect()->route('force.login'); // misalnya redirect ke login normal
+    }
+    
 });
