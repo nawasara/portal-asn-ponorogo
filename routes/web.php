@@ -27,11 +27,14 @@ Route::post('/logout', function () {
 })->name('logout');
 
 Route::get('/login', function () {
-    if (!Auth::check()) {
-        return Socialite::driver('keycloak')
-        ->redirect();
+    if (Auth::check()) {
+        return redirect('/');
     }
-    return redirect('/'); 
+
+    // Coba silent login dulu via prompt=none
+    return Socialite::driver('keycloak')
+        ->with(['prompt' => 'none'])
+        ->redirect();
 });
 
 Route::get('/login/keycloak/callback', function () {
