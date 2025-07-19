@@ -36,9 +36,7 @@ Route::get('/login', function () {
 });
 
 Route::get('/login/silent', function () {
-    return Socialite::driver('keycloak')
-        ->with(['prompt' => 'none'])
-        ->redirect();
+    return Socialite::driver('keycloak')->redirect();
 })->name('login.silent');
 
 Route::get('/force-login', function () {
@@ -68,6 +66,7 @@ Route::get('/login/keycloak/callback', function () {
 
         return redirect('/');
     } catch (\Exception $e) {
+        dd('Login failed: ' . $e->getMessage());
         // Silent login gagal (karena user belum login di Keycloak)
         return redirect()->route('force.login'); // misalnya redirect ke login normal
     }
