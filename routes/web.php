@@ -11,18 +11,20 @@ use App\Livewire\Pages\PortalDashboard\Index;
 Route::get('/', Index::class)->name('portal.index');
 
 Route::post('/logout', function () {
-    $idToken = Session::get('keycloak_id_token'); // bisa null
+    $keycloakBaseUrl = config('keycloak.base_url');
+    $realm = config('keycloak.realm'); // misal: simashebat
+    $redirectUri = url('/'); // arahkan kembali ke homepage Laravel setelah logout Keycloak
+
+    // 2. URL logout keycloak
+    $logoutUrl = "{$keycloakBaseUrl}/realms/{$realm}/protocol/openid-connect/logout?redirect_uri={$redirectUri}";
+
+    // 3. Logout dari Laravel
     Auth::logout();
-    Session::invalidate();
+    request()->session()->invalidate();
+    request()->session()->regenerateToken();
 
-    $redirectUri = route('portal.index'); // ganti ke dashboard atau homepage
-
-    $keycloakLogout = 'https://login.ponorogo.go.id/realms/simashebat/protocol/openid-connect/logout?' . http_build_query([
-        'post_logout_redirect_uri' => $redirectUri,
-        'id_token_hint' => $idToken, // opsional tapi direkomendasikan
-    ]);
-
-    return redirect('/');
+    // 4. Redirect ke logout Keycloak
+    return redirect()->away($logoutUrl);
     
 })->name('logout');
 
@@ -66,7 +68,6 @@ Route::get('/login/keycloak/callback', function () {
 
         return redirect('/');
     } catch (\Exception $e) {
-        dd('Login failed: ' . $e->getMessage());
         // Silent login gagal (karena user belum login di Keycloak)
         return redirect()->route('force.login'); // misalnya redirect ke login normal
     }
