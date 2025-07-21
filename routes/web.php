@@ -3,6 +3,7 @@
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Session;
 use Laravel\Socialite\Facades\Socialite;
 use App\Livewire\Pages\PortalDashboard\Index;
@@ -11,21 +12,18 @@ use App\Livewire\Pages\PortalDashboard\Index;
 Route::get('/', Index::class)->name('portal.index');
 
 Route::post('/logout', function () {
-    $keycloakBaseUrl = config('keycloak.base_url');
-    $realm = config('keycloak.realm'); // misal: simashebat
-    $redirectUri = url('/'); // arahkan kembali ke homepage Laravel setelah logout Keycloak
-
-    // 2. URL logout keycloak
-    $logoutUrl = "{$keycloakBaseUrl}/realms/{$realm}/protocol/openid-connect/logout?redirect_uri={$redirectUri}";
-
-    // 3. Logout dari Laravel
+     // Logout of your app.
     Auth::logout();
-    request()->session()->invalidate();
-    request()->session()->regenerateToken();
-
-    // 4. Redirect ke logout Keycloak
-    return redirect()->away($logoutUrl);
+    Session::flush(); // Clear the session data
+    Session::regenerate(); // Regenerate the session ID to prevent session fixation attacks
     
+    // The URL the user is redirected to after logout.
+    $redirectUri = Config::get('app.url');
+    
+    // Keycloak v18+ does support a post_logout_redirect_uri in combination with a
+    // client_id or an id_token_hint parameter or both of them.
+    // NOTE: You will need to set valid post logout redirect URI in Keycloak.
+    return redirect(Socialite::driver('keycloak')->getLogoutUrl($redirectUri, env('KEYCLOAK_CLIENT_ID')));
 })->name('logout');
 
 Route::get('/login', function () {
