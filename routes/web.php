@@ -19,9 +19,16 @@ Route::post('/logout', function () {
     
     // The URL the user is redirected to after logout.
     $redirectUri = Config::get('app.url');
-    $url = Socialite::driver('keycloak')->getLogoutUrl($redirectUri, null, Session::put('keycloak_id_token')?? null);
+    $url = Socialite::driver('keycloak')->getLogoutUrl();
+    $params = [
+        'id_token_hint' => Session::get('keycloak_id_token'), // Ambil id_token dari session
+        'post_logout_redirect_uri' => $redirectUri, // URL redirect setelah logout
+    ];
+
+    $url .= '?' . http_build_query($params);
+
     dd($url); // Debugging: tampilkan URL logout yang akan digunakan
-    return redirect(Socialite::driver('keycloak')->getLogoutUrl($redirectUri, null, Session::put('keycloak_id_token')?? null));
+    return redirect($url);
 })->name('logout');
 
 Route::get('/login', function () {
