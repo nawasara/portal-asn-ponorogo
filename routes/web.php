@@ -27,7 +27,6 @@ Route::post('/logout', function () {
 
     $url .= '?' . http_build_query($params);
 
-    dd($url); // Debugging: tampilkan URL logout yang akan digunakan
     return redirect($url);
 })->name('logout');
 
@@ -67,7 +66,8 @@ Route::get('/login/keycloak/callback', function () {
 
         Auth::login($authUser, true);
 
-        Session::put('keycloak_id_token', $user->accessTokenResponseBody['id_token'] ?? null);
+        Session::put('keycloak_id_token', $user->accessTokenResponseBody['id_token']);
+        dd(Session::get('keycloak_id_token')); // Debugging: tampilkan id_token yang disimpan di session
 
         return redirect('/');
     } catch (\Exception $e) {
