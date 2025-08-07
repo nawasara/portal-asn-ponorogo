@@ -19,11 +19,7 @@ Route::post('/logout', function () {
     
     // The URL the user is redirected to after logout.
     $redirectUri = Config::get('app.url');
-    
-    // Keycloak v18+ does support a post_logout_redirect_uri in combination with a
-    // client_id or an id_token_hint parameter or both of them.
-    // NOTE: You will need to set valid post logout redirect URI in Keycloak.
-    return redirect(Socialite::driver('keycloak')->getLogoutUrl($redirectUri, env('KEYCLOAK_CLIENT_ID')));
+    return redirect(Socialite::driver('keycloak')->getLogoutUrl($redirectUri, null, Session::put('keycloak_id_token')?? null));
 })->name('logout');
 
 Route::get('/login', function () {
