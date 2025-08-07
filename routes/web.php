@@ -12,7 +12,8 @@ use App\Livewire\Pages\PortalDashboard\Index;
 Route::get('/', Index::class)->name('portal.index');
 
 Route::post('/logout', function () {
-     // Logout of your app.
+    $token = Session::get('keycloak_id_token');
+    // Logout of your app.
     Auth::logout();
     Session::flush(); // Clear the session data
     Session::regenerate(); // Regenerate the session ID to prevent session fixation attacks
@@ -21,7 +22,7 @@ Route::post('/logout', function () {
     $redirectUri = Config::get('app.url');
     $url = Socialite::driver('keycloak')->getLogoutUrl();
     $params = [
-        'id_token_hint' => Session::get('keycloak_id_token'), // Ambil id_token dari session
+        'id_token_hint' => $token, // Ambil id_token dari session
         'post_logout_redirect_uri' => $redirectUri, // URL redirect setelah logout
     ];
 
@@ -67,7 +68,6 @@ Route::get('/login/keycloak/callback', function () {
         Auth::login($authUser, true);
 
         Session::put('keycloak_id_token', $user->accessTokenResponseBody['id_token']);
-        dd(Session::get('keycloak_id_token')); // Debugging: tampilkan id_token yang disimpan di session
 
         return redirect('/');
     } catch (\Exception $e) {
