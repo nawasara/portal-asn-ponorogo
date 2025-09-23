@@ -1,38 +1,9 @@
 <!-- resources/views/components/portal-dashboard.blade.php -->
-@props([
-    'apps' => [
-        [
-            'name' => 'E-Arsip',
-            'icon' => '📂',
-            'description' => 'Sistem pengarsipan elektronik Dinas Kearsipan.',
-            'status' => 'connected',
-            'category' => 'Dokumen',
-        ],
-        [
-            'name' => 'E-Surat',
-            'icon' => '✉️',
-            'description' => 'Aplikasi surat-menyurat internal pemerintah.',
-            'status' => 'connected',
-            'category' => 'Komunikasi',
-        ],
-        [
-            'name' => 'Absensi Pegawai',
-            'icon' => '🕒',
-            'description' => 'Sistem kehadiran pegawai Diskominfo.',
-            'status' => 'disconnected',
-            'category' => 'Kepegawaian',
-        ],
-    ],
-])
 
 @php
-    $categories = collect($apps)->pluck('category')->unique()->prepend('All');
     $search = request('search', '');
-    $selectedCategory = request('category', 'All');
-    $filteredApps = collect($apps)->filter(
-        fn($app) => str_contains(strtolower($app['name']), strtolower($search)) &&
-            ($selectedCategory === 'All' || $app['category'] === $selectedCategory),
-    );
+    // $selectedCategory = request('category', 'All');
+    $filteredApps = collect($apps)->filter(fn($app) => str_contains(strtolower($app['name']), strtolower($search)));
 @endphp
 <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-200 text-gray-900 relative">
 
@@ -87,7 +58,6 @@
     @endif
 
 
-
     <main class="max-w-6xl mx-auto p-6">
         <div class="mb-8">
             <h2 class="text-3xl font-bold text-gray-800 mb-1">Aplikasi Terintegrasi</h2>
@@ -97,12 +67,7 @@
         <form method="GET" class="flex flex-col sm:flex-row sm:items-center gap-4 mb-8">
             <input type="text" name="search" placeholder="Cari aplikasi..." value="{{ $search }}"
                 class="px-4 py-2 rounded-md border border-gray-300 bg-white text-sm w-full sm:w-1/3 shadow-sm focus:ring-2 focus:ring-blue-200">
-            <select name="category"
-                class="px-4 py-2 rounded-md border border-gray-300 bg-white text-sm w-full sm:w-1/4 shadow-sm focus:ring-2 focus:ring-blue-200">
-                @foreach ($categories as $cat)
-                    <option value="{{ $cat }}" @selected($cat === $selectedCategory)>{{ $cat }}</option>
-                @endforeach
-            </select>
+
             <button type="submit"
                 class="px-4 py-2 text-sm rounded-md bg-blue-600 text-white hover:bg-blue-700 shadow-sm">Filter</button>
         </form>
@@ -112,22 +77,28 @@
                 <div
                     class="bg-white rounded-2xl border border-gray-100 p-6 shadow-md hover:shadow-lg transition flex flex-col justify-between min-h-[220px]">
                     <div class="flex items-start gap-4 mb-3">
-                        <div class="text-5xl">{{ $app['icon'] }}</div>
+                        @if ($app['icon_type'] === 'image')
+                            <img src="{{ $app['icon'] }}" alt="{{ $app['name'] }} Icon" class="w-12 h-12">
+                        @else
+                            <div class="text-5xl">{{ $app['icon'] }}</div>
+                        @endif
                         <div>
                             <h3 class="text-lg font-semibold text-gray-800 mb-1">{{ $app['name'] }}</h3>
                             <p class="text-sm text-gray-500 leading-snug">{{ $app['description'] }}</p>
                         </div>
                     </div>
                     <div class="mt-auto flex justify-between items-center">
-                        <span
-                            class="text-xs font-medium px-2.5 py-1.5 rounded-full {{ $app['status'] === 'connected' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">
-                            {{ $app['status'] === 'connected' ? 'Terhubung' : 'Belum Terhubung' }}
-                        </span>
-                        <button
+                        @if ($app['name'] != 'Dokumentasi')
+                            <span
+                                class="text-xs font-medium px-2.5 py-1.5 rounded-full {{ $app['status'] === 'connected' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700' }}">
+                                {{ $app['status'] === 'connected' ? 'Terhubung' : 'Belum Terhubung' }}
+                            </span>
+                        @endif
+                        <a href="{{ $app['link'] }}" target="_blank" rel="noopener"
                             class="px-4 py-1.5 text-sm rounded-lg font-medium shadow-sm {{ $app['status'] === 'connected' ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-gray-200 text-gray-500 cursor-not-allowed' }}"
                             {{ $app['status'] !== 'connected' ? 'disabled' : '' }}>
                             Buka
-                        </button>
+                        </a>
                     </div>
                 </div>
             @endforeach

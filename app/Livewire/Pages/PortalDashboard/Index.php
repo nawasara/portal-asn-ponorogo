@@ -6,27 +6,46 @@ use Livewire\Component;
 
 class Index extends Component
 {
-    public array $apps = [
-        [
-            'name' => 'E-Arsip',
-            'icon' => '📂',
-            'description' => 'Sistem pengarsipan elektronik Dinas Kearsipan.',
-            'status' => 'connected',
-        ],
-        [
-            'name' => 'E-Surat',
-            'icon' => '✉️',
-            'description' => 'Aplikasi surat-menyurat internal pemerintah.',
-            'status' => 'connected',
-        ],
-        [
-            'name' => 'Absensi Pegawai',
-            'icon' => '🕒',
-            'description' => 'Sistem kehadiran pegawai Diskominfo.',
-            'status' => 'disconnected',
-        ],
-    ];
-    
+    public $apps = [];
+    public function mount()
+    {
+        $this->apps = $apps = [
+            [
+                'name' => 'Dokumentasi',
+                'icon' => '📂',
+                'icon_type' => 'emoji',
+                'description' => 'Panduan penggunaan aplikasi dan layanan yang disediakan',
+                'status' => 'connected',
+                'link' => asset('doc/panduan.pdf')
+            ],
+            [
+                'name' => 'Supergratifikasi',
+                'icon' => asset("img/supergratifikasi.png"),
+                'icon_type' => 'image',
+                'description' => 'Aplikasi pengendalian gratifikasi dilingkungan Pemkab. Ponorogo',
+                'status' => 'connected',
+                'link' => 'https://supergratifikasi.ponorogo.go.id/login/sso'
+            ],
+            [
+                'name' => 'Rakaca',
+                'icon' => asset("img/rakaca.ico"),
+                'icon_type' => 'image',
+                'description' => 'Etalase Layanan Teknologi Informasi dan Infrastruktur Bidang Aplikasi dan Informatika Dinas Kominfo dan Statistik',
+                'status' => 'connected',
+                'link' => 'https://rakaca.ponorogo.go.id/login'
+            ],
+            
+            [
+                'name' => 'Sipras',
+                'icon' => asset("img/sipras.png"),
+                'icon_type' => 'image',
+                'description' => 'Aplikasi pengelolaan data Peta dan Koordinat yang dapat diakses oleh Perangkat Daerah di Lingkungan Pemerintah Kabupaten Ponorogo',
+                'status' => 'connected',
+                'link' => 'https://sipras.ponorogo.go.id/admin'
+            ],
+        ];
+    }
+
     public function render()
     {
         return view('livewire.pages.portal-dashboard.index');

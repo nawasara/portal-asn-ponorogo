@@ -10,6 +10,7 @@ use App\Livewire\Pages\PortalDashboard\Index;
 
 
 Route::get('/', Index::class)->name('portal.index');
+Route::get('/down', Index::class)->name('portal.down');
 
 Route::post('/logout', function () {
     $token = Session::get('keycloak_id_token');
