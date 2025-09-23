@@ -16,7 +16,7 @@ class Index extends Component
                 'icon_type' => 'image',
                 'description' => 'Panduan penggunaan aplikasi dan layanan yang disediakan',
                 'status' => 'Coming Soon',
-                'link' => '#'
+                'link' => 'https://simashebat.ponorogo.go.id/login'
             ],
             [
                 'name' => 'Supergratifikasi',
