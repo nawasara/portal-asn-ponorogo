@@ -60,7 +60,7 @@
 
     <main class="max-w-6xl mx-auto p-6">
         <div class="mb-8">
-            <h2 class="text-3xl font-bold text-gray-800 mb-1">Aplikasi Terintegrasi</h2>
+            <h2 class="text-3xl font-bold text-gray-800 mb-1">Portal ASN Ponorogo</h2>
             <p class="text-base text-gray-500">Gunakan satu akun untuk mengakses seluruh layanan.</p>
         </div>
 
