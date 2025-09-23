@@ -7,7 +7,7 @@
 @endphp
 <div
     class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-200 dark:from-gray-900 dark:to-gray-800 text-gray-900 dark:text-gray-100 relative">
-
+    <x-benner />
     {{-- Floating top right: toggle dark mode + user/login --}}
     <div class="fixed top-6 right-8 z-50 flex items-center gap-2" x-data="{
         open: false,
@@ -107,7 +107,7 @@
                     class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-700 p-6 shadow-md hover:shadow-lg transition flex flex-col justify-between min-h-[220px]">
                     <div class="flex items-start gap-4 mb-3">
                         @if ($app['icon_type'] === 'image')
-                            <img src="{{ $app['icon'] }}" alt="{{ $app['name'] }} Icon" class="w-12 h-12">
+                            <img src="{{ $app['icon'] }}" alt="{{ $app['name'] }} Icon" class="w-12 h-auto">
                         @else
                             <div class="text-5xl">{{ $app['icon'] }}</div>
                         @endif

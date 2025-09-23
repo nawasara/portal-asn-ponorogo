@@ -11,12 +11,12 @@ class Index extends Component
     {
         $this->apps = $apps = [
             [
-                'name' => 'Dokumentasi',
-                'icon' => '📂',
-                'icon_type' => 'emoji',
+                'name' => 'Simashebat',
+                'icon' => asset("img/simas.png"),
+                'icon_type' => 'image',
                 'description' => 'Panduan penggunaan aplikasi dan layanan yang disediakan',
-                'status' => 'connected',
-                'link' => asset('doc/panduan.pdf')
+                'status' => 'Coming Soon',
+                'link' => '#'
             ],
             [
                 'name' => 'Supergratifikasi',
@@ -42,6 +42,16 @@ class Index extends Component
                 'description' => 'Aplikasi pengelolaan data Peta dan Koordinat yang dapat diakses oleh Perangkat Daerah di Lingkungan Pemerintah Kabupaten Ponorogo',
                 'status' => 'connected',
                 'link' => 'https://sipras.ponorogo.go.id/admin'
+            ],
+            
+            
+            [
+                'name' => 'Satu Data Ponorogo (Sadap)',
+                'icon' => asset("img/sadap.png"),
+                'icon_type' => 'image',
+                'description' => 'Portal satu data Pemerintah Kabupaten Ponorogo',
+                'status' => 'comming soon',
+                'link' => 'https://sadap.ponorogo.go.id/login'
             ],
         ];
     }
