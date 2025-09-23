@@ -8,9 +8,39 @@
 <div
     class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-200 dark:from-gray-900 dark:to-gray-800 text-gray-900 dark:text-gray-100 relative">
 
-    {{-- User info floating di pojok kanan atas --}}
-    @if (Auth::check())
-        <div class="fixed top-6 right-8 z-50" x-data="{ open: false }">
+    {{-- Floating top right: toggle dark mode + user/login --}}
+    <div class="fixed top-6 right-8 z-50 flex items-center gap-2" x-data="{
+        open: false,
+        dark: localStorage.getItem('theme') === 'dark' || (window.matchMedia('(prefers-color-scheme: dark)').matches && !localStorage.getItem('theme')),
+        toggleDark() {
+            this.dark = !this.dark;
+            if (this.dark) {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            }
+        },
+        init() {
+            if (this.dark) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        }
+    }" x-init="init()">
+        <button @click="toggleDark"
+            class="mr-2 flex items-center justify-center w-9 h-9 rounded-full bg-gray-200 dark:bg-gray-700 text-yellow-500 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition focus:outline-none"
+            :aria-label="dark ? 'Switch to light mode' : 'Switch to dark mode'">
+            <template x-if="!dark">
+                <span class="text-lg">🌙</span>
+            </template>
+            <template x-if="dark">
+                <span class="text-lg">☀️</span>
+            </template>
+        </button>
+        @if (Auth::check())
             <button x-cloak @click="open = !open"
                 class="flex items-center gap-2 focus:outline-none group shadow-md rounded-full bg-white dark:bg-gray-800 px-2 py-1 hover:bg-blue-50 dark:hover:bg-gray-700 transition">
                 <div
@@ -19,8 +49,8 @@
                 </div>
                 <span
                     class="font-medium text-gray-800 dark:text-gray-100 text-sm max-w-[120px] truncate">{{ Auth::user()->name }}</span>
-                <svg class="w-4 h-4 text-gray-500 dark:text-gray-300 group-hover:text-blue-600 transition" fill="none"
-                    stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 text-gray-500 dark:text-gray-300 group-hover:text-blue-600 transition"
+                    fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
                 </svg>
             </button>
@@ -45,9 +75,7 @@
                         MFA</button>
                 </form>
             </div>
-        </div>
-    @else
-        <div class="fixed top-6 right-8 z-50">
+        @else
             <a href="{{ url('/login') }}"
                 class="flex items-center gap-2 shadow-md rounded-full bg-white dark:bg-gray-800 px-2 py-1 hover:bg-blue-50 dark:hover:bg-gray-700 transition">
                 <div
@@ -56,8 +84,8 @@
                 </div>
                 <span class="font-medium text-gray-800 dark:text-gray-100 text-sm">Login</span>
             </a>
-        </div>
-    @endif
+        @endif
+    </div>
 
     <main class="max-w-6xl mx-auto p-6">
         <div class="mb-8">
