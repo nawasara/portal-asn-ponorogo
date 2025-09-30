@@ -8,8 +8,10 @@ use Illuminate\Support\Facades\Session;
 use Laravel\Socialite\Facades\Socialite;
 use App\Livewire\Pages\PortalDashboard\Index;
 
+Route::middleware(['auth', 'whatsapp.required'])->group(function () {
+    Route::get('/', Index::class)->name('portal.index');
+});
 
-Route::get('/', Index::class)->name('portal.index');
 Route::get('/down', Index::class)->name('portal.down');
 
 Route::post('/logout', function () {
@@ -33,9 +35,9 @@ Route::post('/logout', function () {
 })->name('logout');
 
 Route::get('/login', function () {
-    if (Auth::check()) {
-        return redirect('/');
-    }
+    // if (Auth::check()) {
+    //     return redirect('/');
+    // }
 
     // Jika belum login di Laravel, redirect ke login.silent (biar Keycloak yang tentukan)
     return redirect()->route('login.silent');
@@ -69,9 +71,11 @@ Route::get('/login/keycloak/callback', function () {
         Auth::login($authUser, true);
 
         Session::put('keycloak_id_token', $user->accessTokenResponseBody['id_token']);
+        Session::put('keycloak_id_user', $user->id);
 
         return redirect('/');
     } catch (\Exception $e) {
+        dd($e->getMessage());
         // Silent login gagal (karena user belum login di Keycloak)
         return redirect()->route('force.login'); // misalnya redirect ke login normal
     }
