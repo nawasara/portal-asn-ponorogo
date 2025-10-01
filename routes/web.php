@@ -6,8 +6,13 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Session;
 use Laravel\Socialite\Facades\Socialite;
+use App\Livewire\Pages\UpdateWhatsappNumber;
 use App\Livewire\Pages\PortalDashboard\Index;
 
+Route::get('/update-whatsapp-number', UpdateWhatsappNumber::class)
+    ->middleware(['auth']) // pastikan hanya user terautentikasi
+    ->name('update-whatsapp-number');
+    
 Route::middleware(['auth', 'whatsapp.required'])->group(function () {
     Route::get('/', Index::class)->name('portal.index');
 });
@@ -41,7 +46,7 @@ Route::get('/login', function () {
 
     // Jika belum login di Laravel, redirect ke login.silent (biar Keycloak yang tentukan)
     return redirect()->route('login.silent');
-});
+})->name('login');
 
 Route::get('/login/silent', function () {
     return Socialite::driver('keycloak')->redirect();

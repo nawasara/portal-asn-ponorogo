@@ -14,9 +14,9 @@ class KeycloakService
 
     public function __construct()
     {
-        $this->baseUrl      = env('KEYCLOAK_BASE_URL');    // contoh: https://sso.example.com
-        $this->realm        = env('KEYCLOAK_REALM');       // contoh: myrealm
-        $this->clientId     = env('KEYCLOAK_CLIENT_ID');   // client dengan role admin
+        $this->baseUrl      = env('KEYCLOAK_BASE_URL');
+        $this->realm        = env('KEYCLOAK_REALM');
+        $this->clientId     = env('KEYCLOAK_CLIENT_ID');
         $this->clientSecret = env('KEYCLOAK_CLIENT_SECRET');
     }
 
@@ -88,10 +88,10 @@ class KeycloakService
 
         // Update / tambah whatsapp_number
         $attributes['whatsapp_number'] = [$whatsappNumber];
+        $attributes['whatsapp_verified_at'] = [now()->toDateTimeString()];
 
         // Merge kembali ke data user
         $userData['attributes'] = $attributes;
-        dd($userData);
 
         // Kirim update ke Keycloak
         $response = Http::withToken($token)
