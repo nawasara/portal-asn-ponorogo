@@ -16,7 +16,7 @@
         <x-user-menu />
     </div>
 
-    <main class="max-w-6xl mx-auto p-6">
+    <div class="max-w-6xl mx-auto p-6">
         <div class="mb-8">
             <h2 class="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-1">Portal ASN Ponorogo</h2>
             <p class="text-base text-gray-500 dark:text-gray-400">Gunakan satu akun untuk mengakses seluruh layanan.</p>
@@ -37,7 +37,7 @@
                 <span id="hs-soft-color-success-label" class="font-bold">Berhasil!</span> {{ session('success') }}
             </div>
         @endif
-        <div class="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+        <div class="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 pb-12">
             @foreach ($filteredApps as $app)
                 <div
                     class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-700 p-6 shadow-md hover:shadow-lg transition flex flex-col justify-between min-h-[220px]">
@@ -71,5 +71,5 @@
                 </div>
             @endforeach
         </div>
-    </main>
+    </div>
 </div>

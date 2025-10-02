@@ -123,7 +123,7 @@ class ResetMfa extends Component
         $attempts = Cache::get($attemptsKey, 0);
         if ($attempts >= 3) {
             $this->addError('nip', 'Mencapai batas pengiriman OTP. Coba lagi nanti.');
-            // return;
+            return;
         }
 
         // Generate OTP 6 digit
@@ -203,7 +203,7 @@ class ResetMfa extends Component
         Cache::forget($this->getOtpAttemptsKey());
 
         $service = new KeycloakService();
-        // $status = $service->resetOtp($this->userId);
+        $status = $service->resetOtp($this->userId);
     
         session()->flash('success', 'Berhasil mereset MFA. Silakan masuk kembali menggunakan NIP dan scan ulang QRCode MFA Anda.');
 

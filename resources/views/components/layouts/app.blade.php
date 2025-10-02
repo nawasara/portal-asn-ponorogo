@@ -46,6 +46,18 @@
     @stack('modals')
     @livewireScripts
 
+    <script>
+        // Global dark mode handler
+        (function() {
+            const theme = localStorage.getItem('hs_theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            if (theme === 'dark' || (!theme && prefersDark)) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        })();
+    </script>
 </body>
 
 </html>
