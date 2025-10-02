@@ -9,9 +9,9 @@
     </span>
 </button>
 <button type="button"
-    class="hs-dark-mode-active:block hidden hs-dark-mode font-medium text-gray-800 rounded-full hover:bg-gray-200 focus:outline-hidden focus:bg-gray-200"
+    class="hs-dark-mode-active:block hidden hs-dark-mode font-medium text-gray-800 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-hidden focus:bg-gray-200"
     data-hs-theme-click-value="light">
-    <span class="group inline-flex shrink-0 justify-center items-center size-9">
+    <span class="group inline-flex shrink-0 justify-center items-center size-9 dark:text-white">
         <svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
             stroke-linejoin="round">

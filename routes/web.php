@@ -11,12 +11,15 @@ use Illuminate\Support\Facades\Session;
 use Laravel\Socialite\Facades\Socialite;
 use App\Livewire\Pages\UpdateWhatsappNumber;
 
+// route untuk guest
+Route::get('/', Guest::class)->name('portal.index');
 Route::get('/update-whatsapp-number', UpdateWhatsappNumber::class)
     ->middleware(['auth']) // pastikan hanya user terautentikasi
     ->name('update-whatsapp-number');
     
-// route untuk guest
-Route::get('/', Guest::class)->name('portal.index');
+Route::get('/bantuan', function () {
+    return redirect('https://rakaca.ponorogo.go.id/bantuan');
+})->name('help');
 
 // route untuk authenticated
 Route::middleware(['auth', 'whatsapp.required'])->group(function () {
@@ -45,24 +48,8 @@ Route::post('/logout', function () {
 })->name('logout');
 
 Route::get('/login', function () {
-    // if (Auth::check()) {
-    //     return redirect('/');
-    // }
-
-    // Jika belum login di Laravel, redirect ke login.silent (biar Keycloak yang tentukan)
-    return redirect()->route('login.silent');
-})->name('login');
-
-Route::get('/login/silent', function () {
     return Socialite::driver('keycloak')->redirect();
-})->name('login.silent');
-
-Route::get('/force-login', function () {
-    return Socialite::driver('keycloak')
-        ->with(['prompt' => 'login'])
-        ->redirect();
-})->name('force.login');
-
+})->name('login');
 
 Route::get('/login/keycloak/callback', function () {
 
@@ -75,7 +62,7 @@ Route::get('/login/keycloak/callback', function () {
             'email' => $user->getEmail(),
         ], [
             'name' => $user->getName(),
-            'password' => bcrypt(Str::random(16)), // password random
+            'password' => bcrypt(Str::random(16)),
         ]);
 
         Auth::login($authUser, true);
@@ -85,9 +72,7 @@ Route::get('/login/keycloak/callback', function () {
 
         return redirect('/');
     } catch (\Exception $e) {
-        dd($e->getMessage());
-        // Silent login gagal (karena user belum login di Keycloak)
-        return redirect()->route('force.login'); // misalnya redirect ke login normal
+        return redirect()->route('portal.index');
     }
     
 });
