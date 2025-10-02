@@ -9,26 +9,41 @@
                 </div>
             @endif
 
-            <form wire:submit.prevent="sendOtp" class="space-y-4">
-                <label class="block">
-                    <span class="text-sm font-medium">Nomor WhatsApp</span>
-                    <input wire:model.defer="whatsapp_number" type="text" inputmode="numeric"
-                        placeholder="6281234567890"
-                        class="mt-1 block w-full rounded-md border px-3 py-2 focus:outline-none focus:ring" />
-                </label>
-                @error('whatsapp_number')
-                    <div class="text-red-600 text-sm">{{ $message }}</div>
-                @enderror
+            {{-- Form Kirim OTP --}}
+            @if (!$showOtpForm)
+                <form wire:submit.prevent="sendOtp" class="space-y-4" x-data="{ openTips: false }">
+                    <label class="block">
+                        <span class="text-sm font-medium">Nomor WhatsApp</span>
+                        <input wire:model.defer="whatsapp_number" type="text" inputmode="numeric"
+                            placeholder="6281234567890"
+                            class="mt-1 block w-full rounded-md border px-3 py-2 focus:outline-none focus:ring" />
+                    </label>
+                    @error('whatsapp_number')
+                        <div class="text-red-600 text-sm">{{ $message }}</div>
+                    @enderror
 
-                <div class="flex items-center gap-2">
-                    <button type="submit"
-                        class="inline-flex items-center px-4 py-2 rounded-md text-sm font-medium border hover:bg-gray-50">
-                        Kirim OTP
-                    </button>
+                    <div class="flex items-center gap-2">
+                        <button wire:loading.remove type="submit"
+                            class="inline-flex items-center px-4 py-2 rounded-md text-sm font-medium border hover:bg-gray-50">
+                            Kirim OTP
+                        </button>
 
-                    <a href="{{ url()->previous() }}" class="text-sm text-gray-600 hover:underline">Kembali</a>
-                </div>
-            </form>
+                        <x-loading />
+
+                        <a @click="openTips = !openTips"
+                            class="text-sm text-gray-600 cursor-pointer hover:underline">Pelajari kenapa kami
+                            perlu WhatsApp Anda!</a>
+                    </div>
+                    <template x-if="openTips">
+                        <div class="mt-2 bg-blue-100 border border-blue-200 text-sm text-blue-800 rounded-lg p-4 dark:bg-blue-800/10 dark:border-blue-900 dark:text-blue-500"
+                            role="alert" tabindex="-1" aria-labelledby="hs-soft-color-info-label">
+                            <span id="hs-soft-color-info-label" class="font-bold">Info</span> Nomor WhatsApp digunakan
+                            untuk
+                            verifikasi 2 langkah (MFA) demi keamanan akun Anda.
+                        </div>
+                    </template>
+                </form>
+            @endif
 
             {{-- OTP Form --}}
             @if ($showOtpForm)
@@ -43,12 +58,14 @@
                         @enderror
 
                         <div class="flex items-center gap-2">
+
                             <button type="submit"
                                 class="px-4 py-2 rounded-md border text-sm font-medium">Verifikasi</button>
 
                             <button type="button" wire:click="resendOtp" class="px-3 py-2 rounded-md border text-sm">
                                 Kirim Ulang
                             </button>
+                            <x-loading />
 
                             <span class="text-xs text-gray-500 ml-auto">OTP berlaku {{ $otpTtlMinutes }} menit</span>
                         </div>

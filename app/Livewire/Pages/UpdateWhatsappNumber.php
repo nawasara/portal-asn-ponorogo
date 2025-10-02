@@ -5,6 +5,7 @@ namespace App\Livewire\Pages;
 use Livewire\Component;
 use Illuminate\Support\Str;
 use App\Services\KeycloakService;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\ValidationException;
@@ -31,14 +32,33 @@ class UpdateWhatsappNumber extends Component
 
     public function mount()
     {
-        // Ambil nomor yang sudah ada di DB (opsional) atau kosong
-        
-
         // Ganti property ini sesuai ke mana kamu menyimpan keycloak id di model user
         $this->userId = $token = Session::get('keycloak_id_user');
 
         // Jika kamu menyimpan nomor WA di users table, bisa prefill:
         $this->whatsapp_number = $user->whatsapp_number ?? 6285736676648;
+
+        self::checkKeycloakSession();
+
+        /* Ceck cache OTP */
+        $cached = Cache::get($this->getOtpCacheKey());
+        if ($cached) {
+            $this->showOtpForm = true;
+        }
+
+    }
+
+    public function checkKeycloakSession()
+    {
+        $token = Session::get('keycloak_id_token');
+        if (!$token) {
+            Auth::logout();
+            Session::flush(); // Clear the session data
+            Session::regenerate(); // Regenerate the session ID to prevent session fixation attacks    
+
+            // Kalau session Keycloak hilang, redirect ke login
+            return redirect()->route('login');
+        }
     }
 
     protected function getOtpCacheKey(): string
@@ -55,26 +75,14 @@ class UpdateWhatsappNumber extends Component
     {
         // Validasi nomor
         $this->validateOnly('whatsapp_number');
-        // dd($this->userId);
-        // if (!$this->userId) {
-            //     throw ValidationException::withMessages(['whatsapp_number' => 'Tidak dapat menentukan user id Keycloak.']);
-            // }
-            
-            // simple throttle: max 3 sends per 10 minutes
+
+        // simple throttle: max 3 sends per 10 minutes
         $attemptsKey = $this->getOtpAttemptsKey();
         $attempts = Cache::get($attemptsKey, 0);
         if ($attempts >= 3) {
             $this->addError('whatsapp_number', 'Mencapai batas pengiriman OTP. Coba lagi nanti.');
             // return;
         }
-
-        // Update nomor di Keycloak (merge dilakukan di service)
-        // try {
-        //     $keycloak->updateWhatsappNumber($this->userId, $this->whatsapp_number);
-        // } catch (\Exception $e) {
-        //     $this->addError('whatsapp_number', 'Gagal menyimpan nomor ke Keycloak: ' . $e->getMessage());
-        //     return;
-        // }
 
         // Generate OTP 6 digit
         $generatedOtp = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
@@ -85,13 +93,9 @@ class UpdateWhatsappNumber extends Component
         // increment attempts (expire 10 minutes)
         Cache::put($attemptsKey, $attempts + 1, now()->addMinutes(10));
 
-        // Di sinilah kamu panggil service pengirim WA (misal job / service eksternal) untuk kirim OTP:
-        // dispatch(new SendWhatsappOtpJob($this->whatsapp_number, $generatedOtp));
-        // Untuk sekarang kita mock / contoh: log atau session flash
-
         $this->sendToWhatsapp($generatedOtp);
 
-        session()->flash('success', "OTP telah dikirim ke +{$this->whatsapp_number} (mock).");
+        session()->flash('success', "OTP telah dikirim ke +{$this->whatsapp_number}.");
 
         $this->showOtpForm = true;
 
@@ -106,7 +110,6 @@ class UpdateWhatsappNumber extends Component
             $waService->sendWa($this->whatsapp_number, "Kode OTP Anda: {$otp}. Berlaku {$this->otpTtlMinutes} menit.");
         } catch (\Exception $e) {
             $this->addError('whatsapp_number', 'Gagal mengirim OTP via WhatsApp: ' . $e->getMessage());
-            dd($e->getMessage());
             return;
         }
     }
@@ -120,6 +123,11 @@ class UpdateWhatsappNumber extends Component
 
     public function verifyOtp()
     {
+        if (!$this->otp) {
+            $this->addError('otp', 'OTP hasus diisi. Silahkan masukkan kode OTP.');
+            return;
+        }
+        
         $this->validateOnly('otp');
 
         $cached = Cache::get($this->getOtpCacheKey());
@@ -140,11 +148,6 @@ class UpdateWhatsappNumber extends Component
 
         // Tandai verifikasi di session / database
         session(['whatsapp_verified' => true]);
-
-        // Jika kamu ingin menyimpan flag verified di DB:
-        // $user = auth()->user();
-        // $user->whatsapp_verified_at = now();
-        // $user->save();
 
         $service = new KeycloakService();
         $service->updateWhatsappNumber($this->userId, $this->whatsapp_number);
