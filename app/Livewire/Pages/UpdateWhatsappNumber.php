@@ -81,7 +81,7 @@ class UpdateWhatsappNumber extends Component
         $attempts = Cache::get($attemptsKey, 0);
         if ($attempts >= 3) {
             $this->addError('whatsapp_number', 'Mencapai batas pengiriman OTP. Coba lagi nanti.');
-            // return;
+            return;
         }
 
         // Generate OTP 6 digit

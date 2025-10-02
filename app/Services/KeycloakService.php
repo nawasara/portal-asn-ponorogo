@@ -122,5 +122,36 @@ class KeycloakService
         return $response->json();
     }
 
+    public function resetOtp(string $userId): bool
+    {
+        $token = $this->getAdminToken();
+
+        // Ambil semua credential user
+        $response = Http::withToken($token)->get("{$this->baseUrl}/admin/realms/{$this->realm}/users/{$userId}/credentials");
+
+        if ($response->failed()) {
+            throw new \Exception('Gagal mengambil credential user');
+        }
+
+        $credentials = $response->json();
+
+        // Cari credential bertipe OTP (totp atau hotp)
+        foreach ($credentials as $credential) {
+            if (isset($credential['type']) && $credential['type'] === 'otp') {
+                $credentialId = $credential['id'];
+
+                // Hapus credential OTP
+                $delete = Http::withToken($token)->delete("{$this->baseUrl}/admin/realms/{$this->realm}/users/{$userId}/credentials/{$credentialId}");
+
+                if ($delete->failed()) {
+                    throw new \Exception('Gagal reset OTP untuk user');
+                }
+            }
+        }
+
+        return true;
+    }
+
+
 
 }

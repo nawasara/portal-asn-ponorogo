@@ -1,23 +1,28 @@
 <?php
 
 use Illuminate\Support\Str;
+use App\Livewire\Pages\Guest;
+use App\Livewire\Pages\ResetMfa;
+use App\Livewire\Pages\Dashboard;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Session;
 use Laravel\Socialite\Facades\Socialite;
 use App\Livewire\Pages\UpdateWhatsappNumber;
-use App\Livewire\Pages\PortalDashboard\Index;
 
 Route::get('/update-whatsapp-number', UpdateWhatsappNumber::class)
     ->middleware(['auth']) // pastikan hanya user terautentikasi
     ->name('update-whatsapp-number');
     
-Route::middleware(['auth', 'whatsapp.required'])->group(function () {
-    Route::get('/', Index::class)->name('portal.index');
-});
+// route untuk guest
+Route::get('/', Guest::class)->name('portal.index');
 
-Route::get('/down', Index::class)->name('portal.down');
+// route untuk authenticated
+Route::middleware(['auth', 'whatsapp.required'])->group(function () {
+    Route::get('dashboard', Dashboard::class)->name('portal.dashboard');
+    Route::get('reset-mfa', ResetMfa::class)->name('mfa.reset');
+});
 
 Route::post('/logout', function () {
     $token = Session::get('keycloak_id_token');

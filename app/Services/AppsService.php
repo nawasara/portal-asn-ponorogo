@@ -1,16 +1,12 @@
 <?php
 
-namespace App\Livewire\Pages\PortalDashboard;
+namespace App\Services;
 
-use Livewire\Component;
-use Illuminate\Support\Facades\Session;
-
-class Index extends Component
+class AppsService
 {
-    public $apps = [];
-    public function mount()
+    public function getApps()
     {
-        $this->apps = $apps = [
+        return [
             [
                 'name' => 'Simashebat',
                 'icon' => asset("img/simas.png"),
@@ -55,27 +51,5 @@ class Index extends Component
                 'link' => '#'
             ],
         ];
-    }
-
-    public function render()
-    {
-        $token = Session::get('keycloak_id_user');
-
-        return view('livewire.pages.portal-dashboard.index');
-    }
-
-    public function getNumber()
-    {
-        $token = Session::get('keycloak_id_user');
-
-        $service = new \App\Services\KeycloakService();
-        $number = $service->getWhatsappNumber($token);
-        if (!$number) {
-            $service->updateWhatsappNumber($token, 628123456789);
-        }
-
-        return response()->json([
-            'whatsapp_number' => $number
-        ]);
     }
 }
