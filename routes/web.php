@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Str;
+use App\Constants\Constants;
 use App\Livewire\Pages\Guest;
 use App\Livewire\Pages\ResetMfa;
 use App\Livewire\Pages\Dashboard;
@@ -12,24 +13,23 @@ use Laravel\Socialite\Facades\Socialite;
 use App\Livewire\Pages\UpdateWhatsappNumber;
 
 // route untuk guest
-Route::get('/', Guest::class)->name('portal.index');
+Route::get('/', Guest::class)->name('index');
 Route::get('/update-whatsapp-number', UpdateWhatsappNumber::class)
     ->middleware(['auth']) // pastikan hanya user terautentikasi
     ->name('update-whatsapp-number');
     
 Route::get('/bantuan', function () {
-    return redirect('https://rakaca.ponorogo.go.id/bantuan');
+    return redirect(Constants::HELP_URL);
 })->name('help');
 
 // route untuk authenticated
 Route::middleware(['auth', 'whatsapp.required'])->group(function () {
-    Route::get('dashboard', Dashboard::class)->name('portal.dashboard');
+    Route::get('dashboard', Dashboard::class)->name('dashboard');
     Route::get('reset-mfa', ResetMfa::class)->name('mfa.reset');
 });
 
 Route::post('/logout', function () {
     $token = Session::get('keycloak_id_token');
-    // Logout of your app.
     Auth::logout();
     Session::flush(); // Clear the session data
     Session::regenerate(); // Regenerate the session ID to prevent session fixation attacks
@@ -55,7 +55,6 @@ Route::get('/login/keycloak/callback', function () {
 
     try {
         $user = Socialite::driver('keycloak')->user();
-        // dd($user); // Debugging: tampilkan informasi user yang didapat dari Keycloak
 
         // Buat login ke aplikasi Laravel, bisa pakai email / ID dari Keycloak
         $authUser = \App\Models\User::firstOrCreate([
@@ -72,7 +71,6 @@ Route::get('/login/keycloak/callback', function () {
 
         return redirect('/');
     } catch (\Exception $e) {
-        return redirect()->route('portal.index');
+        return redirect()->route('index');
     }
-    
-});
+})->name('login.callback');
