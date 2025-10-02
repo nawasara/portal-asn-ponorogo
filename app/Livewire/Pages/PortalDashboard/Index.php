@@ -17,7 +17,7 @@ class Index extends Component
                 'icon_type' => 'image',
                 'description' => 'Panduan penggunaan aplikasi dan layanan yang disediakan',
                 'status' => 'Coming Soon',
-                'link' => 'https://simashebat.ponorogo.go.id/login'
+                'link' => '#'
             ],
             [
                 'name' => 'Supergratifikasi',
@@ -52,7 +52,7 @@ class Index extends Component
                 'icon_type' => 'image',
                 'description' => 'Portal satu data Pemerintah Kabupaten Ponorogo',
                 'status' => 'comming soon',
-                'link' => 'https://sadap.ponorogo.go.id/login'
+                'link' => '#'
             ],
         ];
     }

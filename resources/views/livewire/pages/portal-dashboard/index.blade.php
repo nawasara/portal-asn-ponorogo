@@ -11,35 +11,8 @@
     {{-- Floating top right: toggle dark mode + user/login --}}
     <div class="fixed top-6 right-8 z-50 flex items-center gap-2" x-data="{
         open: false,
-        dark: localStorage.getItem('theme') === 'dark' || (window.matchMedia('(prefers-color-scheme: dark)').matches && !localStorage.getItem('theme')),
-        toggleDark() {
-            this.dark = !this.dark;
-            if (this.dark) {
-                document.documentElement.classList.add('dark');
-                localStorage.setItem('theme', 'dark');
-            } else {
-                document.documentElement.classList.remove('dark');
-                localStorage.setItem('theme', 'light');
-            }
-        },
-        init() {
-            if (this.dark) {
-                document.documentElement.classList.add('dark');
-            } else {
-                document.documentElement.classList.remove('dark');
-            }
-        }
-    }" x-init="init()">
-        <button @click="toggleDark"
-            class="mr-2 flex items-center justify-center w-9 h-9 rounded-full bg-gray-200 dark:bg-gray-700 text-yellow-500 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition focus:outline-none"
-            :aria-label="dark ? 'Switch to light mode' : 'Switch to dark mode'">
-            <template x-if="!dark">
-                <span class="text-lg">🌙</span>
-            </template>
-            <template x-if="dark">
-                <span class="text-lg">☀️</span>
-            </template>
-        </button>
+    }">
+        <x-dark-mode />
         @if (Auth::check())
             <button x-cloak @click="open = !open"
                 class="flex items-center gap-2 focus:outline-none group shadow-md rounded-full bg-white dark:bg-gray-800 px-2 py-1 hover:bg-blue-50 dark:hover:bg-gray-700 transition">
@@ -49,16 +22,16 @@
                 </div>
                 <span
                     class="font-medium text-gray-800 dark:text-gray-100 text-sm max-w-[120px] truncate">{{ Auth::user()->name }}</span>
-                <svg class="w-4 h-4 text-gray-500 dark:text-gray-300 group-hover:text-blue-600 transition"
-                    fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 text-gray-500 dark:text-gray-300 group-hover:text-blue-600 transition" fill="none"
+                    stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
                 </svg>
             </button>
-            <div x-show="open" @click.away="open = false" x-transition:enter="transition ease-out duration-100"
+            <div x-cloak x-show="open" @click.away="open = false" x-transition:enter="transition ease-out duration-100"
                 x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
                 x-transition:leave="transition ease-in duration-75" x-transition:leave-start="opacity-100 scale-100"
                 x-transition:leave-end="opacity-0 scale-95"
-                class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg py-2 border border-gray-100 dark:border-gray-700 origin-top-right">
+                class="absolute right-0 mt-55 w-55 bg-white dark:bg-gray-800 rounded-lg shadow-lg py-2 border border-gray-100 dark:border-gray-700 origin-top-right">
                 <div class="px-4 py-2 border-b border-gray-100 dark:border-gray-700">
                     <div class="font-semibold text-gray-800 dark:text-gray-100 text-sm">{{ Auth::user()->name }}</div>
                     <div class="text-xs text-gray-500 dark:text-gray-400">{{ Auth::user()->email }}</div>
@@ -103,7 +76,7 @@
 
 
         @if (session('success'))
-            <div class="mt-2 mb-5 bg-teal-100 border border-teal-200 text-sm text-teal-800 rounded-lg p-4 dark:bg-teal-800/10 dark:border-teal-900 dark:text-teal-500"
+            <div class="mt-2 mb-5 bg-green-100 border border-green-200 text-sm text-green-800 rounded-lg p-4 dark:bg-green-800/10 dark:border-green-900 dark:text-green-500"
                 role="alert" tabindex="-1" aria-labelledby="hs-soft-color-success-label">
                 <span id="hs-soft-color-success-label" class="font-bold">Berhasil!</span> {{ session('success') }}
             </div>
@@ -132,7 +105,8 @@
                                 {{ $app['status'] === 'connected' ? 'Terhubung' : 'Belum Terhubung' }}
                             </span>
                         @endif
-                        <a href="{{ $app['link'] }}" target="_blank" rel="noopener"
+                        <a href="{{ $app['link'] }}" @if ($app['link'] != '#') target="_blank" @endif
+                            rel="noopener"
                             class="px-4 py-1.5 text-sm rounded-lg font-medium shadow-sm {{ $app['status'] === 'connected' ? 'bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800' : 'bg-gray-200 text-gray-500 cursor-not-allowed dark:bg-gray-800 dark:text-gray-400' }}"
                             {{ $app['status'] !== 'connected' ? 'disabled' : '' }}>
                             Buka
