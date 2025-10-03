@@ -36,7 +36,7 @@ class UpdateWhatsappNumber extends Component
         $this->userId = $token = Session::get('keycloak_id_user');
 
         // Jika kamu menyimpan nomor WA di users table, bisa prefill:
-        $this->whatsapp_number = $user->whatsapp_number ?? 6285736676648;
+        $this->whatsapp_number = $user->whatsapp_number ?? null;
 
         self::checkKeycloakSession();
 

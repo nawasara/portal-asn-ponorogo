@@ -39,7 +39,7 @@ class ResetMfa extends Component
         $this->keycloakIdToken = Session::get('keycloak_id_token');
 
         // Jika kamu menyimpan nomor WA di users table, bisa prefill:
-        $this->nip = 199506142020121004;
+        $this->nip = null;
 
         self::checkKeycloakSession();
         self::getKeycloakUser();
