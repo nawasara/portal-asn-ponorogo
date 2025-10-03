@@ -10,10 +10,26 @@ class Dashboard extends Component
 {
     public AppsService $appsService;
     public $apps = [];
+
     public function mount()
     {
         $service = new AppsService();
         $this->apps = $service->getApps();
+
+        if (auth()->user()) {
+            self::getNumber();
+        }
+    }
+    
+    public function getNumber()
+    {
+        $token = Session::get('keycloak_id_user');
+
+        $service = new \App\Services\KeycloakService();
+        $number = $service->getWhatsappNumber($token);
+        if (!$number) {
+            return redirect()->route('update-whatsapp-number');
+        }
     }
 
     public function render()

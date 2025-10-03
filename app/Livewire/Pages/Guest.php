@@ -17,7 +17,18 @@ class Guest extends Component
         $this->apps = $service->getApps();
 
         if (auth()->user()) {
-            // $this->middleware('whatsapp.required');
+            self::getNumber();
+        }
+    }
+
+    public function getNumber()
+    {
+        $token = Session::get('keycloak_id_user');
+
+        $service = new \App\Services\KeycloakService();
+        $number = $service->getWhatsappNumber($token);
+        if (!$number) {
+            return redirect()->route('update-whatsapp-number');
         }
     }
 
