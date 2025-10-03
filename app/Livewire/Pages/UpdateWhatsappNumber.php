@@ -42,7 +42,8 @@ class UpdateWhatsappNumber extends Component
 
         /* Ceck cache OTP */
         $cached = Cache::get($this->getOtpCacheKey());
-        if ($cached) {
+        $number = $this->whatsapp_number ?? Cache::get($this->getWACacheKey());
+        if ($cached && $number) {
             $this->showOtpForm = true;
         }
 
@@ -71,29 +72,38 @@ class UpdateWhatsappNumber extends Component
         return 'wa:otp:attempts:' . $this->userId;
     }
 
-    public function sendOtp(KeycloakService $keycloak)
+    protected function getWACacheKey(): string
     {
+        return 'wa:number:' . $this->userId;
+    }
+
+    public function sendOtp(KeycloakService $keycloak, $resend = false)
+    {
+        $this->whatsapp_number = $this->whatsapp_number ? : Cache::get($this->getWACacheKey());
+
         // Validasi nomor
         $this->validateOnly('whatsapp_number');
 
         // simple throttle: max 3 sends per 10 minutes
         $attemptsKey = $this->getOtpAttemptsKey();
         $attempts = Cache::get($attemptsKey, 0);
-        if ($attempts >= 3) {
+        if ($attempts >= 300) {
             $this->addError('whatsapp_number', 'Mencapai batas pengiriman OTP. Coba lagi nanti.');
+
             return;
         }
 
         // Generate OTP 6 digit
         $generatedOtp = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
 
-        // Simpan ke cache
+        Cache::put($this->getWACacheKey(), $this->whatsapp_number, now()->addMinutes(10)); // simpan nomor WA 10 menit
         Cache::put($this->getOtpCacheKey(), $generatedOtp, now()->addMinutes($this->otpTtlMinutes));
 
         // increment attempts (expire 10 minutes)
         Cache::put($attemptsKey, $attempts + 1, now()->addMinutes(10));
 
-        $this->sendToWhatsapp($generatedOtp);
+        $status = $this->sendToWhatsapp($generatedOtp);
+        if (!$status) return;
 
         session()->flash('success', "OTP telah dikirim ke +{$this->whatsapp_number}.");
 
@@ -106,11 +116,21 @@ class UpdateWhatsappNumber extends Component
     public function sendToWhatsapp($otp)
     {
         $waService = new \App\Services\WaNotificationService();
+        
+        $number = $this->whatsapp_number ?? Cache::get($this->getWACacheKey());
+
+        $checkIsWa = $waService->checkNumber($number);
+        if (!$checkIsWa) {
+            $this->addError('whatsapp_number', 'Nomor yang Anda masukkan tidak terdaftar di WhatsApp.');
+            return false;
+        }
+        
         try {
             $waService->sendWa($this->whatsapp_number, "Kode OTP Anda: {$otp}. Berlaku {$this->otpTtlMinutes} menit.");
+            return true;
         } catch (\Exception $e) {
             $this->addError('whatsapp_number', 'Gagal mengirim OTP via WhatsApp: ' . $e->getMessage());
-            return;
+            return false;
         }
     }
 
@@ -118,7 +138,7 @@ class UpdateWhatsappNumber extends Component
     {
         // optional: kita reuse sendOtp but do not revalidate heavy
         $this->otp = null;
-        $this->sendOtp($keycloak);
+        $this->sendOtp($keycloak, $resend = true);
     }
 
     public function verifyOtp()
@@ -157,7 +177,7 @@ class UpdateWhatsappNumber extends Component
         session()->flash('success', 'Nomor WhatsApp berhasil diverifikasi.');
 
         // Redirect ke intended atau dashboard
-        return redirect()->intended('/');
+        return redirect('/');
     }
 
     public function render()

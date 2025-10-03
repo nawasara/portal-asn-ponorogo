@@ -38,4 +38,27 @@ class WaNotificationService
 
     }
 
+    public function checkNumber($to)
+    {
+        $client = new Client();
+
+        try {
+            $response = $client->get($this->baseUrl.'/wago/userCheck?phone='.$to, [
+                'headers' => [
+                    'Authorization' => 'Bearer '.$this->token,
+                    'Content-Type'  => 'application/json',
+                ]
+            ]);
+    
+            $content = $response->getBody()->getContents();
+    
+            $json = json_decode($content, true);
+            return $json['results']['is_on_whatsapp'] ?? false;
+        } catch (\Throwable $th) {
+            info('Gagal cek nomor WA: ' . $th->getMessage());
+            return false;
+        }
+
+    }
+
 }

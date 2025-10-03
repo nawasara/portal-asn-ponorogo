@@ -100,14 +100,6 @@ class ResetMfa extends Component
         $this->dispatch('otp-sent');
     }
 
-    public function getNumber()
-    {
-        $token = Session::get('keycloak_id_user');
-
-        $service = new \App\Services\KeycloakService();
-        return $service->getWhatsappNumber($token);
-    }
-
     public function sendToWhatsapp($otp)
     {
         $number = $this->getNumber();
