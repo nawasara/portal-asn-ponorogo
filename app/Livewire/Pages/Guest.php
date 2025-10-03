@@ -17,7 +17,7 @@ class Guest extends Component
         $this->apps = $service->getApps();
 
         if (auth()->user()) {
-            $this->middleware('whatsapp.required');
+            // $this->middleware('whatsapp.required');
         }
     }
 
