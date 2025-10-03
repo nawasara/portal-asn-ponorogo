@@ -9,9 +9,12 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Session;
 use Laravel\Socialite\Facades\Socialite;
+use App\Traits\SessionTrait;
 
 class ResetMfa extends Component
 {
+    use SessionTrait;
+    
     public ?string $nip = null;
     public bool $showOtpForm = false;
     public bool $showBtnLoginForm = false;
@@ -41,8 +44,8 @@ class ResetMfa extends Component
         // Jika kamu menyimpan nomor WA di users table, bisa prefill:
         $this->nip = null;
 
-        self::checkKeycloakSession();
-        self::getKeycloakUser();
+        self::checkKeycloakSession(); // ada di trait
+        $this->keycloakUser = self::getKeycloakUser(); // ada di trait
 
         /* Ceck cache OTP */
         $cached = Cache::get($this->getOtpCacheKey());
@@ -51,62 +54,14 @@ class ResetMfa extends Component
         }
     }
 
-    public function getKeycloakUser()
-    {
-        try {
-            $service = new KeycloakService();
-            $this->keycloakUser = $service->getUser($this->userId);
-        } catch (\Exception $e) {
-            info('Gagal mengambil info user dari Keycloak: ' . $e->getMessage());
-            self::logout();
-        }
-    }
-
-    public function checkKeycloakSession()
-    {
-        $token = Session::get('keycloak_id_token');
-        if (!$token) { self::logout();}
-
-        try {
-            $service = new KeycloakService();
-            $res = $service->checkLoginStatus($token);
-            if (!$res['active']) {
-                self::logout();
-            }
-        } catch (\Exception $e) {
-            self::logout();
-        }
-    }
-
-    public function logout($redirect = true)
-    {
-        Auth::logout();
-        Session::flush(); // Clear the session data
-        Session::regenerate(); // Regenerate the session ID to prevent session fixation attacks  
-
-        if ($this->keycloakIdToken) {
-            // The URL the user is redirected to after logout.
-            $redirectUri = Config::get('app.url');
-            $url = Socialite::driver('keycloak')->getLogoutUrl();
-            $params = [
-                'id_token_hint' => $this->keycloakIdToken, // Ambil id_token dari session
-                'post_logout_redirect_uri' => $redirectUri, // URL redirect setelah logout
-            ];
-    
-            $url .= '?' . http_build_query($params);
-    
-            return redirect($url);
-        }
-    }
-
     protected function getOtpCacheKey(): string
     {
-        return 'wa:mfa-reset.otp:' . $this->userId;
+        return 'wa:otp:' . $this->userId;
     }
 
     protected function getOtpAttemptsKey(): string
     {
-        return 'wa:mfa-reset.otp:attempts:' . $this->userId;
+        return 'wa:otp:attempts:' . $this->userId;
     }
 
     public function sendOtp(KeycloakService $keycloak)

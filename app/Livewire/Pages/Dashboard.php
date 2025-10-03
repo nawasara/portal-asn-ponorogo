@@ -3,11 +3,15 @@
 namespace App\Livewire\Pages;
 
 use Livewire\Component;
+use App\Traits\SessionTrait;
 use App\Services\AppsService;
+use App\Services\KeycloakService;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 
 class Dashboard extends Component
 {
+    use SessionTrait;
     public AppsService $appsService;
     public $apps = [];
 
@@ -17,21 +21,11 @@ class Dashboard extends Component
         $this->apps = $service->getApps();
 
         if (auth()->user()) {
+            self::checkKeycloakSession(); // ada di trait
             self::getNumber();
         }
     }
     
-    public function getNumber()
-    {
-        $token = Session::get('keycloak_id_user');
-
-        $service = new \App\Services\KeycloakService();
-        $number = $service->getWhatsappNumber($token);
-        if (!$number) {
-            return redirect()->route('update-whatsapp-number');
-        }
-    }
-
     public function render()
     {
         return view('livewire.pages.dashboard');
