@@ -19,8 +19,6 @@ class ResetMfa extends Component
     public ?string $nip = null;
     public bool $showOtpForm = false;
     public bool $showBtnLoginForm = false;
-    public ?string $otp = null;
-    public int $otpTtlMinutes = 5;
     public $userId;
     public $keycloakIdToken;
     public $keycloakUser;

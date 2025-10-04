@@ -29,10 +29,6 @@ class OtpForm extends Component
     public $infoMessage;
     public $infoMessageType = 'success';
 
-    // Event name to emit to parent
-    public string $submitEvent = 'otpSubmitted';
-    public string $resendEvent = 'otpResend';
-
     protected $rules = [
         'otp' => ['required', 'digits:6'],
     ];
@@ -83,7 +79,7 @@ class OtpForm extends Component
 
         $this->sendToWhatsapp($generatedOtp);
 
-        self::setMessage("OTP telah dikirim ke +{$this->waNumber}.", 'success');
+        self::setMessage("OTP telah dikirim ke ".mask_phone($this->waNumber), 'success');
         $this->showForm = true;
 
         // emit event frontend supaya bisa autofocus ke OTP field
