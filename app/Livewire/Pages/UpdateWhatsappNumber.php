@@ -87,7 +87,7 @@ class UpdateWhatsappNumber extends Component
         // simple throttle: max 3 sends per 10 minutes
         $attemptsKey = $this->getOtpAttemptsKey();
         $attempts = Cache::get($attemptsKey, 0);
-        if ($attempts >= 300) {
+        if ($attempts >= 3) {
             $this->addError('whatsapp_number', 'Mencapai batas pengiriman OTP. Coba lagi nanti.');
 
             return;
