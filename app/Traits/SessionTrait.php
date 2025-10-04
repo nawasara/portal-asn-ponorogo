@@ -69,5 +69,7 @@ trait SessionTrait
         if (!$number) {
             return redirect()->route('update-whatsapp-number');
         }
+
+        return $number;
     }
 }
