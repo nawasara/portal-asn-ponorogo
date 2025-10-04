@@ -17,11 +17,11 @@ class ResetMfa extends Component
     use SessionTrait;
     
     public ?string $nip = null;
-    public bool $showOtpForm = false;
     public bool $showBtnLoginForm = false;
     public $userId;
     public $keycloakIdToken;
     public $keycloakUser;
+    public bool $showOtpForm = false;
 
     protected $rules = [
         'nip' => ['required', 'digits:18'],

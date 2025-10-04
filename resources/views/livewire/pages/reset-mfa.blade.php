@@ -43,17 +43,7 @@
                 </form>
             @endif
 
-            {{-- OTP Form --}}
-            {{-- @if ($showOtpForm) --}}
-            {{-- Pesan sukses kirim OTP --}}
-            {{-- @if (!session()->has('success'))
-                <div
-                    class="mb-4 text-sm bg-green-50 dark:bg-green-900 border border-green-200 dark:border-green-700 text-green-700 dark:text-green-300 p-3 rounded">
-                    OTP telah dikirim ke WhatsApp Anda. Silakan periksa dan masukkan di bawah.
-                </div>
-            @endif --}}
             <livewire:components.otp-form />
-            {{-- @endif --}}
 
             @if ($showBtnLoginForm)
                 <div class="mt-6 border-t border-gray-200 dark:border-gray-700 pt-4">

@@ -56,7 +56,7 @@ trait SessionTrait
     
             $url .= '?' . http_build_query($params);
     
-            return redirect($url);
+            // return redirect($url);
         }
     }
 

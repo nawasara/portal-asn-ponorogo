@@ -38,7 +38,6 @@ class OtpForm extends Component
         if (auth()->user()) {
             self::checkKeycloakSession(); // ada di trait
             $this->keycloakUser = self::getKeycloakUser(); // ada di trait
-            $this->waNumber = $this->getNumber();
             $this->userId = Session::get('keycloak_id_user');
         }
     }
@@ -54,11 +53,17 @@ class OtpForm extends Component
     }
 
     #[On('send-otp')]
-    public function sendOtp()
+    public function sendOtp($waNumber = null)
     {
         info('sendOtp called');
         info('No WhatsApp number for user ' . $this->userId);   
         info($this->waNumber);
+        if ($waNumber) {
+            $this->waNumber = $waNumber;
+        } else {
+            $this->waNumber = $this->getNumber();
+        }
+        
         // simple throttle: max 3 sends per 10 minutes
         $attemptsKey = $this->getOtpAttemptsKey();
         $attempts = Cache::get($attemptsKey, 0);
@@ -76,6 +81,8 @@ class OtpForm extends Component
 
         // increment attempts (expire 10 minutes)
         Cache::put($attemptsKey, $attempts + 1, now()->addMinutes(10));
+
+        $this->checkIsWa();
 
         $this->sendToWhatsapp($generatedOtp);
 
@@ -96,6 +103,22 @@ class OtpForm extends Component
     {
         $this->infoMessage = null;
         $this->infoMessageType = null;
+    }
+
+    public function checkIsWa()
+    {
+        $waService = new \App\Services\WaNotificationService();
+        try {
+            $r = $waService->checkNumber($this->waNumber);
+            if (!$r) {
+                $this->addError('otp', 'Nomor WhatsApp tidak terdaftar di WhatsApp. Silakan gunakan nomor lain.');
+                return false;
+            }
+        } catch (\Exception $e) {
+            $this->addError('Gagal mengirim OTP via WhatsApp: ' . $e->getMessage());
+            
+            return false;
+        }
     }
 
     public function sendToWhatsapp($otp)
