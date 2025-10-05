@@ -21,6 +21,7 @@ class OtpForm extends Component
     public int $otpTtlMinutes = 5;
     public bool $showResend = true;
     public bool $showForm = false;
+    public bool $showAlert = false;
 
     public $waNumber;
     public $userId = null;
@@ -31,6 +32,11 @@ class OtpForm extends Component
 
     protected $rules = [
         'otp' => ['required', 'digits:6'],
+    ];
+
+    protected $messages = [
+        'otp.required' => 'OTP wajib diisi.',
+        'otp.digits' => 'OTP harus 6 digit.',
     ];
 
     public function mount()
@@ -55,19 +61,19 @@ class OtpForm extends Component
     #[On('send-otp')]
     public function sendOtp($waNumber = null)
     {
-        info('sendOtp called');
-        info('No WhatsApp number for user ' . $this->userId);   
-        info($this->waNumber);
         if ($waNumber) {
             $this->waNumber = $waNumber;
-        } else {
-            $this->waNumber = $this->getNumber();
         }
         
+        if (!$this->waNumber) {
+            $this->addError('otp', 'Nomor WhatsApp kosong.');
+            return;
+        }
+
         // simple throttle: max 3 sends per 10 minutes
         $attemptsKey = $this->getOtpAttemptsKey();
         $attempts = Cache::get($attemptsKey, 0);
-        if ($attempts >= 300) {
+        if ($attempts >= 3) {
             info('OTP send attempts exceeded for user ' . $this->userId);
             $this->addError('otp', 'Mencapai batas pengiriman OTP. Coba lagi nanti.');
             return;
@@ -82,13 +88,11 @@ class OtpForm extends Component
         // increment attempts (expire 10 minutes)
         Cache::put($attemptsKey, $attempts + 1, now()->addMinutes(10));
 
-        $this->checkIsWa();
-
         $this->sendToWhatsapp($generatedOtp);
 
         self::setMessage("OTP telah dikirim ke ".mask_phone($this->waNumber), 'success');
         $this->showForm = true;
-
+        
         // emit event frontend supaya bisa autofocus ke OTP field
         $this->dispatch('otp-sent');
     }
@@ -105,27 +109,10 @@ class OtpForm extends Component
         $this->infoMessageType = null;
     }
 
-    public function checkIsWa()
-    {
-        $waService = new \App\Services\WaNotificationService();
-        try {
-            $r = $waService->checkNumber($this->waNumber);
-            if (!$r) {
-                $this->addError('otp', 'Nomor WhatsApp tidak terdaftar di WhatsApp. Silakan gunakan nomor lain.');
-                return false;
-            }
-        } catch (\Exception $e) {
-            $this->addError('Gagal mengirim OTP via WhatsApp: ' . $e->getMessage());
-            
-            return false;
-        }
-    }
-
     public function sendToWhatsapp($otp)
     {
-        info($otp);return;
         if (!$this->waNumber) {
-            self::setMessage('Nomor WhatsApp tidak ditemukan di profil Keycloak.', 'error');
+            self::setMessage('Nomor WhatsApp tidak ditemukan.', 'error');
             \info('No WhatsApp number for user ' . $this->userId);   
             return;
         }
@@ -139,11 +126,11 @@ class OtpForm extends Component
         }
     }
 
-    public function resendOtp(KeycloakService $keycloak)
+    public function resendOtp()
     {
         // optional: kita reuse sendOtp but do not revalidate heavy
         $this->otp = null;
-        $this->sendOtp($keycloak);
+        $this->sendOtp();
     }
 
     public function verifyOtp()

@@ -1,12 +1,12 @@
 <div>
     @if ($showForm)
-        @if ($infoMessage && $infoMessageType === 'success')
+        @if ($infoMessage && $infoMessageType == 'success')
             <div
                 class="mb-4 text-sm bg-green-50 dark:bg-green-900 border border-green-200 dark:border-green-700 text-green-700 dark:text-green-300 p-3 rounded">
                 {{ $infoMessage }}
             </div>
         @endif
-        @if ($infoMessage && $infoMessageType === 'error')
+        @if ($infoMessage && $infoMessageType == 'error')
             <div
                 class="mb-4 text-sm bg-red-50 dark:bg-red-900 border border-red-200 dark:border-red-700 text-red-700 dark:text-red-300 p-3 rounded">
                 {{ $infoMessage }}

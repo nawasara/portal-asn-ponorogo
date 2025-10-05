@@ -9,6 +9,7 @@ use App\Services\KeycloakService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
+use App\Services\WaNotificationService;
 use Illuminate\Support\Facades\Session;
 use Laravel\Socialite\Facades\Socialite;
 
@@ -19,9 +20,9 @@ class ResetMfa extends Component
     public ?string $nip = null;
     public bool $showBtnLoginForm = false;
     public $userId;
-    public $keycloakIdToken;
     public $keycloakUser;
     public bool $showOtpForm = false;
+    public $waNumber;
 
     protected $rules = [
         'nip' => ['required', 'digits:18'],
@@ -34,21 +35,19 @@ class ResetMfa extends Component
 
     public function mount()
     {
-        // Ganti property ini sesuai ke mana kamu menyimpan keycloak id di model user
         $this->userId = Session::get('keycloak_id_user');
-        $this->keycloakIdToken = Session::get('keycloak_id_token');
-
-        // Jika kamu menyimpan nomor WA di users table, bisa prefill:
-        $this->nip = 199506142020121004;
-
+        // $this->nip = 199506142020121004;
         self::checkKeycloakSession(); // ada di trait
         $this->keycloakUser = self::getKeycloakUser(); // ada di trait
+        $this->waNumber = self::getNumber();
     }
 
     public function sendOtp()
     {
         // Validasi nomor
         $this->validateOnly('nip');
+
+        if (!self::waNumberIsValid()) return;
 
         if ($this->nip != $this->keycloakUser['username']) {
             $this->addError('nip', 'NIP Anda salah.');
@@ -58,14 +57,32 @@ class ResetMfa extends Component
         $this->showOtpForm = true;
 
         // emit event frontend supaya bisa autofocus ke OTP field
-        $this->dispatch('send-otp');
+        $this->dispatch('send-otp', waNumber: $this->waNumber);
+    }
+
+    public function waNumberIsValid()
+    {
+        $waService = new WaNotificationService();
+        try {
+            $r = $waService->checkNumber($this->waNumber);
+            if (!$r) {
+                $this->addError('nip', 'Nomor yang Anda masukkan tidak terdaftar di WhatsApp. Silakan gunakan nomor lain.');
+                return false;
+            }
+
+            return true;
+        } catch (\Exception $e) {
+            $this->addError('nip', 'Gagal mengirim OTP via WhatsApp: ' . $e->getMessage());
+            
+            return false;
+        }
     }
 
     #[On('otp-valid')]
     public function verifyOtp()
     {
-        // $service = new KeycloakService();
-        // $status = $service->resetOtp($this->userId);
+        $service = new KeycloakService();
+        $status = $service->resetOtp($this->userId);
     
         session()->flash('success', 'Berhasil mereset MFA. Silakan masuk kembali menggunakan NIP dan scan ulang QRCode MFA Anda.');
 

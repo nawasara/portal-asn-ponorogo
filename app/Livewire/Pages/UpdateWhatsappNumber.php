@@ -9,6 +9,7 @@ use App\Traits\SessionTrait;
 use App\Services\KeycloakService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use App\Services\WaNotificationService;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\ValidationException;
 
@@ -45,12 +46,32 @@ class UpdateWhatsappNumber extends Component
         return 'wa:number:' . $this->userId;
     }
 
+    public function waNumberIsValid()
+    {
+        $waService = new WaNotificationService();
+        try {
+            $r = $waService->checkNumber($this->whatsapp_number);
+            if (!$r) {
+                $this->addError('whatsapp_number', 'Nomor yang Anda masukkan tidak terdaftar di WhatsApp. Silakan gunakan nomor lain.');
+                return false;
+            }
+
+            return true;
+        } catch (\Exception $e) {
+            $this->addError('whatsapp_number', 'Gagal mengirim OTP via WhatsApp: ' . $e->getMessage());
+            
+            return false;
+        }
+    }
+
     public function sendOtp(KeycloakService $keycloak, $resend = false)
     {
         $this->whatsapp_number = $this->whatsapp_number ? : Cache::get($this->getWACacheKey());
 
         // Validasi nomor
         $this->validateOnly('whatsapp_number');
+
+        if (!self::waNumberIsValid()) return;
 
         $this->showOtpForm = true;
         $this->dispatch('send-otp', waNumber: $this->whatsapp_number);
@@ -59,8 +80,8 @@ class UpdateWhatsappNumber extends Component
     #[On('otp-valid')]
     public function verifyOtp()
     {
-        // $service = new KeycloakService();
-        // $service->updateWhatsappNumber($this->userId, $this->whatsapp_number);
+        $service = new KeycloakService();
+        $service->updateWhatsappNumber($this->userId, $this->whatsapp_number);
 
         info('Nomor WhatsApp user ID '.$this->userId.' terverifikasi.' . ' Nomor: '.$this->whatsapp_number);
 
