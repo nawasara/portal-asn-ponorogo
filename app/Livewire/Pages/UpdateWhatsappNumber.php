@@ -72,10 +72,12 @@ class UpdateWhatsappNumber extends Component
         $this->validateOnly('whatsapp_number');
 
         self::formatNumber();
-        if (!self::waNumberIsValid()) return;
+        // if (!self::waNumberIsValid()) return;
 
-        $this->showOtpForm = true;
-        $this->dispatch('send-otp', waNumber: $this->whatsapp_number);
+        // $this->showOtpForm = true;
+        // $this->dispatch('send-otp', waNumber: $this->whatsapp_number);
+
+        self::verifyOtp();
     }
 
     public function formatNumber()

@@ -35,6 +35,8 @@ class ResetMfa extends Component
 
     public function mount()
     {
+        return redirect()->route('index');
+        
         $this->userId = Session::get('keycloak_id_user');
         // $this->nip = 199506142020121004;
         self::checkKeycloakSession(); // ada di trait
