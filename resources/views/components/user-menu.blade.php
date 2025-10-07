@@ -16,7 +16,7 @@
         x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
         x-transition:leave="transition ease-in duration-75" x-transition:leave-start="opacity-100 scale-100"
         x-transition:leave-end="opacity-0 scale-95"
-        class="absolute right-0 mt-55 w-55 bg-white dark:bg-gray-800 rounded-lg shadow-lg py-2 border border-gray-100 dark:border-gray-700 origin-top-right">
+        class="absolute right-0 mt-70 w-55 bg-white dark:bg-gray-800 rounded-lg shadow-lg py-2 border border-gray-100 dark:border-gray-700 origin-top-right">
         <div class="px-4 py-2 border-b border-gray-100 dark:border-gray-700">
             <div class="font-semibold text-gray-800 dark:text-gray-100 text-sm">{{ Auth::user()->name }}</div>
             <div class="text-xs text-gray-500 dark:text-gray-400">{{ Auth::user()->email }}</div>
@@ -27,7 +27,6 @@
         <button @click="window.location='{{ route('update-whatsapp-number') }}'"
             class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">Perbarui
             Nomor WhatsApp</button>
-
         <button @click="window.location='{{ \App\Constants\Constants::HELP_URL }}'"
             class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">Bantuan</button>
         <form method="POST" action="{{ route('logout') }}">
