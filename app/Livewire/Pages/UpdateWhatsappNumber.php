@@ -22,12 +22,12 @@ class UpdateWhatsappNumber extends Component
     public bool $showOtpForm = false;
 
     protected $rules = [
-        'whatsapp_number' => ['required', 'regex:/^62[0-9]{8,13}$/'],
+        'whatsapp_number' => ['required', 'regex:/^08[0-9]{8,10}$/'],
     ];
 
     protected $messages = [
         'whatsapp_number.required' => 'Nomor WhatsApp wajib diisi.',
-        'whatsapp_number.regex' => 'Format nomor harus diawali 62 dan hanya angka (contoh: 6281234567890).',
+        'whatsapp_number.regex' => 'Format nomor harus diawali 08 dan hanya angka (contoh: 081234567890).',
     ];
 
     public function mount()
@@ -71,10 +71,18 @@ class UpdateWhatsappNumber extends Component
         // Validasi nomor
         $this->validateOnly('whatsapp_number');
 
+        self::formatNumber();
         if (!self::waNumberIsValid()) return;
 
         $this->showOtpForm = true;
         $this->dispatch('send-otp', waNumber: $this->whatsapp_number);
+    }
+
+    public function formatNumber()
+    {
+        if ($this->whatsapp_number) {
+            $this->whatsapp_number = '62' . substr($this->whatsapp_number, 1);
+        }
     }
 
     #[On('otp-valid')]

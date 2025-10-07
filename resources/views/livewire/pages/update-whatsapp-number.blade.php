@@ -19,10 +19,29 @@
                         <form wire:submit.prevent="sendOtp" class="space-y-4" x-data="{ openTips: false }">
                             <label class="block">
                                 <span class="text-sm font-medium text-gray-700 dark:text-gray-200">Nomor WhatsApp</span>
-                                <input wire:model.defer="whatsapp_number" type="text" inputmode="numeric"
-                                    placeholder="6281234567890" x-mask="62999999999999"
-                                    x-on:input="let v = $event.target.value.replace(/\D/g, ''); if (!v.startsWith('62')) { v = '62' + v.replace(/^0+/, ''); } $event.target.value = v; $event.target.dispatchEvent(new Event('input'))"
+                                <input type="text" inputmode="numeric" placeholder="0812-3456-7890"
+                                    x-on:input="(() => {
+                                        const el = $event.target;
+                                        let raw = el.value.replace(/\D/g, '');
+                                        if (raw.startsWith('62')) raw = '0' + raw.slice(2);
+                                        if (!raw.startsWith('08')) {
+                                            if (raw.startsWith('0')) raw = '08' + raw.slice(1);
+                                            else raw = '08' + raw;
+                                        }
+                                        raw = raw.slice(0, 12); // limit to 12 digits (0 + 11)
+                                        const p1 = raw.slice(0, 4);
+                                        const p2 = raw.slice(4, 8);
+                                        const p3 = raw.slice(8, 12);
+                                        const formatted = p1 + (p2 ? '-' + p2 : '') + (p3 ? '-' + p3 : '');
+                                        el.value = formatted;
+                                        // update hidden raw input bound to Livewire
+                                        if ($refs.whatsapp_raw) {
+                                            $refs.whatsapp_raw.value = raw;
+                                            $refs.whatsapp_raw.dispatchEvent(new Event('input'));
+                                        }
+                                    })()"
                                     class="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-3 py-2 focus:outline-none focus:ring focus:ring-blue-200 dark:focus:ring-blue-900" />
+                                <input type="hidden" x-ref="whatsapp_raw" wire:model.defer="whatsapp_number" />
                             </label>
                             @error('whatsapp_number')
                                 <div class="text-red-600 dark:text-red-400 text-sm">{{ $message }}</div>
@@ -78,7 +97,7 @@
                     <ol class="mt-3 text-sm space-y-2 text-gray-700 dark:text-gray-200">
                         <li class="flex items-start gap-2">
                             <span class="font-semibold text-blue-600">1.</span>
-                            <div>Masukkan nomor WhatsApp Anda (format: 628xxxxxxxx). Bukan 08xxxxxxxx</div>
+                            <div>Masukkan nomor WhatsApp Anda (format: 08xxxxxxxx)</div>
                         </li>
                         <li class="flex items-start gap-2">
                             <span class="font-semibold text-blue-600">2.</span>
