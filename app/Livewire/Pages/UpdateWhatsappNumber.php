@@ -64,7 +64,7 @@ class UpdateWhatsappNumber extends Component
         }
     }
 
-    public function sendOtp(KeycloakService $keycloak, $resend = false)
+    public function sendOtp($resend = false)
     {
         $this->whatsapp_number = $this->whatsapp_number ? : Cache::get($this->getWACacheKey());
 
@@ -89,6 +89,14 @@ class UpdateWhatsappNumber extends Component
 
         $this->redirect('/');
 
+    }
+
+    
+    #[On('otp-reach-limit')]
+    public function otpReachLimit()
+    {
+        $this->addError('whatsapp_number', 'Pengiriman OTP ke nomor WhatsApp Anda dibatasi 3 kali dalam 10 menit. Silakan coba lagi nanti.');
+        $this->showOtpForm = false;
     }
 
     public function render()

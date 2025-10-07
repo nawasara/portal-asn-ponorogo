@@ -90,7 +90,14 @@ class ResetMfa extends Component
 
         return;
     }
-    
+
+    #[On('otp-reach-limit')]
+    public function otpReachLimit()
+    {
+        $this->addError('nip', 'Pengiriman OTP ke nomor WhatsApp Anda dibatasi 3 kali dalam 10 menit. Silakan coba lagi nanti.');
+        $this->showOtpForm = false;
+    }
+
     public function render()
     {
         return view('livewire.pages.reset-mfa');

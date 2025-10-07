@@ -76,6 +76,7 @@ class OtpForm extends Component
         if ($attempts >= 3) {
             info('OTP send attempts exceeded for user ' . $this->userId);
             $this->addError('otp', 'Mencapai batas pengiriman OTP. Coba lagi nanti.');
+            $this->dispatch('otp-reach-limit');
             return;
         }
 
@@ -90,7 +91,7 @@ class OtpForm extends Component
 
         $this->sendToWhatsapp($generatedOtp);
 
-        self::setMessage("OTP telah dikirim ke ".mask_phone($this->waNumber), 'success');
+        self::setMessage("OTP telah dikirim ke nomor WhatsApp ".mask_phone($this->waNumber), 'success');
         $this->showForm = true;
         
         // emit event frontend supaya bisa autofocus ke OTP field
