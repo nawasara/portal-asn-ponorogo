@@ -24,6 +24,9 @@
         <button @click="window.location='{{ route('mfa.reset') }}'"
             class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">Reset
             MFA</button>
+        <button @click="window.location='{{ route('update-whatsapp-number') }}'"
+            class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">Perbarui
+            Nomor WhatsApp</button>
 
         <button @click="window.location='{{ \App\Constants\Constants::HELP_URL }}'"
             class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">Bantuan</button>
