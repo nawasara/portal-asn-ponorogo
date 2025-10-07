@@ -13,14 +13,14 @@
         open: false,
     }">
         <x-dark-mode />
-        <a href="{{ url('/reset-mfa-unauthorization') }}"
+        {{-- <a href="{{ url('/reset-mfa-unauthorization') }}"
             class="flex items-center gap-2 shadow-md rounded-full bg-white dark:bg-gray-800 px-2 py-1 hover:bg-blue-50 dark:hover:bg-gray-700 transition">
             <div
                 class="w-9 h-9 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-base">
                 R
             </div>
             <span class="font-medium text-gray-800 dark:text-gray-100 text-sm">Reset MFA</span>
-        </a>
+        </a> --}}
         <x-user-menu />
     </div>
 
