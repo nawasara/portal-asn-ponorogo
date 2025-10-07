@@ -57,6 +57,34 @@ class KeycloakService
     }
 
     /**
+     * Get user by username
+     */
+    public function getUserByUsername(string $username)
+    {
+        $token = $this->getAdminToken();
+
+        // Gunakan parameter search agar fleksibel (tidak case-sensitive)
+        $response = Http::withToken($token)->get("{$this->baseUrl}/admin/realms/{$this->realm}/users", [
+            'username' => $username,
+            'exact' => true, // hanya user dengan username persis sama
+        ]);
+
+        if ($response->failed()) {
+            throw new \Exception('Gagal mencari user berdasarkan username di Keycloak');
+        }
+
+        $users = $response->json();
+
+        // Keycloak bisa mengembalikan array kosong jika user tidak ditemukan
+        if (empty($users)) {
+            return null;
+        }
+
+        // Ambil user pertama karena username seharusnya unik
+        return $users[0];
+    }
+
+    /**
      * Get WhatsApp Number dari user profile
      */
     public function getWhatsappNumber($userId)
@@ -122,6 +150,9 @@ class KeycloakService
         return $response->json();
     }
 
+    /**
+     * Reset OTP (MFA) user di Keycloak
+      */
     public function resetOtp(string $userId): bool
     {
         $token = $this->getAdminToken();
@@ -151,6 +182,8 @@ class KeycloakService
 
         return true;
     }
+
+    
 
 
 
