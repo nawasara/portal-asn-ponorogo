@@ -82,7 +82,7 @@ class ResetMfa extends Component
     public function verifyOtp()
     {
         $service = new KeycloakService();
-        $status = $service->resetOtp($this->userId);
+        // $status = $service->resetOtp($this->userId);
     
         session()->flash('success', 'Berhasil mereset MFA. Silakan masuk kembali menggunakan NIP dan scan ulang QRCode MFA Anda.');
 
