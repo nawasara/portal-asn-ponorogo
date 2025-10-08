@@ -19,7 +19,7 @@
     {{-- <script src="https://maps.googleapis.com/maps/api/js?key={{ env('MAPS_API_KEY') }}&libraries=marker&loading=async"> --}}
     </script>
     <!-- Scripts -->
-    @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/map.js'])
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <!-- Styles -->
     @livewireStyles
@@ -28,14 +28,8 @@
 <body class="bg-gray-100">
     {{ $slot }}
 
-    @livewire('modals.report')
     @stack('modals')
     @livewireScripts
-    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <x-livewire-alert::scripts />
-    @livewire('wire-elements-modal')
-
-
 </body>
 
 </html>
