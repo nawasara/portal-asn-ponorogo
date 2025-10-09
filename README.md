@@ -1,61 +1,118 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Portal ASN Ponorogo
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Lightweight README for the Portal ASN Ponorogo web application. This repository is a Laravel application that includes Livewire for dynamic UI, Tailwind CSS for styling, and Keycloak/Socialite for SSO authentication.
 
-## About Laravel
+**Access Portal:**  
+Visit at [https://asn.ponorogo.go.id](https://asn.ponorogo.go.id)
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Contents
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+-   `app/` — Laravel application code (controllers, models, Livewire components)
+-   `resources/views/` — Blade templates and Livewire views
+-   `routes/` — web route definitions
+-   `public/` — web entry (assets, index.php)
+-   `tests/` — PHPUnit tests
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Quick overview
 
-## Learning Laravel
+This project implements an internal portal for ASN Ponorogo with features like:
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+-   Keycloak SSO login/logout flows (Socialite driver)
+-   User profile, dashboard and MFA/OTP flows using WhatsApp
+-   Livewire components for OTP handling and interactive forms
+-   Tailwind-based responsive UI with dark mode support
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+## Prerequisites
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+-   PHP 8.1+ (as required by composer.json)
+-   Composer
+-   Node.js + npm (for assets / Vite)
+-   SQLite (included for local development) or other DB
+-   Optional: Docker + Docker Compose (for containerized setup)
 
-## Laravel Sponsors
+## Local setup (recommended)
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+1. Copy `.env.example` to `.env` and adjust settings (DB, APP_URL, KEYCLOAK settings):
 
-### Premium Partners
+    - `APP_URL` — your local URL (e.g. `http://localhost:8000`)
+    - `DB_CONNECTION` — `sqlite` by default (see `database/database.sqlite`)
+    - Keycloak/Socialite: set `KEYCLOAK_CLIENT_ID`, `KEYCLOAK_CLIENT_SECRET`, `KEYCLOAK_BASE_URL`, etc.
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+2. Install PHP dependencies:
 
-## Contributing
+    ```powershell
+    composer install
+    ```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+3. Install JS dependencies and build assets (Vite):
 
-## Code of Conduct
+    ```powershell
+    npm install
+    npm run dev
+    ```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+4. Generate app key and run migrations/seeder (if needed):
 
-## Security Vulnerabilities
+    ```powershell
+    php artisan key:generate
+    php artisan migrate --seed
+    ```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+5. Start the local server:
+
+    ```powershell
+    php artisan serve
+    ```
+
+Open your browser at the `APP_URL` value.
+
+## Development notes
+
+-   Livewire and Alpine are used for dynamic UI. When changing JS, run `npm run dev`.
+-   Tailwind config is in `tailwind.config.js` and assets live in `resources/css` and `resources/js`.
+-   Dark mode is implemented using Tailwind's `class` strategy and a small script that reads `localStorage.theme`.
+
+## OTP / WhatsApp flow
+
+-   The application sends OTP codes to WhatsApp numbers via an internal `WaNotificationService` (or similar). OTP state is cached with TTL and rate-limited.
+-   The OTP UI is implemented as a reusable Livewire component at `app/Livewire/Components/OtpForm.php` and view `resources/views/livewire/components/otp-form.blade.php`.
+
+## Keycloak SSO
+
+-   Login/Logout flow is centralized in `app/Http/Controllers/Auth/KeycloakController.php`.
+-   Logout uses `id_token_hint` and `post_logout_redirect_uri` to redirect the user back to the portal after logging out of Keycloak.
+
+## Tests
+
+-   Run PHPUnit tests with:
+
+    ```powershell
+    ./vendor/bin/phpunit
+    ```
+
+## Common tasks & commands
+
+-   Run migrations: `php artisan migrate`
+-   Run seeders: `php artisan db:seed`
+-   Build assets for production: `npm run build`
+
+## Troubleshooting
+
+-   Dark mode not toggling: check `resources/views/components/layouts/app.blade.php` for the global dark-mode script and ensure no page-level scripts overwrite it.
+-   Missing Alpine features: Livewire may bundle Alpine; avoid loading conflicting Alpine versions.
+-   OTP not sent: verify `WaNotificationService` credentials and that `cache` is writable.
+
+## Contribution
+
+-   Keep UI components reusable (Blade/Livewire components), centralize auth logic into controllers, and write tests for Livewire behavior where possible.
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+This project inherits licensing from upstream dependencies. Add a license file if this repository needs a specific license.
+
+---
+
+If you want I can:
+
+-   Add a quick start script that automates installation for Windows (PowerShell), or
+-   Add a CONTRIBUTING.md and PR template.
