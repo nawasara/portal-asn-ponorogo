@@ -52,7 +52,7 @@
                         <div class="flex items-center gap-3 flex-wrap">
                             <button wire:loading.remove type="submit"
                                 class="inline-flex items-center px-5 py-2 rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-800 transition">
-                                Kirim OTP
+                                Simpan
                             </button>
 
                             <x-loading />

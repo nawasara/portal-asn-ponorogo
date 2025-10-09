@@ -62,7 +62,7 @@
                                 class="bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 
                        text-white px-5 py-2 rounded-lg text-sm font-medium transition-all duration-200 
                        shadow-sm hover:shadow-md focus-visible:ring-2 focus-visible:ring-blue-500">
-                                Kirim OTP
+                                Simpan
                             </button>
 
                             <x-loading />
