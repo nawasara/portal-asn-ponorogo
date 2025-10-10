@@ -25,18 +25,29 @@
                             <input type="text" inputmode="numeric" placeholder="0812-3456-7890"
                                 x-on:input="(() => {
                                     const el = $event.target;
-                                    let raw = el.value.replace(/\D/g, '');
+                                    let raw = el.value.replace(/\D/g, ''); // hapus semua karakter non-digit
+
+                                    // Normalisasi prefix
                                     if (raw.startsWith('62')) raw = '0' + raw.slice(2);
                                     if (!raw.startsWith('08')) {
                                         if (raw.startsWith('0')) raw = '08' + raw.slice(1);
                                         else raw = '08' + raw;
                                     }
-                                    raw = raw.slice(0, 12);
+
+                                    // Batasi maksimal 14 digit
+                                    raw = raw.slice(0, 14);
+
+                                    // Format ke dalam grup 4-4-4-2 (sesuai panjang nomor)
                                     const p1 = raw.slice(0, 4);
                                     const p2 = raw.slice(4, 8);
                                     const p3 = raw.slice(8, 12);
-                                    const formatted = p1 + (p2 ? '-' + p2 : '') + (p3 ? '-' + p3 : '');
+                                    const p4 = raw.slice(12, 14);
+
+                                    const formatted = [p1, p2, p3, p4].filter(Boolean).join('-');
+
                                     el.value = formatted;
+
+                                    // Simpan nilai raw (tanpa format) ke input hidden jika ada
                                     if ($refs.whatsapp_raw) {
                                         $refs.whatsapp_raw.value = raw;
                                         $refs.whatsapp_raw.dispatchEvent(new Event('input'));

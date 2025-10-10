@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="theme-color" content="#ffffff">
 
     <!-- Favicon untuk berbagai perangkat -->
     <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('favicon/apple-touch-icon.png') }}">
@@ -16,17 +17,14 @@
     <!-- Untuk Android / PWA -->
     <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('favicon/android-chrome-192x192.png') }}">
     <link rel="icon" type="image/png" sizes="512x512" href="{{ asset('favicon/android-chrome-512x512.png') }}">
-
-    <!-- Meta tambahan opsional -->
-    <meta name="theme-color" content="#ffffff">
-
-    <title>{{ config('app.name', 'Laravel') }}</title>
-
     <!-- Favicon -->
     <link rel="shortcut icon" href="{{ asset('favicon.png') }}">
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+
+    <title>{{ config('app.name', 'Laravel') }}</title>
+
     </script>
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])

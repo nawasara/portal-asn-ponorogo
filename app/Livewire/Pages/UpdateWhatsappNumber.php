@@ -22,7 +22,7 @@ class UpdateWhatsappNumber extends Component
     public bool $showOtpForm = false;
 
     protected $rules = [
-        'whatsapp_number' => ['required', 'regex:/^08[0-9]{8,10}$/'],
+        'whatsapp_number' => ['required', 'regex:/^08[0-9]{8,12}$/'],
     ];
 
     protected $messages = [
