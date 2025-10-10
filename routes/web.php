@@ -15,11 +15,12 @@ use App\Livewire\Pages\ResetMfaUnauthorization;
 use App\Http\Controllers\Auth\KeycloakController;
 
 // route untuk guest
+
+Route::get('/', Guest::class)->name('index');
 Route::get('/update-whatsapp-number', UpdateWhatsappNumber::class)
     ->middleware(['auth']) // pastikan hanya user terautentikasi
     ->name('update-whatsapp-number');
-Route::get('/', Guest::class)->name('index');
-
+    
 Route::middleware(['guest'])->group(function () {
     Route::get('reset-mfa-unauthorization', ResetMfaUnauthorization::class)->name('mfa.reset-unauthorization');
     Route::get('/bantuan', function () {
