@@ -20,8 +20,8 @@ Route::get('/', Index::class)->name('index');
 Route::get('/update-whatsapp-number', UpdateWhatsappNumber::class)
     ->middleware(['auth']) // pastikan hanya user terautentikasi
     ->name('update-whatsapp-number');
+    
 Route::middleware(['guest'])->group(function () {
-
     Route::get('reset-mfa-unauthorization', ResetMfaUnauthorization::class)->name('mfa.reset-unauthorization');
     Route::get('/bantuan', function () {
         return redirect(Constants::HELP_URL);

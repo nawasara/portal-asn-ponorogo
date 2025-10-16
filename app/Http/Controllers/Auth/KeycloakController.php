@@ -2,17 +2,21 @@
 
 namespace App\Http\Controllers\Auth;
 
-use Illuminate\Http\Request;
+use App\Models\User;
 use Illuminate\Support\Str;
+use App\Constants\Constants;
+use App\Traits\SessionTrait;
+use Illuminate\Http\Request;
+use App\Services\KeycloakService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Session;
 use Laravel\Socialite\Facades\Socialite;
-use App\Models\User;
-use App\Constants\Constants;
 
 class KeycloakController extends \App\Http\Controllers\Controller
 {
+    use SessionTrait;
+
     public function redirectToProvider()
     {
         return Socialite::driver('keycloak')->redirect();
@@ -43,19 +47,11 @@ class KeycloakController extends \App\Http\Controllers\Controller
 
     public function logout(Request $request)
     {
-        $token = Session::get('keycloak_id_token');
-        Auth::logout();
-        Session::flush();
-        Session::regenerate();
+        // Keycloak logout
+        $service = new KeycloakService();
+        $url = $service->logout();
 
-        $redirectUri = Config::get('app.url');
-        $url = Socialite::driver('keycloak')->getLogoutUrl();
-        $params = [
-            'id_token_hint' => $token,
-            'post_logout_redirect_uri' => $redirectUri,
-        ];
-        $url .= '?' . http_build_query($params);
-
-        return redirect($url);
+        $this->logoutLaravel();
+        return $url ? redirect($url) : redirect('/');
     }
 }
