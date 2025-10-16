@@ -13,7 +13,7 @@ class AppsService
                 'icon_type' => 'image',
                 'description' => 'Panduan penggunaan aplikasi dan layanan yang disediakan',
                 'status' => 'Coming Soon',
-                'link' => '#'
+                'link' => 'https://imashebat.ponorogo.go.id/login/sso'
             ],
             [
                 'name' => 'Supergratifikasi',
@@ -25,13 +25,13 @@ class AppsService
             ],
             [
                 'name' => 'Rakaca',
-                'icon' => asset("img/rakaca.ico"),
+                'icon' => asset("img/rakaca.png"),
                 'icon_type' => 'image',
                 'description' => 'Etalase Layanan Teknologi Informasi dan Infrastruktur Bidang Aplikasi dan Informatika Dinas Kominfo dan Statistik',
                 'status' => 'connected',
                 'link' => 'https://rakaca.ponorogo.go.id/login'
             ],
-            
+
             [
                 'name' => 'Sipras',
                 'icon' => asset("img/sipras.png"),
@@ -40,8 +40,8 @@ class AppsService
                 'status' => 'connected',
                 'link' => 'https://sipras.ponorogo.go.id/admin'
             ],
-            
-            
+
+
             [
                 'name' => 'Satu Data Ponorogo (Sadap)',
                 'icon' => asset("img/sadap.png"),

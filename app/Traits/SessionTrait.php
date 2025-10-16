@@ -13,14 +13,18 @@ trait SessionTrait
     public function checkKeycloakSession()
     {
         $token = Session::get('keycloak_id_token');
-        if (!$token) { self::logout();}
+        if (!$token) {
+            self::logout();
+        }
 
         try {
             $service = new KeycloakService();
             $res = $service->checkLoginStatus($token);
-            if (!$res['active']) {
-                self::logout();
-            }
+            // if (!$res['active']) {
+            //     self::logout();
+            // }
+
+            return $res;
         } catch (\Exception $e) {
             self::logout();
         }
@@ -53,9 +57,9 @@ trait SessionTrait
                 'id_token_hint' => $keycloakIdToken, // Ambil id_token dari session
                 'post_logout_redirect_uri' => $redirectUri, // URL redirect setelah logout
             ];
-    
+
             $url .= '?' . http_build_query($params);
-    
+
             // return redirect($url);
         }
     }

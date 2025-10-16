@@ -1,24 +1,28 @@
 <?php
 
-namespace App\Livewire\Pages;
+namespace App\Livewire\Dashboard\Section;
 
 use Livewire\Component;
 use App\Traits\SessionTrait;
 use App\Services\AppsService;
-use App\Services\KeycloakService;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Session;
 
-class Dashboard extends Component
+class AppList extends Component
 {
     use SessionTrait;
     public AppsService $appsService;
     public $apps = [];
 
+    public $query = '';
+
     public function mount()
     {
         $service = new AppsService();
         $this->apps = $service->getApps();
+
+        if ($this->query) {
+            $q = strtolower($this->query);
+            $apps = $apps->filter(fn($a) => str_contains(strtolower($a['title'] . ' ' . $a['desc']), $q));
+        }
 
         if (auth()->user()) {
             self::checkKeycloakSession(); // ada di trait
@@ -28,6 +32,6 @@ class Dashboard extends Component
 
     public function render()
     {
-        return view('livewire.pages.dashboard');
+        return view('livewire.dashboard.section.app-list');
     }
 }

@@ -15,6 +15,7 @@
         "vite": "^6.2.4"
     },
     "dependencies": {
+        "@alpinejs/focus": "^3.15.0",
         "@floating-ui/dom": "^1.7.4",
         "@preline/dropdown": "^3.2.3",
         "@preline/theme-switch": "^3.2.3",

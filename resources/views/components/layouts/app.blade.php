@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="scroll-smooth">
 
 <head>
     <meta charset="utf-8">
@@ -29,13 +29,21 @@
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+    <script defer src="https://unpkg.com/@alpinejs/ui@3.15.0/dist/cdn.min.js"></script>
+    <script defer src="https://unpkg.com/@alpinejs/focus@3.15.0/dist/cdn.min.js"></script>
+
     <!-- Styles -->
     @livewireStyles
 </head>
 
-<body class="font-sans antialiased">
+<body class="font-sans antialiased bg-gray-100 dark:bg-gray-900">
 
-    <div class="min-h-screen bg-gray-100">
+    <div class="absolute top-0 inset-x-0 z-[10] ">
+        <livewire:shared-components.topbar />
+    </div>
+
+    <div class="bg-gray-100 dark:bg-gray-900">
         <main class="">
             {{ $slot }}
         </main>
@@ -46,15 +54,23 @@
 
     <script>
         // Global dark mode handler
-        (function() {
-            const theme = localStorage.getItem('hs_theme');
-            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            if (theme === 'dark' || (!theme && prefersDark)) {
-                document.documentElement.classList.add('dark');
+        ( function ()
+        {
+            const theme = localStorage.getItem( 'hs_theme' );
+            const prefersDark = window.matchMedia( '(prefers-color-scheme: dark)' ).matches;
+            if ( theme === 'dark' || ( !theme && prefersDark ) ) {
+                document.documentElement.classList.add( 'dark' );
             } else {
-                document.documentElement.classList.remove('dark');
+                document.documentElement.classList.remove( 'dark' );
             }
-        })();
+        } )();
+    </script>
+
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <script>
+        AOS.init();
     </script>
 </body>
 

@@ -21,12 +21,12 @@
             <div class="font-semibold text-gray-800 dark:text-gray-100 text-sm">{{ Auth::user()->name }}</div>
             <div class="text-xs text-gray-500 dark:text-gray-400">{{ Auth::user()->email }}</div>
         </div>
-        <button @click="window.location='{{ route('mfa.reset') }}'"
+        {{-- <button @click="window.location='{{ route('mfa.reset') }}'"
             class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">Reset
-            MFA</button>
-        <button @click="window.location='{{ route('update-whatsapp-number') }}'"
+            MFA</button> --}}
+        {{-- <button @click="window.location='{{ route('update-whatsapp-number') }}'"
             class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">Perbarui
-            Nomor WhatsApp</button>
+            Nomor WhatsApp</button> --}}
         <button @click="window.location='{{ \App\Constants\Constants::HELP_URL }}'"
             class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700">Bantuan</button>
         <form method="POST" action="{{ route('logout') }}">
