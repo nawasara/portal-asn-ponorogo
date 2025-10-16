@@ -19,10 +19,10 @@ class AppList extends Component
         $service = new AppsService();
         $this->apps = $service->getApps();
 
-        if ($this->query) {
-            $q = strtolower($this->query);
-            $apps = $apps->filter(fn($a) => str_contains(strtolower($a['title'] . ' ' . $a['desc']), $q));
-        }
+        // if ($this->query) {
+        //     $q = strtolower($this->query);
+        //     $apps = $this->apps->filter(fn($a) => str_contains(strtolower($a['title'] . ' ' . $a['desc']), $q));
+        // }
 
         if (auth()->user()) {
             self::checkKeycloakSession(); // ada di trait

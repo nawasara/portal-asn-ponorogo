@@ -1,5 +1,16 @@
 <div>
-    <div class="max-w-6xl pb-10 lg:pb-14" id="app-lists">
+    <div class="max-w-6xl py-10 lg:py-14 mx-auto 
+           sm:bg-linear-to-b/decreasing from-gray-200 to-white 
+           sm:rounded-br-4xl sm:rounded-bl-4xl 
+           dark:from-slate-800 dark:to-slate-900 
+           dark:sm:bg-linear-to-b/srgb" id="app-lists">
+
+        @if (Route::is('apps'))
+            <div class="flex items-center justify-center gap-x-3 md:hidden">
+                <img src="{{ asset('img/logo.png') }}" alt="Portal ASN Ponorogo" class="size-6 w-auto" loading="lazy" />
+                <span class="dark:text-white text-gray-700 font-semibold">Aplikasi Terintegrasi SSO Kisara</span>
+            </div>
+        @endif
 
         @php
             $search = request('search', '');
@@ -8,14 +19,14 @@
         @endphp
 
         <div class="py-6" data-aos="fade-up" data-aos-duration="1000">
-            <h2 class="mt-4 text-2xl font-bold text-gray-800 dark:text-white md:text-4xl text-center mx-auto py-6">
+            <h2 class="text-2xl font-bold text-gray-800 dark:text-white md:text-4xl text-center mx-auto py-6">
                 Daftar Aplikasi
             </h2>
         </div>
 
         {{-- <!-- Grid --> --}}
-        <div class="grid grid-cols-1 md:grid-cols-3 sm:grid-cols-2 gap-6" data-aos="fade-up" data-aos-duration="1000"
-            date-aos-delay="3000">
+        <div class="grid grid-cols-1 xl:grid-cols-3 md:grid-cols-2 gap-6 sm:px-4" data-aos="fade-up"
+            data-aos-duration="1000" date-aos-delay="3000">
             @foreach ($filteredApps as $app)
 
                 <a href="{{ $app['link'] }}" class="group border border-gray-200 dark:border-gray-700 rounded-2xl ">

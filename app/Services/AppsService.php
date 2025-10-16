@@ -11,9 +11,9 @@ class AppsService
                 'name' => 'Simashebat',
                 'icon' => asset("img/simas.png"),
                 'icon_type' => 'image',
-                'description' => 'Panduan penggunaan aplikasi dan layanan yang disediakan',
-                'status' => 'Coming Soon',
-                'link' => 'https://imashebat.ponorogo.go.id/login/sso'
+                'description' => 'Sistem Informasi Manajemen ASN Pemerintah Kabupaten Ponorogo',
+                'status' => 'connected',
+                'link' => 'https://simashebat.ponorogo.go.id/login/sso'
             ],
             [
                 'name' => 'Supergratifikasi',
@@ -47,7 +47,7 @@ class AppsService
                 'icon' => asset("img/sadap.png"),
                 'icon_type' => 'image',
                 'description' => 'Portal satu data Pemerintah Kabupaten Ponorogo',
-                'status' => 'comming soon',
+                'status' => 'coming soon',
                 'link' => '#'
             ],
         ];

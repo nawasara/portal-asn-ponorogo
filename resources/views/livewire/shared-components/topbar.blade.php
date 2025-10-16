@@ -1,9 +1,10 @@
 <div>
-    <header class="dark:bg-gray-900/50 bg-gray-100/50 backdrop-blur-md shadow shadow-gray-300 dark:shadow-gray-500">
+    <header
+        class="dark:bg-gray-900/50 bg-gray-100/50 backdrop-blur-md shadow shadow-gray-300 dark:shadow-gray-500 hidden md:block">
         <nav aria-label="Global" class="mx-auto flex items-center justify-between gap-x-6 px-6 py-2 lg:px-8 max-w-6xl">
 
             <div class="flex lg:flex-1">
-                <a href="/" class="-m-1.5 p-1.5 flex items-center gap-x-2">
+                <a href="/" wire:navigate.hover class="-m-1.5 p-1.5 flex items-center gap-x-2">
                     <span class="sr-only">Portal ASN Ponorogo</span>
                     <img src="{{ asset('img/logo.png') }}" alt="Portal ASN Ponorogo" class="h-12 w-auto" />
 
@@ -16,10 +17,7 @@
                 {{-- Dark mode toggle --}}
                 <x-dark-mode />
 
-                {{-- <a href="#" class="hidden text-sm/6 font-semibold text-white lg:block">Log in</a> --}}
-
                 @auth
-                    {{-- <span class="text-xs sm:text-base dark:text-white">Halo, </span> --}}
                     <div class="hs-dropdown relative inline-flex [--placement:bottom-right] ">
                         <button id="portal-user-dropdown" type="button"
                             class="hs-dropdown-toggle py-3 px-4 inline-flex items-center gap-x-2 text-sm cursor-pointer font-medium rounded-lg text-gray-800 hover:bg-gray-50 focus:outline-hidden focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:text-white dark:hover:bg-neutral-700"

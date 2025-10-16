@@ -1,11 +1,20 @@
 <div>
     {{-- Support Section --}}
-    <div class="max-w-6xl py-10 lg:py-14 mx-auto" id="support" data-aos="fade-up">
-        <div class="pb-6">
+    <section class="max-w-6xl py-10 lg:py-14 mx-auto" id="support" data-aos="fade-up">
+
+        @if (Route::is('supports'))
+            <div class="flex items-center justify-center gap-x-3 md:hidden">
+                <img src="{{ asset('img/logo.png') }}" alt="Portal ASN Ponorogo" class="size-6 w-auto" loading="lazy" />
+                <span class="dark:text-white text-gray-700 font-semibold">Bantuan SSO Kisara</span>
+            </div>
+        @endif
+
+        <div class="py-6">
             <h2 class="text-2xl font-bold text-gray-800 dark:text-white md:text-4xl text-center mx-auto py-6">
                 Mengalami Kendala?
             </h2>
         </div>
+
         <div class="grid sm:grid-cols-2 lg:grid-cols-2 items-center gap-6">
 
             {{-- Form Bantuan Card --}}
@@ -84,6 +93,6 @@
             </a>
             <!-- End Card -->
         </div>
-    </div>
+    </section>
     <!-- End Icon Blocks -->
 </div>

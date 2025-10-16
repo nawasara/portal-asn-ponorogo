@@ -1,5 +1,5 @@
 <div>
-    <footer class="mt-auto w-full max-w-6xl py-10 px-4 sm:px-6 lg:px-8 mx-auto">
+    <footer class="mt-auto w-full max-w-6xl hidden sm:block py-10 px-4 sm:px-6 lg:px-8 mx-auto">
         <!-- Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 items-center gap-5">
             <div class="flex lg:flex-1 justify-center md:justify-start">

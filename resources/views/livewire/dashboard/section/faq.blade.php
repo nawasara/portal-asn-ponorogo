@@ -15,7 +15,7 @@
             </div>
             <!-- End Col -->
 
-            <div class="md:col-span-3" data-aos="slide-up" data-aos-duration="2000" date-aos-delay="3000">
+            <div class="md:col-span-3" data-aos="slide-up" data-aos-duration="1500" date-aos-delay="2000">
                 <!-- Accordion -->
                 <div class="hs-accordion-group divide-y divide-gray-200 dark:divide-neutral-700">
 

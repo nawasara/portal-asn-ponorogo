@@ -2,11 +2,11 @@
 
     <div x-data="{ open: $wire.entangle('showModal') }" class="flex justify-center">
         {{-- <!-- Trigger --> --}}
-        <span x-on:click="open = true">
+        {{-- <span x-on:click="open = true">
             <button type="button"
                 class="relative flex items-center justify-center gap-2 whitespace-nowrap rounded-lg border border-gray-200 bg-white px-4 py-2 text-gray-800 shadow-sm hover:border-gray-200 hover:bg-gray-50">Open
                 dialog</button>
-        </span>
+        </span> --}}
 
         {{-- <!-- Modal --> --}}
         <div x-dialog x-model="open" x-cloak class="fixed inset-0 z-10 overflow-y-auto">

@@ -1,5 +1,7 @@
 <?php
 
+use App\Livewire\Dashboard\Section\AppList;
+use App\Livewire\Dashboard\Section\Integration;
 use Illuminate\Support\Str;
 use App\Constants\Constants;
 use App\Livewire\Pages\Guest;
@@ -14,9 +16,15 @@ use App\Livewire\Pages\UpdateWhatsappNumber;
 use App\Livewire\Pages\ResetMfaUnauthorization;
 use App\Http\Controllers\Auth\KeycloakController;
 use App\Livewire\Dashboard\Index;
+use App\Livewire\Dashboard\Section\Support;
+use App\Livewire\SharedComponents\Profile;
 
 // route untuk guest
 Route::get('/', Index::class)->name('index');
+Route::get('apps', AppList::class)->name('apps');
+Route::get('supports', Support::class)->name('supports');
+Route::get('integrations', Integration::class)->name('integrations');
+Route::get('profiles', Profile::class)->name('profiles');
 Route::get('/update-whatsapp-number', UpdateWhatsappNumber::class)
     ->middleware(['auth']) // pastikan hanya user terautentikasi
     ->name('update-whatsapp-number');
