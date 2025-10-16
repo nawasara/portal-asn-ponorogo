@@ -89,6 +89,6 @@ class SessionModal extends Component
      */
     public function logoutApp(): void
     {
-        $this->logout();
+        $this->logoutLaravel();
     }
 }
