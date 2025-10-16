@@ -49,7 +49,8 @@ trait SessionTrait
         $service = new KeycloakService();
         $number = $service->getWhatsappNumber($token);
         if (!$number) {
-            return redirect()->route('update-whatsapp-number');
+            $this->redirectRoute('update-whatsapp-number');
+            return;
         }
 
         return $number;
