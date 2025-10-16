@@ -61,5 +61,6 @@ trait SessionTrait
         Auth::logout();
         Session::flush(); // Clear the session data
         Session::regenerate(); // Regenerate the session ID to prevent session fixation attacks  
+        return;
     }  
 }

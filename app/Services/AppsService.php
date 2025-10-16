@@ -11,8 +11,8 @@ class AppsService
                 'name' => 'Simashebat',
                 'icon' => asset("img/simas.png"),
                 'icon_type' => 'image',
-                'description' => 'Panduan penggunaan aplikasi dan layanan yang disediakan',
-                'status' => 'Coming Soon',
+                'description' => 'Aplikasi kepegawaian Pemerintah Kab. Ponorogo',
+                'status' => 'connected',
                 'link' => 'https://imashebat.ponorogo.go.id/login/sso'
             ],
             [
