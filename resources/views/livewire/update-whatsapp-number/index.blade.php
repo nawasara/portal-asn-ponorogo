@@ -25,6 +25,6 @@
 
         </div>
     </div>
-    <livewire:dashboard.modal.session-modal />
+    <livewire:shared-components.modal.session-modal />
 
 </div>

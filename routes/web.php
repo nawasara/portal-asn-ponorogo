@@ -29,20 +29,12 @@ Route::get('/update-whatsapp-number', UpdateWhatsappNumber::class)
     ->middleware(['auth']) // pastikan hanya user terautentikasi
     ->name('update-whatsapp-number');
     
-Route::middleware(['guest'])->group(function () {
-    Route::get('reset-mfa-unauthorization', ResetMfaUnauthorization::class)->name('mfa.reset-unauthorization');
-    Route::get('/bantuan', function () {
-        return redirect(Constants::HELP_URL);
-    })->name('help');
+Route::get('reset-mfa-unauthorization', ResetMfaUnauthorization::class)->name('mfa.reset-unauthorization');
+Route::get('/bantuan', function () {
+    return redirect(Constants::HELP_URL);
+})->name('help');
 
-
-});
-
-// route untuk authenticated
-Route::middleware(['auth', 'whatsapp.required'])->group(function () {
-    Route::get('dashboard', Dashboard::class)->name('dashboard');
-    Route::get('reset-mfa', ResetMfa::class)->name('mfa.reset');
-});
+Route::get('reset-mfa', ResetMfa::class)->middleware(['auth', 'whatsapp.required'])->name('mfa.reset');
 
 Route::get('/login', [KeycloakController::class, 'redirectToProvider'])->name('login');
 Route::get('/login/keycloak/callback', [KeycloakController::class, 'handleProviderCallback'])->name('login.callback');
