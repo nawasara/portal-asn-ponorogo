@@ -1,13 +1,15 @@
 <?php
-namespace App\Livewire\Components;
+namespace App\Livewire\SharedComponents;
 
 use Livewire\Component;
+use Illuminate\Support\Str;
 use Livewire\Attributes\On;
 use App\Traits\SessionTrait;
 use App\Services\KeycloakService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
+use App\Services\WaNotificationService;
 use Illuminate\Support\Facades\Session;
 use Laravel\Socialite\Facades\Socialite;
 
@@ -118,9 +120,12 @@ class OtpForm extends Component
             return;
         }
 
-        $waService = new \App\Services\WaNotificationService();
+        $uuid = Str::uuid()->toString();
+        $message = "Kode OTP Anda: {$otp}. Berlaku {$this->otpTtlMinutes} menit. (Ref: {$uuid})";
+
+        $waService = new WaNotificationService();
         try {
-            $waService->sendWa($this->waNumber, "Kode OTP Anda: {$otp}. Berlaku {$this->otpTtlMinutes} menit.");
+            $waService->sendWa($this->waNumber, $message);
         } catch (\Exception $e) {
             self::setMessage('Gagal mengirim OTP via WhatsApp: ' . $e->getMessage(), 'error');
             return;
@@ -171,6 +176,6 @@ class OtpForm extends Component
 
     public function render()
     {
-        return view('livewire.components.otp-form');
+        return view('livewire.shared-components.otp-form');
     }
 }

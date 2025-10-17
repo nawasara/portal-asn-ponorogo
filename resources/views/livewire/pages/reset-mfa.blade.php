@@ -75,7 +75,7 @@
                     </form>
                 @endif
 
-                <livewire:components.otp-form />
+                <livewire:shared-components.otp-form />
 
                 @if ($showBtnLoginForm)
                     <div class="mt-6 border-t border-gray-200 dark:border-gray-700 pt-4">

@@ -15,7 +15,7 @@
                 <livewire:update-whatsapp-number.section.form />
 
                 <div class="mt-6">
-                    <livewire:components.otp-form />
+                    <livewire:shared-components.otp-form />
                 </div>
             </div>
 

@@ -5,7 +5,21 @@
         waNumber: '',
         openModal(e) {
             this.waNumber = e.detail.whatsappNumber ?? '0';
+            this.waNumber = this.masking(this.waNumber);
             this.open = true;
+        },
+        masking(number) {
+            number = number.slice(0, 14);
+    
+            // Format ke dalam grup 4-4-4-2 (sesuai panjang nomor)
+            const p1 = number.slice(0, 4);
+            const p2 = number.slice(4, 8);
+            const p3 = number.slice(8, 12);
+            const p4 = number.slice(12, 14);
+    
+            const formatted = [p1, p2, p3, p4].filter(Boolean).join('-');
+    
+            return formatted;
         }
     }" @open-modal-confirm.window="openModal($event)" class="flex justify-center">
         <!-- Modal -->
