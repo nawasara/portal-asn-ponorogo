@@ -5,7 +5,6 @@ use App\Constants\Constants;
 use App\Livewire\Pages\Guest;
 use App\Livewire\Pages\ResetMfa;
 use App\Livewire\Dashboard\Index;
-use App\Livewire\Pages\Dashboard;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Config;
