@@ -53,7 +53,6 @@ class WaNotificationService
             $content = $response->getBody()->getContents();
     
             $json = json_decode($content, true);
-            info($json);
             return $json['results']['is_on_whatsapp'] ?? false;
         } catch (\Throwable $th) {
             info('Gagal cek nomor WA: ' . $th->getMessage());

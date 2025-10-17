@@ -20,7 +20,7 @@ use App\Livewire\Dashboard\Section\Support;
 use App\Livewire\SharedComponents\Profile;
 
 // route untuk guest
-Route::get('/', Index::class)->name('index');
+Route::get('/', Index::class)->middleware(['whatsapp.required.if.auth'])->name('index');
 Route::get('apps', AppList::class)->name('apps');
 Route::get('supports', Support::class)->name('supports');
 Route::get('integrations', Integration::class)->name('integrations');

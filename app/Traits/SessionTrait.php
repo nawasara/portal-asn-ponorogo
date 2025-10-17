@@ -48,12 +48,8 @@ trait SessionTrait
 
         $service = new KeycloakService();
         $number = $service->getWhatsappNumber($token);
-        if (!$number) {
-            $this->redirectRoute('update-whatsapp-number');
-            return;
-        }
-
-        return $number;
+        if (!$number) info("get number null");
+        return $number ?? null;
     }
     
     public function logoutLaravel()

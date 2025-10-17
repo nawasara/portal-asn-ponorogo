@@ -26,7 +26,6 @@ class AppList extends Component
 
         if (auth()->user()) {
             self::checkKeycloakSession(); // ada di trait
-            self::getNumber();
         }
     }
 

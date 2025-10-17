@@ -13,6 +13,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'whatsapp.required' => \App\Http\Middlewares\EnsureWhatsappNumberIsSet::class,
+            'whatsapp.required.if.auth' => \App\Http\Middlewares\ApplyWhatsappRequiredIfAuthenticated::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
