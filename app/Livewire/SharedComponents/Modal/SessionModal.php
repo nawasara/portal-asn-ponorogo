@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Dashboard\Modal;
+namespace App\Livewire\SharedComponents\Modal;
 
 use Livewire\Component;
 use Livewire\Attributes\On;
@@ -43,7 +43,7 @@ class SessionModal extends Component
      */
     public function render()
     {
-        return view('livewire.dashboard.modal.session-modal');
+        return view('livewire.shared-components.modal.session-modal');
     }
 
     /**

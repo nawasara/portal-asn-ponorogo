@@ -15,7 +15,6 @@ use Illuminate\Validation\ValidationException;
 
 class Form extends Component
 {
-    use SessionTrait;
     public ?string $whatsapp_number = null;
     public $userId;
     public bool $showOtpForm = false;
@@ -40,8 +39,6 @@ class Form extends Component
         
         // Jika kamu menyimpan nomor WA di users table, bisa prefill:
         $this->whatsapp_number = $user->whatsapp_number ?? null;
-        
-        self::checkKeycloakSession();
     }
 
     protected function getWACacheKey(): string

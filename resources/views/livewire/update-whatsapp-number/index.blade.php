@@ -25,4 +25,6 @@
 
         </div>
     </div>
+    <livewire:dashboard.modal.session-modal />
+
 </div>
