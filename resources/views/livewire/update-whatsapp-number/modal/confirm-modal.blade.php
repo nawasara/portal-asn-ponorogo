@@ -7,13 +7,14 @@
             this.waNumber = e.detail.whatsappNumber ?? '0';
             this.open = true;
         }
-    }" @open-confirm.window="openModal($event)" class="flex justify-center">
+    }" @open-modal-confirm.window="openModal($event)" class="flex justify-center">
         <!-- Modal -->
         <div x-show="open" style="display: none" x-on:keydown.escape.prevent.stop="open = false" role="dialog"
             aria-modal="true" x-id="['modal-title']" :aria-labelledby="$id('modal-title')"
-            class="fixed inset-0 z-10 overflow-y-auto">
+            class="fixed inset-0 z-10 overflow-y-auto ">
             <!-- Overlay -->
-            <div x-show="open" x-transition.opacity class="fixed inset-0 bg-black/25 dark:bg-black/50"></div>
+            <div x-show="open" x-transition.opacity
+                class="fixed inset-0 bg-black/25 dark:bg-black/50 backdrop-blur-md"></div>
 
             <!-- Panel -->
             <div x-show="open" x-transition x-on:click="open = false"

@@ -1,23 +1,23 @@
 <?php
 
-use App\Livewire\Dashboard\Section\AppList;
-use App\Livewire\Dashboard\Section\Integration;
 use Illuminate\Support\Str;
 use App\Constants\Constants;
 use App\Livewire\Pages\Guest;
 use App\Livewire\Pages\ResetMfa;
+use App\Livewire\Dashboard\Index;
 use App\Livewire\Pages\Dashboard;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Session;
 use Laravel\Socialite\Facades\Socialite;
-use App\Livewire\Pages\UpdateWhatsappNumber;
+use App\Livewire\SharedComponents\Profile;
+use App\Livewire\Dashboard\Section\AppList;
+use App\Livewire\Dashboard\Section\Support;
+use App\Livewire\Dashboard\Section\Integration;
 use App\Livewire\Pages\ResetMfaUnauthorization;
 use App\Http\Controllers\Auth\KeycloakController;
-use App\Livewire\Dashboard\Index;
-use App\Livewire\Dashboard\Section\Support;
-use App\Livewire\SharedComponents\Profile;
+use App\Livewire\UpdateWhatsappNumber\Index as UpdateWhatsappNumber;
 
 // route untuk guest
 Route::get('/', Index::class)->middleware(['whatsapp.required.if.auth'])->name('index');

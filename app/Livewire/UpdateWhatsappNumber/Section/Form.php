@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Pages;
+namespace App\Livewire\UpdateWhatsappNumber\Section;
 
 use Livewire\Component;
 use Illuminate\Support\Str;
@@ -13,13 +13,16 @@ use App\Services\WaNotificationService;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\ValidationException;
 
-
-class UpdateWhatsappNumber extends Component
+class Form extends Component
 {
     use SessionTrait;
     public ?string $whatsapp_number = null;
     public $userId;
     public bool $showOtpForm = false;
+
+    protected $listeners = [
+        'request-send-otp' => 'handleRequestSendOtp',
+    ];
 
     protected $rules = [
         'whatsapp_number' => ['required', 'regex:/^08[0-9]{8,12}$/'],
@@ -106,9 +109,9 @@ class UpdateWhatsappNumber extends Component
         $this->addError('whatsapp_number', 'Pengiriman OTP ke nomor WhatsApp Anda dibatasi 3 kali dalam 10 menit. Silakan coba lagi nanti.');
         $this->showOtpForm = false;
     }
-
+    
     public function render()
     {
-        return view('livewire.pages.update-whatsapp-number');
+        return view('livewire.update-whatsapp-number.section.form');
     }
 }
