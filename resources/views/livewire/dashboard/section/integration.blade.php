@@ -58,7 +58,7 @@
 
                         <li class="flex gap-x-3">
                             <div class="">
-                                <a href="https://wa.me/6285126061182"
+                                <a href="https://wa.me/{{ env('PIC_NUMBER') }}"
                                     class="px-6 py-3 flex items-center gap-x-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-lg font-medium transition transform hover:-translate-y-0.5 hover:shadow-lg">
 
                                     Hubungi Kami

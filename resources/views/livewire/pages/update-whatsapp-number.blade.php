@@ -17,7 +17,7 @@
                 @endif
 
                 @if (!$showOtpForm)
-                    <form wire:submit.prevent="sendOtp" class="space-y-5" x-data="{ openTips: false }">
+                    <form wire:submit.prevent="sendOtp" class="space-y-5" x-data="{ openTips: false, whatsappNumber: '' }">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-1">
                                 Nomor WhatsApp
@@ -53,16 +53,21 @@
                                         $refs.whatsapp_raw.dispatchEvent(new Event('input'));
                                     }
                                 })()"
-                                class="block w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition" />
-                            <input type="hidden" x-ref="whatsapp_raw" wire:model.defer="whatsapp_number" />
+                                class="block w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 px-4 py-2 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition" />
+                            <input type="hidden" x-ref="whatsapp_raw" x-model="whatsappNumber"
+                                wire:model.defer="whatsapp_number" />
                             @error('whatsapp_number')
                                 <div class="text-red-600 dark:text-red-400 text-sm mt-1">{{ $message }}</div>
                             @enderror
                         </div>
 
                         <div class="flex items-center gap-3 flex-wrap">
-                            <button wire:loading.remove type="submit"
-                                class="inline-flex items-center px-5 py-2 rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-800 transition">
+                            <button type="button" @click="$dispatch('open-confirm', {whatsappNumber:whatsappNumber})"
+                                class="inline-flex items-center px-5 py-2 rounded-lg text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 focus:ring-4 focus:ring-emerald-300 dark:focus:ring-emerald-800 transition">
+                                Kirim OTP
+                            </button>
+                            <button wire:loading.remove type="submit" x-ref="submitBtn"
+                                class="hidden items-center px-5 py-2 rounded-lg text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 focus:ring-4 focus:ring-emerald-300 dark:focus:ring-emerald-800 transition">
                                 Kirim OTP
                             </button>
 
@@ -76,11 +81,13 @@
 
                         <template x-if="openTips">
                             <div
-                                class="mt-3 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 text-sm text-blue-800 dark:text-blue-300 rounded-lg p-4">
+                                class="mt-3 bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-800 text-sm text-emerald-800 dark:text-emerald-300 rounded-lg p-4">
                                 <span class="font-semibold">Info:</span> Nomor WhatsApp digunakan untuk verifikasi dua
                                 langkah (MFA) demi keamanan akun Anda.
                             </div>
                         </template>
+                        <livewire:update-whatsapp-number.modal.confirm-modal />
+
                     </form>
                 @endif
                 <div class="mt-6">
@@ -92,7 +99,7 @@
             <div class=" dark:bg-gray-800/60 rounded-xl p-6  dark:border dark:border-gray-700">
                 <div class="flex items-center gap-2 mb-3">
                     <div
-                        class="bg-blue-600 dark:bg-blue-500 text-white rounded-full w-7 h-7 flex items-center justify-center font-semibold text-sm">
+                        class="bg-emerald-600 dark:bg-emerald-500 text-white rounded-full w-7 h-7 flex items-center justify-center font-semibold text-sm">
                         i
                     </div>
                     <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-300">Cara Verifikasi Nomor WhatsApp
@@ -107,7 +114,7 @@
                 </ol>
 
                 <p
-                    class="mt-4 text-xs text-gray-500 dark:text-gray-400 border-t border-blue-100 dark:border-gray-700 pt-3">
+                    class="mt-4 text-xs text-gray-500 dark:text-gray-400 border-t border-emerald-100 dark:border-gray-700 pt-3">
                     Jika tidak menerima pesan dalam beberapa menit, coba kirim ulang atau hubungi admin jika masalah
                     berlanjut.
                 </p>
