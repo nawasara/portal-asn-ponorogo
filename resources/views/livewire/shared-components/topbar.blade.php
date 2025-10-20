@@ -46,7 +46,7 @@
                                     class="flex w-full items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
                                         viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                        class="size-4 text-gray-700">
+                                        class="size-4 text-gray-700 dark:text-neutral-400">
                                         <path stroke-linecap="round" stroke-linejoin="round"
                                             d="M12 20.25c4.97 0 9-3.694 9-8.25s-4.03-8.25-9-8.25S3 7.444 3 12c0 2.104.859 4.023 2.273 5.48.432.447.74 1.04.586 1.641a4.483 4.483 0 0 1-.923 1.785A5.969 5.969 0 0 0 6 21c1.282 0 2.47-.402 3.445-1.087.81.22 1.668.337 2.555.337Z" />
                                     </svg>
@@ -58,7 +58,8 @@
                                     class="flex w-full items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                         viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                        stroke-linecap="round" stroke-linejoin="round" class="size-4 text-gray-700">
+                                        stroke-linecap="round" stroke-linejoin="round"
+                                        class="size-4 text-gray-700 dark:text-neutral-400">
                                         <rect x="3" y="11" width="18" height="11" rx="2" ry="2">
                                         </rect>
                                         <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
@@ -75,7 +76,7 @@
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                             stroke-linecap="round" stroke-linejoin="round"
-                                            class="lucide lucide-log-out-icon lucide-log-out size-4 text-gray-700">
+                                            class="lucide lucide-log-out-icon lucide-log-out size-4 text-gray-700 dark:text-neutral-400">
                                             <path d="m16 17 5-5-5-5" />
                                             <path d="M21 12H9" />
                                             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />

@@ -30,8 +30,8 @@
             <a class="group flex-none snap-center w-80 sm:w-auto bg-white dark:bg-gray-900
             rounded-2xl border border-gray-200 dark:border-gray-700 p-6 hover:shadow-lg
             transition justify-between min-h-40"
-                href="{{ route('mfa.reset-unauthorization') }}" target="_blank" data-aos="zoom-in"
-                data-aos-duration="1000" date-aos-delay="3000">
+                href="{{ route('mfa.reset') }}" target="_blank" data-aos="zoom-in" data-aos-duration="1000"
+                date-aos-delay="3000">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                     class="lucide lucide-settings-icon lucide-settings shrink-0 size-8 text-gray-800 dark:text-white mt-0.5 me-6">

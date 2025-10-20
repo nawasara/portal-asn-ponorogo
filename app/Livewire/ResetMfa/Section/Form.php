@@ -18,6 +18,7 @@ class Form extends Component
     public $keycloakUser;
     public bool $showForm = true;
     public $waNumber;
+    public bool $isAuth = false;
 
     protected $rules = [
         'nip' => ['required', 'digits:18'],
@@ -30,17 +31,50 @@ class Form extends Component
 
     public function mount()
     {
+        $this->isAuth = auth()->check();
+        $this->initAuthData();
+    }
+
+    public function initAuthData()
+    {
+        if (!$this->isAuth) return;
+
         $this->userId = Session::get('keycloak_id_user');
         // $this->nip = 199506142020121004;
         self::checkKeycloakSession(); // ada di trait
         $this->keycloakUser = self::getKeycloakUser(); // ada di trait
-        $this->waNumber = self::getNumber();
+        $this->waNumber = $this->keycloakUser['attributes']['whatsapp_number'][0] ?? null;
+    }
+
+    public function getKeycloakProfile()
+    {
+        $service = new KeycloakService();
+        $this->keycloakUser = $service->getUserByUsername($this->nip);
+        if (!$this->keycloakUser) {
+            $this->addError('nip', 'NIP Anda tidak terdaftar.');
+            return false;
+        }
+
+        $this->waNumber = $this->keycloakUser['attributes']['whatsapp_number'][0] ?? null;
+        $this->userId = $this->keycloakUser['id'];
+
+        if (!$this->waNumber) {
+            $this->addError('nip', 'Nomor WhatsApp Anda belum terdaftar. Silakan klik link bantuan.');
+            return false;
+        }
+
+        return true;
     }
 
     public function sendOtp()
     {
         // Validasi nomor
         $this->validateOnly('nip');
+
+        if (!$this->isAuth) {
+            $isTrue = self::getKeycloakProfile();
+            if (!$isTrue) return;
+        }
 
         if (!self::waNumberIsValid()) return;
 
