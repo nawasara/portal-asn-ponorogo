@@ -20,7 +20,7 @@
                 @auth
                     <div class="hs-dropdown relative inline-flex [--placement:bottom-right] ">
                         <button id="portal-user-dropdown" type="button"
-                            class="hs-dropdown-toggle py-3 px-4 inline-flex items-center gap-x-2 text-sm cursor-pointer font-medium rounded-lg text-gray-800 hover:bg-gray-50 focus:outline-hidden focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:text-white dark:hover:bg-neutral-700"
+                            class="hs-dropdown-toggle py-3 px-4 inline-flex items-center gap-x-2 text-sm cursor-pointer font-medium rounded-lg text-gray-800 hover:bg-gray-50 focus:outline-hidden focus:bg-gray-50  dark:focus:bg-neutral-800 disabled:opacity-50 disabled:pointer-events-none dark:text-white dark:hover:bg-neutral-700"
                             aria-haspopup="menu" aria-expanded="false" aria-label="Dropdown">
                             {{ auth()->user()->name }}
                             <svg class="hs-dropdown-open:rotate-180 size-4" xmlns="http://www.w3.org/2000/svg"
