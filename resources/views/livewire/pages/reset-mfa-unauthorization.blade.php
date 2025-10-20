@@ -50,7 +50,7 @@
                                         $refs.nip_raw.dispatchEvent(new Event('input'));
                                     }
                                 })()"
-                                class="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 px-3 py-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500" />
+                                class="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 px-3 py-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500" />
                             <input type="hidden" x-ref="nip_raw" wire:model.defer="nip" />
                             @error('nip')
                                 <p class="text-red-600 dark:text-red-400 text-sm mt-1">{{ $message }}
@@ -58,7 +58,7 @@
                             @enderror
                             <div class="mt-2 flex justify-end">
                                 <a href="http://asn.ponorogo.go.id/bantuan" target="_blank" rel="noopener"
-                                    class="text-xs text-blue-600 hover:underline">
+                                    class="text-xs text-emerald-600 hover:underline">
                                     Butuh bantuan?
                                 </a>
                             </div>
@@ -66,9 +66,9 @@
 
                         <div class="flex items-center gap-3">
                             <button wire:loading.remove type="submit"
-                                class="bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 
+                                class="bg-emerald-600 hover:bg-emerald-700 dark:bg-emerald-500 dark:hover:bg-emerald-600 
                        text-white px-5 py-2 rounded-lg text-sm font-medium transition-all duration-200 
-                       shadow-sm hover:shadow-md focus-visible:ring-2 focus-visible:ring-blue-500">
+                       shadow-sm hover:shadow-md focus-visible:ring-2 focus-visible:ring-emerald-500">
                                 Kirim OTP
                             </button>
 
@@ -82,16 +82,16 @@
                     </form>
                 @endif
 
-                <livewire:components.otp-form />
+                <livewire:shared-components.otp-form />
 
                 @if ($showBtnLoginForm)
                     <div class="mt-6 border-t border-gray-200 dark:border-gray-700 pt-4">
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button type="submit"
-                                class="w-full inline-flex justify-center px-4 py-2 text-sm rounded-lg bg-blue-600 hover:bg-blue-700 
-                       dark:bg-blue-500 dark:hover:bg-blue-600 text-white shadow-sm transition-all duration-200 
-                       focus-visible:ring-2 focus-visible:ring-blue-500">
+                                class="w-full inline-flex justify-center px-4 py-2 text-sm rounded-lg bg-emerald-600 hover:bg-emerald-700 
+                       dark:bg-emerald-500 dark:hover:bg-emerald-600 text-white shadow-sm transition-all duration-200 
+                       focus-visible:ring-2 focus-visible:ring-emerald-500">
                                 Kembali ke Halaman Login
                             </button>
                         </form>
@@ -103,7 +103,7 @@
             <div class=" dark:bg-gray-800/60 rounded-xl p-6  dark:border dark:border-gray-700">
                 <div class="flex items-center gap-2 mb-3">
                     <div
-                        class="bg-blue-600 dark:bg-blue-500 text-white rounded-full w-7 h-7 flex items-center justify-center font-semibold text-sm">
+                        class="bg-emerald-600 dark:bg-emerald-500 text-white rounded-full w-7 h-7 flex items-center justify-center font-semibold text-sm">
                         i
                     </div>
                     <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-300">Cara Reset MFA</h3>
@@ -117,7 +117,7 @@
                 </ol>
 
                 <p
-                    class="mt-4 text-xs text-gray-500 dark:text-gray-400 border-t border-blue-100 dark:border-gray-700 pt-3">
+                    class="mt-4 text-xs text-gray-500 dark:text-gray-400 border-t border-emerald-100 dark:border-gray-700 pt-3">
                     Jika tidak menerima pesan dalam beberapa menit, coba kirim ulang atau hubungi admin jika masalah
                     berlanjut.
                 </p>
