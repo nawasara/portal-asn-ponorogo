@@ -65,20 +65,21 @@ class SessionModal extends Component
         }
 
         // Jika user terautentikasi, periksa status sesi Keycloak
-        if (Auth::check()) {
-            $keycloakSession = $this->checkKeycloakSession(); // berasal dari SessionTrait
-            $this->getNumber(); // update data user
-
-            // Jika sesi aktif, modal ditutup. Jika tidak, logout dan tampilkan modal.
-            if (!empty($keycloakSession['active'])) {
-                $this->showModal = false;
-            } else {
-                $this->logoutApp();
-                $this->showModal = true;
-            }
-        } else {
+        $logged = auth()->user(); 
+        if (!$logged) {
             // Jika user tidak login, pastikan modal tertutup
             $this->showModal = false;
+            return;
+        }
+
+        $keycloakSession = $this->checkKeycloakSession(); // berasal dari SessionTrait
+
+        // Jika sesi aktif, modal ditutup. Jika tidak, logout dan tampilkan modal.
+        if (!empty($keycloakSession['active'])) {
+            $this->showModal = false;
+        } else {
+            $this->logoutApp();
+            $this->showModal = true;
         }
     }
 

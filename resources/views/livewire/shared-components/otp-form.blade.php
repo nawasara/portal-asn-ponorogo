@@ -17,13 +17,13 @@
             <form wire:submit.prevent="verifyOtp" class="space-y-3">
                 <input wire:model.defer="otp" type="text" inputmode="numeric" maxlength="6" placeholder="6 digit OTP"
                     id="otp-input"
-                    class="block w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 px-3 py-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500" />
+                    class="block w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 px-4 py-2 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition" />
                 @error('otp')
                     <div class="text-red-600 dark:text-red-400 text-sm">{{ $message }}</div>
                 @enderror
                 <div class="flex items-center gap-2">
                     <button type="submit"
-                        class="px-4 py-2 rounded-md border border-gray-300 dark:border-gray-700 text-sm font-medium text-gray-700 dark:text-gray-100 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700">Verifikasi</button>
+                        class="px-4 py-2 rounded-lg text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 focus:ring-4 focus:ring-emerald-300 dark:focus:ring-emerald-800 transition">Verifikasi</button>
                     @if ($showResend)
                         <button type="button" wire:click="resendOtp"
                             class="px-3 py-2 rounded-md border border-gray-300 dark:border-gray-700 text-sm text-gray-700 dark:text-gray-100 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700">Kirim
