@@ -48,6 +48,12 @@
                 @error('nip')
                     <p class="text-red-600 dark:text-red-400 text-sm mt-1">{{ $message }}</p>
                 @enderror
+                <div class="mt-2 flex justify-end">
+                    <a href="http://asn.ponorogo.go.id/bantuan" target="_blank" rel="noopener"
+                        class="text-xs text-emerald-600 hover:underline">
+                        Butuh bantuan?
+                    </a>
+                </div>
             </div>
 
             <div class="flex items-center gap-3">
