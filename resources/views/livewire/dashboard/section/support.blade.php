@@ -15,10 +15,59 @@
             </h2>
         </div>
 
-        <div class="grid sm:grid-cols-3 lg:grid-cols-3 items-center gap-6">
+        <div class="flex overflow-x-auto sm:grid sm:grid-cols-3 lg:grid-cols-3 gap-6 items-stretch snap-x snap-mandatory scroll-smooth  w-full"
+            style="scrollbar-width: none; -ms-overflow-style: none;">
+            <style>
+                /* Hides scrollbar di Chrome, Safari, Edge */
+                div::-webkit-scrollbar {
+                    display: none;
+                }
+            </style>
+
+
+
+            {{-- Reset MFA Card --}}
+            <a class="group flex-none snap-center w-80 sm:w-auto bg-white dark:bg-gray-900
+            rounded-2xl border border-gray-200 dark:border-gray-700 p-6 hover:shadow-lg
+            transition justify-between min-h-40"
+                href="{{ route('mfa.reset-unauthorization') }}" target="_blank" data-aos="zoom-in"
+                data-aos-duration="1000" date-aos-delay="3000">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-settings-icon lucide-settings shrink-0 size-8 text-gray-800 dark:text-white mt-0.5 me-6">
+                    <path
+                        d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915" />
+                    <circle cx="12" cy="12" r="3" />
+                </svg>
+
+                <div>
+                    <div>
+                        <h3 class="block font-bold text-gray-800 dark:text-white">
+                            Reset MFA Single Sign On (SSO)
+                        </h3>
+                        <p class="text-gray-600 dark:text-neutral-400">
+                            Layanan untuk mereset Multi-Factor Authentication (MFA) SSO Anda secara mandiri
+                        </p>
+                    </div>
+
+                    <p
+                        class="mt-3 inline-flex items-center gap-x-1 text-sm font-semibold text-gray-800 dark:text-neutral-200">
+                        Reset MFA Sekarang
+                        <svg class="shrink-0 size-4 transition ease-in-out group-hover:translate-x-1 group-focus:translate-x-1"
+                            xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <path d="m9 18 6-6-6-6" />
+                        </svg>
+                    </p>
+                </div>
+            </a>
+            {{-- End Card --}}
 
             {{-- Form Bantuan Card --}}
-            <a class="group flex bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 hover:shadow-lg transition justify-between min-h-40"
+            <a class="group flex-none snap-center w-80 sm:w-auto bg-white dark:bg-gray-900
+            rounded-2xl border border-gray-200 dark:border-gray-700 p-6 hover:shadow-lg
+            transition justify-between min-h-40"
                 href="https://asn.ponorogo.go.id/bantuan" target="_blank" data-aos="zoom-in" data-aos-duration="1000"
                 date-aos-delay="3000">
 
@@ -56,7 +105,9 @@
             </a>
 
             {{-- Panduan Card --}}
-            <a class="group flex bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 hover:shadow-lg transition justify-between min-h-40"
+            <a class="group flex-none snap-center w-80 sm:w-auto bg-white dark:bg-gray-900
+            rounded-2xl border border-gray-200 dark:border-gray-700 p-6 hover:shadow-lg
+            transition justify-between min-h-40"
                 href="{{ \App\Constants\Constants::DOC_URL }}" target="_blank" data-aos="zoom-in"
                 data-aos-duration="1000" date-aos-delay="3000">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
@@ -94,41 +145,6 @@
                 </div>
             </a>
             <!-- End Card -->
-
-            {{-- Reset MFA Card --}}
-            <a class="group flex bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 hover:shadow-lg transition justify-between min-h-40"
-                href="" target="_blank" data-aos="zoom-in" data-aos-duration="1000" date-aos-delay="3000">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="lucide lucide-settings-icon lucide-settings shrink-0 size-8 text-gray-800 dark:text-white mt-0.5 me-6">
-                    <path
-                        d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915" />
-                    <circle cx="12" cy="12" r="3" />
-                </svg>
-
-                <div>
-                    <div>
-                        <h3 class="block font-bold text-gray-800 dark:text-white">
-                            Reset MFA Single Sign On (SSO)
-                        </h3>
-                        <p class="text-gray-600 dark:text-neutral-400">
-                            Layanan untuk mereset Multi-Factor Authentication (MFA) SSO Anda secara mandiri
-                        </p>
-                    </div>
-
-                    <p
-                        class="mt-3 inline-flex items-center gap-x-1 text-sm font-semibold text-gray-800 dark:text-neutral-200">
-                        Reset MFA Sekarang
-                        <svg class="shrink-0 size-4 transition ease-in-out group-hover:translate-x-1 group-focus:translate-x-1"
-                            xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                            stroke-linejoin="round">
-                            <path d="m9 18 6-6-6-6" />
-                        </svg>
-                    </p>
-                </div>
-            </a>
-            {{-- End Card --}}
 
         </div>
     </section>
