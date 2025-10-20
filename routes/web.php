@@ -3,7 +3,6 @@
 use Illuminate\Support\Str;
 use App\Constants\Constants;
 use App\Livewire\Pages\Guest;
-use App\Livewire\Pages\ResetMfa;
 use App\Livewire\Dashboard\Index;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -13,6 +12,7 @@ use Laravel\Socialite\Facades\Socialite;
 use App\Livewire\SharedComponents\Profile;
 use App\Livewire\Dashboard\Section\AppList;
 use App\Livewire\Dashboard\Section\Support;
+use App\Livewire\ResetMfa\Index as ResetMfa;
 use App\Livewire\Dashboard\Section\Integration;
 use App\Livewire\Pages\ResetMfaUnauthorization;
 use App\Http\Controllers\Auth\KeycloakController;
