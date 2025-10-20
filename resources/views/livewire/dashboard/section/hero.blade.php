@@ -50,7 +50,7 @@
                     </a>
                 @endauth
 
-                <a href="#support"
+                <a href="#support" @click="$dispatch('set-arrow');"
                     class="px-6 py-3 bg-slate-300 flex text-center justify-center items-center gap-x-2 hover:bg-slate-400 dark:text-slate-800 rounded-lg text-lg font-medium transition transform hover:-translate-y-0.5 hover:shadow-lg">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"

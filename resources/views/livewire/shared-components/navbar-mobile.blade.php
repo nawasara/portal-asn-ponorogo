@@ -1,5 +1,4 @@
 <div>
-
     <!-- Mobile Bottom Navigation -->
     <nav
         class="sticky bottom-0 left-0 right-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-t border-slate-200 dark:border-slate-700 shadow-lg md:hidden">
@@ -33,12 +32,11 @@
             </li>
 
             <li>
-                <a @if (Route::is('index')) href="#support" @else href="{{ url('/supports') }}" wire:navigate.hover
-                @endif
+                <a @if (Route::is('index')) href="#support" @else href="{{ url('/supports') }}" wire:navigate.hover @endif
                     class="flex flex-col items-center justify-center w-12 h-12 transition-all hover:text-emerald-500 dark:hover:text-emerald-400">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="lucide lucide-life-buoy" width="24" height="24"
-                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round">
+                    <svg @click="$dispatch('set-arrow');" xmlns="http://www.w3.org/2000/svg"
+                        class="lucide lucide-life-buoy" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="12" cy="12" r="10" />
                         <circle cx="12" cy="12" r="4" />
                         <line x1="4.93" y1="4.93" x2="9.17" y2="9.17" />
@@ -54,9 +52,9 @@
             <li>
                 <a @if (Route::is('index')) href="#integration" @else href="/integrations" wire:navigate.hover @endif
                     class="flex flex-col items-center justify-center w-12 h-12 transition-all hover:text-emerald-500 dark:hover:text-emerald-400">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                        class="lucide lucide-toy-brick-icon lucide-toy-brick">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" class="lucide lucide-toy-brick-icon lucide-toy-brick">
                         <rect width="18" height="12" x="3" y="8" rx="1" />
                         <path d="M10 8V5c0-.6-.4-1-1-1H6a1 1 0 0 0-1 1v3" />
                         <path d="M19 8V5c0-.6-.4-1-1-1h-3a1 1 0 0 0-1 1v3" />
@@ -75,7 +73,10 @@
                         <path d="M4 21v-2a4 4 0 0 1 3-3.87" />
                         <circle cx="12" cy="7" r="4" />
                     </svg>
-                    <span class="text-xs">@auth Profil @else Masuk @endauth</span>
+                    <span class="text-xs">@auth Profil
+                        @else
+                        Masuk @endauth
+                    </span>
                 </a>
             </li>
         </ul>

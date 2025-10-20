@@ -15,7 +15,14 @@
             </h2>
         </div>
 
-        <div class="flex overflow-x-auto sm:grid sm:grid-cols-3 lg:grid-cols-3 gap-6 items-stretch snap-x snap-mandatory scroll-smooth  w-full"
+        <div x-data="{
+            showArrow: true,
+            showMe() {
+                this.showArrow = true;
+                setTimeout(() => this.showArrow = false, 2500)
+            }
+        }" x-init="showMe();" @set-arrow.window="showMe()"
+            class="relative flex overflow-x-auto sm:grid sm:grid-cols-3 lg:grid-cols-3 gap-6 items-stretch snap-x snap-mandatory scroll-smooth  w-full before:absolute before:inset-y-0 before:left-0 before:w-6 before:bg-gradient-to-r before:from-white/80 dark:before:from-gray-900/80 before:pointer-events-none after:absolute after:inset-y-0 after:right-0 after:w-6 after:bg-gradient-to-l after:from-white/80 dark:after:from-gray-900/80 after:pointer-events-none"
             style="scrollbar-width: none; -ms-overflow-style: none;">
             <style>
                 /* Hides scrollbar di Chrome, Safari, Edge */
@@ -24,6 +31,25 @@
                 }
             </style>
 
+
+            <!-- Fade kiri-kanan (opsional tapi keren banget) -->
+            <div
+                class="pointer-events-none absolute inset-y-0 left-0 w-10 bg-gradient-to-r from-white/80 dark:from-gray-900/80">
+            </div>
+            <div
+                class="pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-white/80 dark:from-gray-900/80">
+            </div>
+            <!-- 👉 Panah geser kanan -->
+            <template x-if="showArrow">
+                <div
+                    class="absolute right-3 top-1/2 -translate-y-1/2 z-10 bg-gray-800 text-white dark:bg-gray-100 dark:text-gray-800
+                     rounded-full p-2 shadow-md animate-bounce opacity-80 cursor-pointer select-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                    </svg>
+                </div>
+            </template>
 
 
             {{-- Reset MFA Card --}}
