@@ -20,10 +20,6 @@ trait SessionTrait
         try {
             $service = new KeycloakService();
             $res = $service->checkLoginStatus($token);
-            // if (!$res['active']) {
-            //     self::logout();
-            // }
-
             return $res;
         } catch (\Exception $e) {
             self::logoutLaravel();
