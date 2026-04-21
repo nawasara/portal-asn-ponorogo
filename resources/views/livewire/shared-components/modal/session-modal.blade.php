@@ -1,68 +1,61 @@
 <div>
+    <div x-data="{ open: $wire.entangle('showModal') }">
 
-    <div x-data="{ open: $wire.entangle('showModal') }" class="flex justify-center">
-        {{-- <!-- Trigger --> --}}
-        {{-- <span x-on:click="open = true">
-            <button type="button"
-                class="relative flex items-center justify-center gap-2 whitespace-nowrap rounded-lg border border-gray-200 bg-white px-4 py-2 text-gray-800 shadow-sm hover:border-gray-200 hover:bg-gray-50">Open
-                dialog</button>
-        </span> --}}
+        <template x-teleport="body">
+            <div x-dialog x-model="open" x-cloak class="fixed inset-0 z-[100]">
 
-        {{-- <!-- Modal --> --}}
-        <div x-dialog x-model="open" x-cloak class="fixed inset-0 z-10 overflow-y-auto">
+                {{-- Overlay: full viewport --}}
+                <div x-dialog:overlay x-transition.opacity
+                    class="fixed inset-0 bg-slate-900/40 dark:bg-slate-950/70 backdrop-blur-md"></div>
 
-            {{-- <!-- Overlay --> --}}
-            <div x-dialog:overlay x-transition.opacity class="fixed inset-0 bg-white/15 backdrop-blur-md"></div>
+                {{-- Panel wrapper: scrollable kalau panel lebih tinggi dari viewport --}}
+                <div class="fixed inset-0 overflow-y-auto">
+                    <div x-show="open" x-dialog:panel x-transition
+                        class="flex min-h-full items-center justify-center p-4">
+                        <div class="relative w-full max-w-md glass-card gradient-border rounded-3xl p-6 sm:p-8 shadow-2xl shadow-slate-900/20 text-center">
 
-            {{-- <!-- Panel --> --}}
-
-            <div x-show="open" x-dialog:panel x-transition
-                class="relative flex min-h-screen items-center justify-center p-4 overflow-hidden">
-                <div class="relative min-w-96 max-w-xl rounded-xl bg-white dark:bg-gray-900  
-                 p-6 shadow-lg">
-                    <div class="p-4 sm:p-10 text-center overflow-y-auto">
-
-                        <!-- Icon -->
-                        <span
-                            class="mb-4 inline-flex justify-center items-center size-15.5 rounded-full border-4 border-yellow-50 bg-yellow-100 text-yellow-500 dark:bg-yellow-700 dark:border-yellow-600 dark:text-yellow-100">
-                            <svg class="shrink-0 size-5" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                fill="currentColor" viewBox="0 0 16 16">
-                                <path
-                                    d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
-                            </svg>
-                        </span>
-                        <!-- End Icon -->
-
-                        <div class="py-6">
-                            <h3 class="mb-2 text-2xl font-bold text-gray-800 dark:text-neutral-200">
-                                Anda telah telah logout Kisara SSO
-                            </h3>
-                            <p class="text-gray-500 dark:text-neutral-300">
-                                Apakah anda ingin melakukan login ulang?
-                            </p>
-                        </div>
-
-                        <div class="mt-6 grid gap-y-2">
-                            <a href="/login"
-                                class="px-6 py-3 flex items-center justify-center focus:outline-none focus:ring-0 focus:border-none text-center gap-x-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-lg font-medium transition transform hover:-translate-y-0.5 hover:shadow-lg">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                            {{-- Icon --}}
+                            <div class="mx-auto mb-5 size-14 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 grid place-items-center shadow-lg shadow-amber-500/30">
+                                <svg class="size-7 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
                                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" class="lucide lucide-log-in-icon lucide-log-in">
-                                    <path d="m10 17 5-5-5-5" />
-                                    <path d="M15 12H3" />
-                                    <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+                                    stroke-linejoin="round">
+                                    <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                                    <line x1="12" y1="9" x2="12" y2="13" />
+                                    <line x1="12" y1="17" x2="12.01" y2="17" />
                                 </svg>
-                                Masuk Sekarang
-                            </a>
+                            </div>
 
-                            <a href="/" wire:navigate.hover
-                                class="px-6 py-3 bg-slate-300 flex text-center justify-center items-center gap-x-2 hover:bg-slate-400 dark:text-slate-800 rounded-lg text-lg font-medium transition transform hover:-translate-y-0.5 hover:shadow-lg">
-                                Tidak
-                            </a>
+                            <h3 class="text-xl font-bold tracking-tight text-slate-800 dark:text-white">
+                                Sesi SSO berakhir
+                            </h3>
+                            <p class="mt-2 text-sm text-slate-600 dark:text-slate-400 max-w-sm mx-auto leading-relaxed">
+                                Anda telah logout dari Kisara SSO. Apakah Anda ingin melakukan login ulang?
+                            </p>
+
+                            <div class="mt-6 flex flex-col gap-2.5">
+                                <a href="/login"
+                                    class="relative inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold text-white overflow-hidden group">
+                                    <span class="absolute inset-0 bg-gradient-to-br from-emerald-500 to-teal-600"></span>
+                                    <span class="absolute -inset-1 bg-gradient-to-br from-emerald-400 to-sky-500 blur-lg opacity-40 group-hover:opacity-70 transition"></span>
+                                    <svg class="relative size-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <path d="m10 17 5-5-5-5" />
+                                        <path d="M15 12H3" />
+                                        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+                                    </svg>
+                                    <span class="relative">Masuk Sekarang</span>
+                                </a>
+
+                                <button type="button" x-on:click="open = false"
+                                    class="inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-white/5 transition">
+                                    Tidak, lain kali
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </template>
     </div>
 </div>
