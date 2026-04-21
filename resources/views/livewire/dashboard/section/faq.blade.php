@@ -1,59 +1,39 @@
 <div>
-    {{-- <!-- FAQ --> --}}
-    <div class="md:max-w-6xl py-10 lg:py-14 mx-auto px-4">
-        <!-- Grid -->
+    <section id="faq" class="py-12 lg:py-16">
         <div class="grid md:grid-cols-5 gap-10">
             <div class="md:col-span-2" data-aos="slide-up" data-aos-duration="1000">
-                <div class="max-w-xs">
-                    <h2 class="text-2xl font-bold md:text-4xl md:leading-tight dark:text-white">
-                        Pertanyaan yang Sering Diajukan
-                    </h2>
-                    <p class="mt-1 hidden md:block text-gray-600 dark:text-neutral-400">
-                        Jawaban untuk pertanyaan yang paling sering diajukan
-                    </p>
-                </div>
+                <div class="text-sm font-semibold text-emerald-600 dark:text-emerald-400 mb-2">FAQ</div>
+                <h2 class="text-3xl md:text-4xl font-bold tracking-tight leading-tight dark:text-white">
+                    Pertanyaan yang <br><span class="text-gradient">sering diajukan</span>
+                </h2>
+                <p class="mt-4 text-slate-600 dark:text-slate-400 hidden md:block">
+                    Tidak menemukan jawaban?
+                    <a href="#support" class="text-emerald-600 dark:text-emerald-400 font-semibold hover:underline">Hubungi tim kami</a>.
+                </p>
             </div>
-            <!-- End Col -->
 
-            <div class="md:col-span-3" data-aos="slide-up" data-aos-duration="1500" date-aos-delay="2000">
-                <!-- Accordion -->
-                <div class="hs-accordion-group divide-y divide-gray-200 dark:divide-neutral-700">
-
-                    @foreach ($this->availableFaq() as $faq)
-                        <div class="hs-accordion pt-6 pb-3" id="{{$faq['id']}}" wire:key='{{$faq['id']}}'>
-                            <button
-                                class="hs-accordion-toggle group pb-3 inline-flex items-center justify-between gap-x-3 w-full md:text-lg font-semibold text-start text-gray-800 rounded-lg transition hover:text-gray-500 focus:outline-hidden focus:text-gray-500 dark:text-neutral-200 dark:hover:text-neutral-400 dark:focus:text-neutral-400"
-                                aria-expanded="false" aria-controls="portal-{{$faq['id']}}">
-                                {{$faq['title']}}
-                                <svg class="hs-accordion-active:hidden block shrink-0 size-5 text-gray-600 group-hover:text-gray-500 dark:text-neutral-400"
-                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            <div class="md:col-span-3 space-y-3" data-aos="slide-up" data-aos-duration="1500">
+                @foreach ($this->availableFaq() as $index => $faq)
+                    <details class="glass-card gradient-border rounded-2xl group" wire:key="{{ $faq['id'] }}"
+                        {{ $index === 0 ? 'open' : '' }}>
+                        <summary
+                            class="cursor-pointer list-none p-5 flex items-center justify-between gap-4 md:text-lg font-semibold dark:text-white hover:text-emerald-600 dark:hover:text-emerald-400 transition">
+                            <span>{{ $faq['title'] }}</span>
+                            <span
+                                class="shrink-0 size-8 rounded-full glass-card grid place-items-center group-open:rotate-180 transition">
+                                <svg class="size-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
                                     stroke-linejoin="round">
-                                    <path d="m6 9 6 6 6-6" />
+                                    <path d="M6 9l6 6 6-6" />
                                 </svg>
-                                <svg class="hs-accordion-active:block hidden shrink-0 size-5 text-gray-600 group-hover:text-gray-500 dark:text-neutral-400"
-                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round">
-                                    <path d="m18 15-6-6-6 6" />
-                                </svg>
-                            </button>
-                            <div id="portal-{{$faq['id']}}"
-                                class="hs-accordion-content hidden w-full overflow-hidden transition-[height] duration-300"
-                                role="region" aria-labelledby="{{$faq['id']}}">
-                                <p class="text-gray-600 dark:text-neutral-400">
-                                    {!! $faq['description'] !!}
-                                </p>
-                            </div>
+                            </span>
+                        </summary>
+                        <div class="px-5 pb-5 text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                            {!! $faq['description'] !!}
                         </div>
-                    @endforeach
-
-                </div>
-                <!-- End Accordion -->
+                    </details>
+                @endforeach
             </div>
-            <!-- End Col -->
         </div>
-        <!-- End Grid -->
-    </div>
-    <!-- End FAQ -->
+    </section>
 </div>

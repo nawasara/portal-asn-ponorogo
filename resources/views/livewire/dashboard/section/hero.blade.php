@@ -1,60 +1,72 @@
 <div>
-    <section id="hero"
-        class="max-w-6xl mx-auto flex flex-col-reverse lg:flex-row items-center justify-between max-h-screen pt-16 sm:pt-32 lg:pt-52 gap-10 md:gap-16">
-        <div class="flex-1 text-center lg:text-left" data-aos="fade-up" data-aos-duration="1000">
-
-            <h1 class="dark:text-white text-4xl md:text-5xl font-bold leading-tight mb-8 sm:mb-4">
-
+    <section id="hero" class="pt-28 pb-12 lg:pt-36 lg:pb-16">
+        <div class="grid lg:grid-cols-[1.2fr_1fr] gap-10 lg:gap-16 items-center">
+        <div data-aos="fade-up" data-aos-duration="1000">
+            <div class="inline-flex items-center gap-2 glass-card rounded-full px-4 py-1.5 text-xs font-medium mb-6">
+                <span class="size-2 rounded-full bg-emerald-500 animate-pulse"></span>
                 @auth
-                    <span class="dark:text-white">Selamat Datang</span>
-                    <br>
-                    <span class="text-emerald-600 dark:text-emerald-400">{{ auth()->user()->name }}</span>
+                    Terhubung sebagai <span class="font-semibold text-emerald-600 dark:text-emerald-400">ASN</span>
                 @else
-                    <span class="dark:text-white">Satu Portal, Banyak Layanan</span>
+                    Tersambung dengan <span class="font-semibold text-emerald-600 dark:text-emerald-400">Keycloak SSO</span>
+                @endauth
+            </div>
+
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.1]">
+                @auth
+                    <span class="dark:text-white">Selamat datang,</span>
                     <br>
-                    <span class="text-emerald-600 dark:text-emerald-400">Untuk ASN Ponorogo</span>
+                    <span class="text-gradient">{{ auth()->user()->name }}</span>
+                @else
+                    <span class="dark:text-white">Satu portal,</span>
+                    <br>
+                    <span class="text-gradient">banyak layanan</span>
                 @endauth
             </h1>
 
-            <p class="text-slate-600 dark:text-slate-300 text-lg mb-16 sm:mb-8 text-pretty">
-                @auth <span>Sekarang anda dapat mengakses</span>
+            <p class="mt-6 max-w-xl text-base md:text-lg text-slate-600 dark:text-slate-300 leading-relaxed">
+                @auth
+                    Sekarang Anda dapat mengakses
                 @else
-                <span>Akses</span> @endauth seluruh aplikasi ASN
-                Ponorogo dalam satu tempat. Cepat, aman, dan
-                terintegrasi.
+                    Akses
+                @endauth
+                seluruh aplikasi ASN Pemerintah Kabupaten Ponorogo dalam satu tempat —
+                <span class="font-semibold text-slate-800 dark:text-slate-100">cepat, aman, terintegrasi.</span>
             </p>
 
-            <div class="flex flex-col md:flex-row justify-center lg:justify-start gap-4">
+            <div class="mt-8 flex flex-col sm:flex-row gap-3">
                 @auth
-                    <button
-                        class="px-6 py-3 bg-emerald-600 flex text-center justify-center items-center gap-x-2 hover:bg-emerald-500 text-white rounded-lg text-lg font-medium transition transform hover:-translate-y-0.5 hover:shadow-lg">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
-                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                            stroke-linejoin="round" class="lucide lucide-search-icon lucide-search">
-                            <path d="m21 21-4.34-4.34" />
+                    <a href="#app-lists"
+                        class="relative inline-flex items-center justify-center gap-2 rounded-2xl px-6 py-3.5 text-base font-semibold text-white overflow-hidden group">
+                        <span class="absolute inset-0 bg-gradient-to-br from-emerald-500 to-teal-600"></span>
+                        <span class="absolute -inset-1 bg-gradient-to-br from-emerald-400 to-sky-500 blur-xl opacity-50 group-hover:opacity-80 transition"></span>
+                        <svg class="relative size-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                            stroke-linejoin="round">
                             <circle cx="11" cy="11" r="8" />
+                            <path d="m21 21-4.34-4.34" />
                         </svg>
-                        Cari Aplikasi
-                    </button>
+                        <span class="relative">Cari Aplikasi</span>
+                    </a>
                 @else
                     <a href="/login"
-                        class="px-6 py-3 flex items-center justify-center gap-x-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-lg font-medium transition transform hover:-translate-y-0.5 hover:shadow-lg">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
-                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                            stroke-linejoin="round" class="lucide lucide-log-in-icon lucide-log-in">
+                        class="relative inline-flex items-center justify-center gap-2 rounded-2xl px-6 py-3.5 text-base font-semibold text-white overflow-hidden group">
+                        <span class="absolute inset-0 bg-gradient-to-br from-emerald-500 to-teal-600"></span>
+                        <span class="absolute -inset-1 bg-gradient-to-br from-emerald-400 to-sky-500 blur-xl opacity-50 group-hover:opacity-80 transition"></span>
+                        <svg class="relative size-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                            stroke-linejoin="round">
                             <path d="m10 17 5-5-5-5" />
                             <path d="M15 12H3" />
                             <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
                         </svg>
-                        Masuk Sekarang
+                        <span class="relative">Masuk Sekarang</span>
                     </a>
                 @endauth
 
                 <a href="#support" @click="$dispatch('set-arrow');"
-                    class="px-6 py-3 bg-slate-300 flex text-center justify-center items-center gap-x-2 hover:bg-slate-400 dark:text-slate-800 rounded-lg text-lg font-medium transition transform hover:-translate-y-0.5 hover:shadow-lg">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round" class="lucide lucide-info-icon lucide-info">
+                    class="inline-flex items-center justify-center gap-2 glass-card rounded-2xl px-6 py-3.5 text-base font-semibold hover:bg-white/80 dark:hover:bg-white/10 transition dark:text-white">
+                    <svg class="size-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="12" cy="12" r="10" />
                         <path d="M12 16v-4" />
                         <path d="M12 8h.01" />
@@ -62,48 +74,54 @@
                     Bantuan
                 </a>
             </div>
-
         </div>
 
-        {{-- <!-- Illustration --> --}}
-        <div class="justify-center" data-aos="fade-up" data-aos-duration="1500" data-aos-delay="100">
-            <img src="{{ asset('img/undraw_hello_ccwj.svg') }}" alt="ASN illustration"
-                class="sm:w-64 hidden sm:flex md:w-96 drop-shadow-lg select-none" loading="lazy">
-            <img src="{{ asset('img/logo.png') }}" alt="ASN illustration"
-                class="sm:hidden flex w-20 drop-shadow-lg select-none" loading="lazy">
+        {{-- Floating card stack --}}
+        <div class="relative hidden lg:block animate-float" data-aos="fade-up" data-aos-duration="1500"
+            data-aos-delay="100">
+            <div class="relative glass-card gradient-border rounded-3xl p-6 shadow-2xl shadow-emerald-500/10">
+                <div class="flex items-center gap-3 mb-5">
+                    <div class="size-10 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-600 grid place-items-center text-white font-bold">S</div>
+                    <div>
+                        <div class="font-semibold dark:text-white">Simashebat</div>
+                        <div class="text-xs text-slate-500 dark:text-slate-400">Sistem Manajemen ASN</div>
+                    </div>
+                    <span class="ml-auto text-[10px] font-semibold px-2 py-1 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300">Live</span>
+                </div>
+                <div class="space-y-2">
+                    <div class="h-2 rounded-full bg-slate-200/70 dark:bg-slate-700/50 overflow-hidden">
+                        <div class="h-full w-3/4 bg-gradient-to-r from-emerald-400 to-sky-500 rounded-full"></div>
+                    </div>
+                    <div class="h-2 rounded-full bg-slate-200/70 dark:bg-slate-700/50 overflow-hidden">
+                        <div class="h-full w-1/2 bg-gradient-to-r from-emerald-400 to-sky-500 rounded-full"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="absolute -bottom-8 -left-6 glass-card rounded-2xl p-4 w-56 shadow-xl rotate-[-6deg]">
+                <div class="flex items-center gap-3">
+                    <div class="size-9 rounded-lg bg-gradient-to-br from-sky-400 to-blue-600 grid place-items-center">
+                        <svg class="size-4 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                    </div>
+                    <div>
+                        <div class="text-xs font-semibold dark:text-white">Rakaca</div>
+                        <div class="text-[10px] text-slate-500 dark:text-slate-400">Tersambung</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="absolute -top-6 -right-4 glass-card rounded-2xl p-4 w-52 shadow-xl rotate-[5deg]">
+                <div class="flex items-center gap-3">
+                    <div class="size-9 rounded-lg bg-gradient-to-br from-violet-400 to-fuchsia-600 grid place-items-center">
+                        <svg class="size-4 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+                    </div>
+                    <div>
+                        <div class="text-xs font-semibold dark:text-white">MFA Aktif</div>
+                        <div class="text-[10px] text-slate-500 dark:text-slate-400">WhatsApp OTP</div>
+                    </div>
+                </div>
+            </div>
+        </div>
         </div>
     </section>
-
-    <div class="lg:pt-40 pt-24 text-center hidden sm:block" data-aos="fade-down" data-aos-duration="1000">
-        {{--
-        <hr class="text-gray-300 dark:text-gray-700 mb-16"> --}}
-        <div
-            class="flex mx-auto justify-center gap-x-16 bg-gray-200 dark:bg-slate-800 pt-2 2xl:pt-20 sm:rounded-tr-4xl sm:rounded-tl-4xl">
-            <a href="#app-lists"
-                class="hover:bg-gray-300 dark:hover:text-gray-800 select-none no-underline flex bg-transparent rounded-lg py-4 px-8
-                 items-center gap-x-3 duration-400 transition-all text-gray-800 dark:text-white">
-                <svg xmlns="http://www.w3.org/2000/svg" class="lucide lucide-grid" width="24" height="24"
-                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round">
-                    <rect x="3" y="3" width="7" height="7" />
-                    <rect x="14" y="3" width="7" height="7" />
-                    <rect x="14" y="14" width="7" height="7" />
-                    <rect x="3" y="14" width="7" height="7" />
-                </svg>
-                <div class="text-xl">Aplikasi</div>
-            </a>
-            <a href="#integration"
-                class="hover:bg-gray-300 dark:hover:text-gray-800 select-none no-underline flex bg-transparent rounded-lg py-4 px-8
-                 items-center gap-x-3 duration-400 transition-all text-gray-800 dark:text-white">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="lucide lucide-toy-brick-icon lucide-toy-brick">
-                    <rect width="18" height="12" x="3" y="8" rx="1" />
-                    <path d="M10 8V5c0-.6-.4-1-1-1H6a1 1 0 0 0-1 1v3" />
-                    <path d="M19 8V5c0-.6-.4-1-1-1h-3a1 1 0 0 0-1 1v3" />
-                </svg>
-                <div class="text-xl">Integrasi</div>
-            </a>
-        </div>
-    </div>
 </div>

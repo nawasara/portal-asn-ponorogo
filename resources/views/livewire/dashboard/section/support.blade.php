@@ -1,177 +1,128 @@
 <div>
-    {{-- Support Section --}}
-    <section class="max-w-6xl py-10 lg:py-14 mx-auto" id="support" data-aos="fade-up">
+    <section id="support" class="py-12 lg:py-16" data-aos="fade-up">
 
         @if (Route::is('supports'))
-            <div class="flex items-center justify-center gap-x-3 md:hidden">
+            <div class="flex items-center justify-center gap-x-3 md:hidden mb-6">
                 <img src="{{ asset('img/logo.png') }}" alt="Portal ASN Ponorogo" class="size-6 w-auto" loading="lazy" />
-                <span class="dark:text-white text-gray-700 font-semibold">Bantuan SSO Kisara</span>
+                <span class="dark:text-white text-slate-700 font-semibold">Bantuan SSO Kisara</span>
             </div>
         @endif
 
-        <div class="py-6">
-            <h2 class="text-2xl font-bold text-gray-800 dark:text-white md:text-4xl text-center mx-auto py-6">
-                Mengalami Kendala?
-            </h2>
+        <div class="text-center mb-10" data-aos="fade-up">
+            <div class="text-sm font-semibold text-emerald-600 dark:text-emerald-400 mb-2">Pusat Bantuan</div>
+            <h2 class="text-3xl md:text-4xl font-bold tracking-tight dark:text-white">Mengalami kendala?</h2>
+            <p class="mt-3 text-slate-600 dark:text-slate-400 max-w-xl mx-auto">
+                Layanan mandiri untuk mereset MFA, mengajukan aduan, atau membaca panduan SSO.
+            </p>
         </div>
 
-        <div x-data="{
-            showArrow: true,
-            showMe() {
-                this.showArrow = true;
-                setTimeout(() => this.showArrow = false, 2500)
-            }
-        }" x-init="showMe();" @set-arrow.window="showMe()"
-            class="relative flex overflow-x-auto sm:grid sm:grid-cols-3 lg:grid-cols-3 gap-6 items-stretch snap-x snap-mandatory scroll-smooth  w-full before:absolute before:inset-y-0 before:left-0 before:w-6 before:bg-gradient-to-r before:from-white/80 dark:before:from-gray-900/80 before:pointer-events-none after:absolute after:inset-y-0 after:right-0 after:w-6 after:bg-gradient-to-l after:from-white/80 dark:after:from-gray-900/80 after:pointer-events-none"
-            style="scrollbar-width: none; -ms-overflow-style: none;">
-            <style>
-                /* Hides scrollbar di Chrome, Safari, Edge */
-                div::-webkit-scrollbar {
-                    display: none;
-                }
-            </style>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-
-            <!-- Fade kiri-kanan (opsional tapi keren banget) -->
-            <div
-                class="pointer-events-none absolute inset-y-0 left-0 w-10 bg-gradient-to-r from-white/80 dark:from-gray-900/80">
-            </div>
-            <div
-                class="pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-white/80 dark:from-gray-900/80">
-            </div>
-            <!-- 👉 Panah geser kanan -->
-            <template x-if="showArrow">
+            {{-- Reset MFA --}}
+            <a href="{{ route('mfa.reset') }}"
+                class="tilt glass-card gradient-border rounded-3xl p-6 group relative block overflow-hidden"
+                data-aos="zoom-in" data-aos-duration="1000">
                 <div
-                    class="absolute right-3 top-1/2 -translate-y-1/2 z-10 bg-gray-800 text-white dark:bg-gray-100 dark:text-gray-800
-                     rounded-full p-2 shadow-md animate-bounce opacity-80 cursor-pointer select-none">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="size-4" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                    class="absolute -bottom-16 -right-16 w-40 h-40 rounded-full bg-gradient-to-br from-emerald-400 to-teal-600 opacity-0 group-hover:opacity-20 blur-3xl transition duration-500">
+                </div>
+
+                <div
+                    class="relative size-12 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-600 grid place-items-center shadow-lg shadow-slate-900/10 mb-5">
+                    <svg class="size-6 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path
+                            d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915" />
+                        <circle cx="12" cy="12" r="3" />
                     </svg>
                 </div>
-            </template>
 
+                <h3 class="relative text-lg font-bold tracking-tight mb-2 dark:text-white">Reset MFA SSO</h3>
+                <p class="relative text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-5">
+                    Reset Multi-Factor Authentication Single Sign On Anda secara mandiri.
+                </p>
 
-            {{-- Reset MFA Card --}}
-            <a class="group flex-none snap-center w-80 sm:w-auto bg-white dark:bg-gray-900
-            rounded-2xl border border-gray-200 dark:border-gray-700 p-6 hover:shadow-lg
-            transition justify-between min-h-40"
-                href="{{ route('mfa.reset') }}" data-aos="zoom-in" data-aos-duration="1000" date-aos-delay="3000">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="lucide lucide-settings-icon lucide-settings shrink-0 size-8 text-gray-800 dark:text-white mt-0.5 me-6">
-                    <path
-                        d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915" />
-                    <circle cx="12" cy="12" r="3" />
-                </svg>
-
-                <div>
-                    <div>
-                        <h3 class="block font-bold text-gray-800 dark:text-white">
-                            Reset MFA Single Sign On (SSO)
-                        </h3>
-                        <p class="text-gray-600 dark:text-neutral-400">
-                            Layanan untuk mereset Multi-Factor Authentication (MFA) SSO Anda secara mandiri
-                        </p>
-                    </div>
-
-                    <p
-                        class="mt-3 inline-flex items-center gap-x-1 text-sm font-semibold text-gray-800 dark:text-neutral-200">
-                        Reset MFA Sekarang
-                        <svg class="shrink-0 size-4 transition ease-in-out group-hover:translate-x-1 group-focus:translate-x-1"
-                            xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                            stroke-linejoin="round">
-                            <path d="m9 18 6-6-6-6" />
-                        </svg>
-                    </p>
-                </div>
-            </a>
-            {{-- End Card --}}
-
-            {{-- Form Bantuan Card --}}
-            <a class="group flex-none snap-center w-80 sm:w-auto bg-white dark:bg-gray-900
-            rounded-2xl border border-gray-200 dark:border-gray-700 p-6 hover:shadow-lg
-            transition justify-between min-h-40"
-                href="https://asn.ponorogo.go.id/bantuan" target="_blank" data-aos="zoom-in" data-aos-duration="1000"
-                date-aos-delay="3000">
-
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="lucide lucide-file-text-icon lucide-file-text shrink-0 size-8 text-gray-800 dark:text-white mt-0.5 me-6">
-                    <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
-                    <path d="M14 2v4a2 2 0 0 0 2 2h4" />
-                    <path d="M10 9H8" />
-                    <path d="M16 13H8" />
-                    <path d="M16 17H8" />
-                </svg>
-
-                <div>
-                    <div>
-                        <h3 class="block font-bold text-gray-800 dark:text-white">
-                            Formulir Aduan Single Sign On (SSO)
-                        </h3>
-                        <p class="text-gray-600 dark:text-neutral-400">
-                            Isi formulir aduan dan tim akan menghubungi Anda
-                        </p>
-                    </div>
-
-                    <p
-                        class="mt-3 inline-flex items-center gap-x-1 text-sm font-semibold text-gray-800 dark:text-neutral-200">
-                        Isi Formulir
-                        <svg class="shrink-0 size-4 transition ease-in-out group-hover:translate-x-1 group-focus:translate-x-1"
-                            xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                            stroke-linejoin="round">
-                            <path d="m9 18 6-6-6-6" />
-                        </svg>
-                    </p>
+                <div class="relative inline-flex items-center gap-1.5 text-sm font-semibold text-emerald-600 dark:text-emerald-400">
+                    Reset MFA sekarang
+                    <svg class="size-4 group-hover:translate-x-1 transition" xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 18l6-6-6-6" />
+                    </svg>
                 </div>
             </a>
 
-            {{-- Panduan Card --}}
-            <a class="group flex-none snap-center w-80 sm:w-auto bg-white dark:bg-gray-900
-            rounded-2xl border border-gray-200 dark:border-gray-700 p-6 hover:shadow-lg
-            transition justify-between min-h-40"
-                href="{{ \App\Constants\Constants::DOC_URL }}" target="_blank" data-aos="zoom-in"
-                data-aos-duration="1000" date-aos-delay="3000">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="lucide lucide-book-open-text-icon lucide-book-open-text shrink-0 size-8 text-gray-800 dark:text-white mt-0.5 me-6">
-                    <path d="M12 7v14" />
-                    <path d="M16 12h2" />
-                    <path d="M16 8h2" />
-                    <path
-                        d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z" />
-                    <path d="M6 12h2" />
-                    <path d="M6 8h2" />
-                </svg>
+            {{-- Formulir Aduan --}}
+            <a href="https://asn.ponorogo.go.id/bantuan" target="_blank"
+                class="tilt glass-card gradient-border rounded-3xl p-6 group relative block overflow-hidden"
+                data-aos="zoom-in" data-aos-duration="1000" data-aos-delay="100">
+                <div
+                    class="absolute -bottom-16 -right-16 w-40 h-40 rounded-full bg-gradient-to-br from-sky-400 to-blue-600 opacity-0 group-hover:opacity-20 blur-3xl transition duration-500">
+                </div>
 
-                <div>
-                    <div>
-                        <h3 class="block font-bold text-gray-800 dark:text-white">
-                            Panduan
-                        </h3>
-                        <p class="text-gray-600 dark:text-neutral-400">
-                            Dapatkan panduan berupa PDF pengaktifan MFA Single Sign On (SSO)
-                        </p>
-                    </div>
+                <div
+                    class="relative size-12 rounded-2xl bg-gradient-to-br from-sky-400 to-blue-600 grid place-items-center shadow-lg shadow-slate-900/10 mb-5">
+                    <svg class="size-6 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
+                        <path d="M14 2v4a2 2 0 0 0 2 2h4" />
+                        <path d="M10 9H8" />
+                        <path d="M16 13H8" />
+                        <path d="M16 17H8" />
+                    </svg>
+                </div>
 
-                    <p
-                        class="mt-3 inline-flex items-center gap-x-1 text-sm font-semibold text-gray-800 dark:text-neutral-200">
-                        Dapatkan panduan
-                        <svg class="shrink-0 size-4 transition ease-in-out group-hover:translate-x-1 group-focus:translate-x-1"
-                            xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                            stroke-linejoin="round">
-                            <path d="m9 18 6-6-6-6" />
-                        </svg>
-                    </p>
+                <h3 class="relative text-lg font-bold tracking-tight mb-2 dark:text-white">Formulir Aduan</h3>
+                <p class="relative text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-5">
+                    Isi formulir aduan, tim kami akan menghubungi Anda segera.
+                </p>
+
+                <div class="relative inline-flex items-center gap-1.5 text-sm font-semibold text-emerald-600 dark:text-emerald-400">
+                    Isi formulir
+                    <svg class="size-4 group-hover:translate-x-1 transition" xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 18l6-6-6-6" />
+                    </svg>
                 </div>
             </a>
-            <!-- End Card -->
+
+            {{-- Panduan --}}
+            <a href="{{ \App\Constants\Constants::DOC_URL }}" target="_blank"
+                class="tilt glass-card gradient-border rounded-3xl p-6 group relative block overflow-hidden"
+                data-aos="zoom-in" data-aos-duration="1000" data-aos-delay="200">
+                <div
+                    class="absolute -bottom-16 -right-16 w-40 h-40 rounded-full bg-gradient-to-br from-violet-400 to-fuchsia-600 opacity-0 group-hover:opacity-20 blur-3xl transition duration-500">
+                </div>
+
+                <div
+                    class="relative size-12 rounded-2xl bg-gradient-to-br from-violet-400 to-fuchsia-600 grid place-items-center shadow-lg shadow-slate-900/10 mb-5">
+                    <svg class="size-6 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 7v14" />
+                        <path d="M16 12h2" />
+                        <path d="M16 8h2" />
+                        <path
+                            d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z" />
+                        <path d="M6 12h2" />
+                        <path d="M6 8h2" />
+                    </svg>
+                </div>
+
+                <h3 class="relative text-lg font-bold tracking-tight mb-2 dark:text-white">Panduan PDF</h3>
+                <p class="relative text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-5">
+                    Unduh panduan lengkap pengaktifan MFA SSO dalam format PDF.
+                </p>
+
+                <div class="relative inline-flex items-center gap-1.5 text-sm font-semibold text-emerald-600 dark:text-emerald-400">
+                    Dapatkan panduan
+                    <svg class="size-4 group-hover:translate-x-1 transition" xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 18l6-6-6-6" />
+                    </svg>
+                </div>
+            </a>
 
         </div>
     </section>
-    <!-- End Icon Blocks -->
 </div>
