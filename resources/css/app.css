@@ -14,4 +14,113 @@
     --font-sans: "Instrument Sans", ui-sans-serif, system-ui, sans-serif,
         "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
         "Noto Color Emoji";
+
+    --animate-blob-slow: blob 18s ease-in-out infinite;
+    --animate-blob-med:  blob 14s ease-in-out infinite;
+    --animate-blob-fast: blob 11s ease-in-out infinite;
+    --animate-float:     float 6s ease-in-out infinite;
+    --animate-shimmer:   shimmer 6s linear infinite;
+
+    @keyframes blob {
+        0%, 100% { transform: translate(0, 0) scale(1); }
+        33%      { transform: translate(40px, -60px) scale(1.1); }
+        66%      { transform: translate(-30px, 30px) scale(0.95); }
+    }
+    @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50%      { transform: translateY(-10px); }
+    }
+    @keyframes shimmer {
+        0%   { background-position: -200% 0; }
+        100% { background-position: 200% 0; }
+    }
+}
+
+/* ===== Glassmorphism surfaces ===== */
+@layer components {
+    .glass {
+        background: rgba(255, 255, 255, 0.6);
+        backdrop-filter: blur(20px) saturate(180%);
+        -webkit-backdrop-filter: blur(20px) saturate(180%);
+        border: 1px solid rgba(255, 255, 255, 0.4);
+    }
+    :where(.dark) .glass {
+        background: rgba(15, 23, 42, 0.55);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .glass-card {
+        background: rgba(255, 255, 255, 0.55);
+        backdrop-filter: blur(16px) saturate(160%);
+        -webkit-backdrop-filter: blur(16px) saturate(160%);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+    }
+    :where(.dark) .glass-card {
+        background: rgba(30, 41, 59, 0.45);
+        border: 1px solid rgba(148, 163, 184, 0.12);
+    }
+
+    .gradient-border {
+        position: relative;
+        background-clip: padding-box;
+    }
+    .gradient-border::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        padding: 1px;
+        background: linear-gradient(135deg,
+            rgba(16, 185, 129, 0.5),
+            rgba(14, 165, 233, 0.3),
+            rgba(255, 255, 255, 0.1));
+        -webkit-mask:
+            linear-gradient(#000 0 0) content-box,
+            linear-gradient(#000 0 0);
+        -webkit-mask-composite: xor;
+                mask-composite: exclude;
+        pointer-events: none;
+    }
+
+    .tilt {
+        transition: transform 0.4s cubic-bezier(.2, .8, .2, 1), box-shadow 0.4s;
+    }
+    .tilt:hover {
+        transform: perspective(1000px) rotateX(2deg) rotateY(-2deg) translateY(-4px);
+        box-shadow: 0 24px 60px -20px rgba(16, 185, 129, 0.35);
+    }
+    :where(.dark) .tilt:hover {
+        box-shadow: 0 24px 60px -20px rgba(16, 185, 129, 0.5);
+    }
+
+    .text-gradient {
+        background: linear-gradient(120deg, #10b981 0%, #059669 30%, #0ea5e9 70%, #10b981 100%);
+        background-size: 200% 100%;
+        -webkit-background-clip: text;
+                background-clip: text;
+        color: transparent;
+        animation: shimmer 6s linear infinite;
+    }
+}
+
+/* Fallback untuk browser tanpa backdrop-filter */
+@supports not (backdrop-filter: blur(1px)) {
+    .glass, .glass-card {
+        background: rgba(255, 255, 255, 0.92);
+    }
+    :where(.dark) .glass,
+    :where(.dark) .glass-card {
+        background: rgba(15, 23, 42, 0.95);
+    }
+}
+
+/* Accessibility: hormati reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+    .animate-blob-slow,
+    .animate-blob-med,
+    .animate-blob-fast,
+    .animate-float,
+    .text-gradient {
+        animation: none !important;
+    }
 }
