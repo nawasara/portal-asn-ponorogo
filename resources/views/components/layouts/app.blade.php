@@ -35,23 +35,21 @@
     @livewireStyles
 </head>
 
-<body class="font-sans antialiased bg-gray-100 dark:bg-gray-900">
+<body class="font-sans antialiased bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 overflow-x-hidden">
 
-    {{-- topbar non mobile--}}
-    <div class="fixed top-0 inset-x-0 z-[10] ">
+    <x-aurora />
+
+    {{-- topbar desktop --}}
+    <div class="fixed top-0 inset-x-0 z-[10]">
         <livewire:shared-components.topbar />
     </div>
 
-    {{-- mobile navbar only--}}
-    <div class="fixed bottom-0 inset-x-0 z-[10] ">
-        <livewire:shared-components.navbar-mobile />
-    </div>
+    {{-- mobile bottom navbar --}}
+    <livewire:shared-components.navbar-mobile />
 
-    <div class="bg-gray-100 dark:bg-gray-900">
-        <main class="max-w-6xl px-8 mx-auto">
-            {{ $slot }}
-        </main>
-    </div>
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-28 md:pb-8">
+        {{ $slot }}
+    </main>
 
     @stack('modals')
     @livewireScripts
