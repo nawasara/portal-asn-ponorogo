@@ -36,7 +36,12 @@ class KeycloakController extends \App\Http\Controllers\Controller
 
             Auth::login($authUser, true);
 
-            Session::put('keycloak_id_token', $user->accessTokenResponseBody['id_token']);
+            $tokenResponse = $user->accessTokenResponseBody;
+
+            Session::put('keycloak_id_token', $tokenResponse['id_token']);
+            Session::put('keycloak_access_token', $tokenResponse['access_token']);
+            Session::put('keycloak_refresh_token', $tokenResponse['refresh_token'] ?? null);
+            Session::put('keycloak_token_expires_at', now()->addSeconds($tokenResponse['expires_in'] ?? 300)->timestamp);
             Session::put('keycloak_id_user', $user->id);
 
             return redirect('/');
