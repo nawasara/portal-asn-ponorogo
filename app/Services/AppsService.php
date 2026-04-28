@@ -13,7 +13,7 @@ class AppsService
                 'icon_type' => 'image',
                 'description' => 'Sistem Informasi Manajemen ASN Pemerintah Kabupaten Ponorogo',
                 'status' => 'connected',
-                'link' => 'https://simashebat.ponorogo.go.id/login/sso'
+                'link' => 'https://simashebat.ponorogo.go.id/login/sso/'
             ],
             [
                 'name' => 'Supergratifikasi',
