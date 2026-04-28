@@ -18,10 +18,10 @@ class KeycloakService
 
     public function __construct()
     {
-        $this->baseUrl      = env('KEYCLOAK_BASE_URL');
-        $this->realm        = env('KEYCLOAK_REALM');
-        $this->clientId     = env('KEYCLOAK_CLIENT_ID');
-        $this->clientSecret = env('KEYCLOAK_CLIENT_SECRET');
+        $this->baseUrl      = config('services.keycloak.base_url');
+        $this->realm        = config('services.keycloak.realms');
+        $this->clientId     = config('services.keycloak.client_id');
+        $this->clientSecret = config('services.keycloak.client_secret');
     }
 
     /**

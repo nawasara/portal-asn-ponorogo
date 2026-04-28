@@ -68,16 +68,16 @@ trait SessionTrait
             return false;
         }
 
-        $baseUrl = env('KEYCLOAK_BASE_URL');
-        $realm = env('KEYCLOAK_REALM');
+        $baseUrl = config('services.keycloak.base_url');
+        $realm = config('services.keycloak.realms');
 
         try {
             $response = Http::asForm()->post(
                 "{$baseUrl}/realms/{$realm}/protocol/openid-connect/token",
                 [
                     'grant_type' => 'refresh_token',
-                    'client_id' => env('KEYCLOAK_CLIENT_ID'),
-                    'client_secret' => env('KEYCLOAK_CLIENT_SECRET'),
+                    'client_id' => config('services.keycloak.client_id'),
+                    'client_secret' => config('services.keycloak.client_secret'),
                     'refresh_token' => $refreshToken,
                 ]
             );
