@@ -48,7 +48,11 @@
                                 Konfirmasi Nomor WhatsApp
                             </h2>
                             <p class="mt-1 text-sm text-slate-600 dark:text-slate-400">
-                                Kode OTP akan dikirimkan ke nomor ini. Pastikan nomor sudah benar.
+                                @if (config('services.whatsapp.verification_enabled', true))
+                                    Kode OTP akan dikirimkan ke nomor ini. Pastikan nomor sudah benar.
+                                @else
+                                    Nomor ini akan disimpan ke akun Anda. Pastikan nomor sudah benar.
+                                @endif
                             </p>
                         </div>
                     </div>
@@ -68,7 +72,7 @@
                             class="relative inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold text-white overflow-hidden group">
                             <span class="absolute inset-0 bg-gradient-to-br from-emerald-500 to-teal-600"></span>
                             <span class="absolute -inset-1 bg-gradient-to-br from-emerald-400 to-sky-500 blur-lg opacity-40 group-hover:opacity-70 transition"></span>
-                            <span class="relative">Kirim OTP</span>
+                            <span class="relative">{{ config('services.whatsapp.verification_enabled', true) ? 'Kirim OTP' : 'Simpan Nomor' }}</span>
                         </button>
                     </div>
                     </div>

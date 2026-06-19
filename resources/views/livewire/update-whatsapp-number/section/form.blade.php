@@ -12,7 +12,7 @@
             </div>
         </div>
 
-        <form wire:submit.prevent="sendOtp" class="space-y-5"
+        <form wire:submit="sendOtp" class="space-y-5"
             x-data="{ openTips: false, whatsappNumber: '' }"
             @keydown.enter.prevent="$dispatch('open-modal-confirm', { whatsappNumber: whatsappNumber })">
             <div>
@@ -49,7 +49,7 @@
                     })()"
                     class="block w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white/60 dark:bg-slate-900/40 backdrop-blur-sm text-slate-900 dark:text-slate-100 px-4 py-3 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition" />
                 <input type="hidden" x-ref="whatsapp_raw" x-model="whatsappNumber"
-                    wire:model.defer="whatsapp_number" />
+                    wire:model="whatsapp_number" />
                 @error('whatsapp_number')
                     <div class="text-rose-600 dark:text-rose-400 text-sm mt-1.5">{{ $message }}</div>
                 @enderror
@@ -61,7 +61,7 @@
                     class="relative inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold text-white overflow-hidden group">
                     <span class="absolute inset-0 bg-gradient-to-br from-emerald-500 to-teal-600"></span>
                     <span class="absolute -inset-1 bg-gradient-to-br from-emerald-400 to-sky-500 blur-lg opacity-40 group-hover:opacity-70 transition"></span>
-                    <span class="relative">Kirim OTP</span>
+                    <span class="relative">{{ config('services.whatsapp.verification_enabled', true) ? 'Kirim OTP' : 'Simpan Nomor' }}</span>
                 </button>
 
                 <x-loading />

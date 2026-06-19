@@ -42,4 +42,14 @@ return [
         'realms' => env('KEYCLOAK_REALM')         // Specify your keycloak realm
     ],
 
+    'whatsapp' => [
+        'api_url' => env('WHATSAPP_API_URL'),
+        'api_key' => env('WHATSAPP_API_KEY'),
+
+        // Saat WAGO tidak tersedia (mis. nomor kena ban), set false untuk
+        // melewati cek nomor + pengiriman OTP. Form input WA TETAP muncul
+        // dan nomor TETAP disimpan — hanya verifikasinya yang dilewati.
+        'verification_enabled' => env('WHATSAPP_VERIFICATION_ENABLED', true),
+    ],
+
 ];
