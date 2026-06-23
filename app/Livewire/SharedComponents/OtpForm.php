@@ -31,6 +31,7 @@ class OtpForm extends Component
     public ?string $email = null;
     public string $channel = 'wa'; // 'wa' | 'email' — default wa agar flow lama tak berubah
     public $userId = null;
+    public ?string $identity = null; // NIP/userId target — dikirim parent agar throttle benar walau anonim
     public $keycloakIdToken;
     public $keycloakUser;
     public $infoMessage;
@@ -54,18 +55,33 @@ class OtpForm extends Component
         }
     }
 
-    protected function getOtpCacheKey(): string
+    /**
+     * Identitas target untuk kunci cache: NIP/userId yang dikirim parent, atau
+     * userId sesi bila login. Fallback ke 'anon' (sangat jarang) supaya tidak
+     * pernah jadi string kosong yang membuat counter global antar-user.
+     */
+    protected function otpIdentity(): string
     {
-        return 'wa:otp:' . $this->userId;
+        return (string) ($this->identity ?: $this->userId ?: 'anon');
     }
 
+    protected function getOtpCacheKey(): string
+    {
+        return 'otp:code:' . $this->otpIdentity();
+    }
+
+    /**
+     * Throttle pengiriman per NIP + IP. Dengan NIP, dua user berbeda di IP yang
+     * sama (mis. satu kantor) tetap punya counter terpisah; IP menambah proteksi
+     * agar satu klien tidak spam lintas NIP.
+     */
     protected function getOtpAttemptsKey(): string
     {
-        return 'wa:otp:attempts:' . $this->userId;
+        return 'otp:attempts:' . $this->otpIdentity() . ':' . request()->ip();
     }
 
     #[On('send-otp')]
-    public function sendOtp($waNumber = null, $email = null, $channel = null)
+    public function sendOtp($waNumber = null, $email = null, $channel = null, $identity = null)
     {
         if ($channel) {
             $this->channel = $channel;
@@ -75,6 +91,9 @@ class OtpForm extends Component
         }
         if ($email) {
             $this->email = $email;
+        }
+        if ($identity) {
+            $this->identity = $identity;
         }
 
         // Pastikan target sesuai channel terisi.

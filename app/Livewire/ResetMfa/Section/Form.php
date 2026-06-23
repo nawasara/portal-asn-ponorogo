@@ -76,7 +76,7 @@ class Form extends Component
         if ($this->email) {
             $this->emailEmpty = false;
             $this->showForm = false;
-            $this->dispatch('send-otp', email: $this->email, channel: 'email');
+            $this->dispatch('send-otp', email: $this->email, channel: 'email', identity: $this->nip);
             return;
         }
 
@@ -100,7 +100,7 @@ class Form extends Component
         if (!self::waNumberIsValid()) return;
 
         $this->showForm = false;
-        $this->dispatch('send-otp', waNumber: $this->waNumber, channel: 'wa');
+        $this->dispatch('send-otp', waNumber: $this->waNumber, channel: 'wa', identity: $this->nip);
     }
 
     /**
