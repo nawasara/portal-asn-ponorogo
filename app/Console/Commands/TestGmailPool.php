@@ -5,7 +5,6 @@ namespace App\Console\Commands;
 use App\Mail\OtpMail;
 use App\Services\GmailPoolMailer;
 use Illuminate\Console\Command;
-use Symfony\Component\Mailer\Mailer as SymfonyMailer;
 use Symfony\Component\Mailer\Transport\Smtp\EsmtpTransport;
 
 /**
@@ -58,13 +57,13 @@ class TestGmailPool extends Command
             try {
                 $transport = new EsmtpTransport($host, $port, $port === 465);
                 $transport->setUsername($user);
-                $transport->setPassword($account['pass']);
+                $transport->setPassword(str_replace(' ', '', (string) $account['pass']));
 
                 $mailer = new \Illuminate\Mail\Mailer(
                     'gmail-test',
-                    \Illuminate\Support\Facades\View::getFacadeRoot(),
-                    new SymfonyMailer($transport),
-                    app(\Illuminate\Events\Dispatcher::class)
+                    app(\Illuminate\Contracts\View\Factory::class),
+                    $transport,
+                    app(\Illuminate\Contracts\Events\Dispatcher::class)
                 );
                 $mailer->alwaysFrom($account['from'] ?? $user, $account['name'] ?? config('mail.from.name'));
                 $mailer->to($to)->send($mail);

@@ -5,9 +5,8 @@ namespace App\Services;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailer;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\View;
-use Illuminate\Events\Dispatcher;
-use Symfony\Component\Mailer\Mailer as SymfonyMailer;
+use Illuminate\Contracts\View\Factory as ViewFactory;
+use Illuminate\Contracts\Events\Dispatcher;
 use Symfony\Component\Mailer\Transport\Smtp\EsmtpTransport;
 
 /**
@@ -54,6 +53,7 @@ class GmailPoolMailer
                 $lastError = $e;
                 Log::warning('Gmail pool: akun gagal kirim, coba akun lain', [
                     'account' => $account['user'] ?? '?',
+                    'exception' => get_class($e),
                     'error' => $e->getMessage(),
                 ]);
                 // lanjut ke akun berikutnya
@@ -77,13 +77,16 @@ class GmailPoolMailer
         // EsmtpTransport: port 465 = TLS implisit (SMTPS); selain itu STARTTLS.
         $transport = new EsmtpTransport($host, $port, $port === 465);
         $transport->setUsername($account['user']);
-        $transport->setPassword($account['pass']);
+        // App Password Google boleh ditulis dgn spasi; normalkan jadi tanpa spasi.
+        $transport->setPassword(str_replace(' ', '', (string) $account['pass']));
 
-        // Mailer Laravel dibungkus di atas Symfony mailer untuk akun ini.
+        // Bangun Mailer Laravel di atas transport Symfony untuk akun ini.
+        // Resolve dependency lewat container pakai CONTRACT (bukan concrete class)
+        // supaya cocok dengan type-hint constructor Mailer.
         $mailer = new Mailer(
             'gmail-pool',
-            View::getFacadeRoot(),
-            new SymfonyMailer($transport),
+            app(ViewFactory::class),
+            $transport, // Laravel Mailer mengharapkan TransportInterface langsung
             app(Dispatcher::class)
         );
 
