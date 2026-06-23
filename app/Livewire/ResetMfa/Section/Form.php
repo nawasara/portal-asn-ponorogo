@@ -18,6 +18,8 @@ class Form extends Component
     public $keycloakUser;
     public bool $showForm = true;
     public $waNumber;
+    public ?string $email = null;
+    public bool $emailEmpty = false; // true → tampilkan opsi fallback WhatsApp
     public bool $isAuth = false;
 
     protected $rules = [
@@ -44,6 +46,7 @@ class Form extends Component
         self::checkKeycloakSession(); // ada di trait
         $this->keycloakUser = self::getKeycloakUser(); // ada di trait
         $this->waNumber = $this->keycloakUser['attributes']['whatsapp_number'][0] ?? null;
+        $this->email = $this->keycloakUser['email'] ?? null;
     }
 
     public function getKeycloakProfile()
@@ -56,35 +59,68 @@ class Form extends Component
         }
 
         $this->waNumber = $this->keycloakUser['attributes']['whatsapp_number'][0] ?? null;
+        $this->email = $this->keycloakUser['email'] ?? null;
         $this->userId = $this->keycloakUser['id'];
-
-        if (!$this->waNumber) {
-            $this->addError('nip', 'Nomor WhatsApp Anda belum terdaftar. Silakan klik link bantuan.');
-            return false;
-        }
 
         return true;
     }
 
+    /**
+     * Channel default: EMAIL. Bila email user kosong, tampilkan opsi fallback WhatsApp.
+     */
     public function sendOtp()
     {
-        // Validasi nomor
-        $this->validateOnly('nip');
+        if (!self::resolveAndVerifyUser()) return;
 
-        if (!$this->isAuth) {
-            $isTrue = self::getKeycloakProfile();
-            if (!$isTrue) return;
+        // Jalur utama: email.
+        if ($this->email) {
+            $this->emailEmpty = false;
+            $this->showForm = false;
+            $this->dispatch('send-otp', email: $this->email, channel: 'email');
+            return;
+        }
+
+        // Email kosong → tawarkan fallback WhatsApp (tombol muncul di view).
+        $this->emailEmpty = true;
+        $this->addError('nip', 'Email Anda belum terdaftar. Kirim OTP via WhatsApp, atau hubungi bantuan.');
+    }
+
+    /**
+     * Fallback: kirim OTP via WhatsApp (dipakai saat email kosong).
+     */
+    public function sendOtpViaWa()
+    {
+        if (!self::resolveAndVerifyUser()) return;
+
+        if (!$this->waNumber) {
+            $this->addError('nip', 'Nomor WhatsApp Anda juga belum terdaftar. Silakan klik link bantuan.');
+            return;
         }
 
         if (!self::waNumberIsValid()) return;
 
-        if ($this->nip != $this->keycloakUser['username']) {
-            $this->addError('nip', 'NIP Anda salah.');
-            return;
+        $this->showForm = false;
+        $this->dispatch('send-otp', waNumber: $this->waNumber, channel: 'wa');
+    }
+
+    /**
+     * Validasi NIP + resolve user Keycloak + cek username cocok.
+     * Return true bila lolos. Mengisi $this->email / $this->waNumber.
+     */
+    protected function resolveAndVerifyUser(): bool
+    {
+        $this->validateOnly('nip');
+
+        if (!$this->isAuth) {
+            if (!self::getKeycloakProfile()) return false;
         }
 
-        $this->showForm = false;
-        $this->dispatch('send-otp', waNumber: $this->waNumber);
+        if ($this->nip != ($this->keycloakUser['username'] ?? null)) {
+            $this->addError('nip', 'NIP Anda salah.');
+            return false;
+        }
+
+        return true;
     }
 
     public function waNumberIsValid()
@@ -122,7 +158,7 @@ class Form extends Component
     #[On('otp-reach-limit')]
     public function otpReachLimit()
     {
-        $this->addError('nip', 'Pengiriman OTP ke nomor WhatsApp Anda dibatasi 3 kali dalam 10 menit. Silakan coba lagi nanti.');
+        $this->addError('nip', 'Pengiriman OTP dibatasi 3 kali dalam 10 menit. Silakan coba lagi nanti.');
     }
 
     public function render()

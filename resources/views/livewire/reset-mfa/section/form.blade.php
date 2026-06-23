@@ -71,8 +71,16 @@
                     class="relative inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold text-white overflow-hidden group">
                     <span class="absolute inset-0 bg-gradient-to-br from-emerald-500 to-teal-600"></span>
                     <span class="absolute -inset-1 bg-gradient-to-br from-emerald-400 to-sky-500 blur-lg opacity-40 group-hover:opacity-70 transition"></span>
-                    <span class="relative">Kirim OTP</span>
+                    <span class="relative">Kirim OTP ke Email</span>
                 </button>
+
+                {{-- Fallback: muncul hanya saat email user kosong --}}
+                @if ($emailEmpty)
+                    <button type="button" wire:click="sendOtpViaWa"
+                        class="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-500/40 bg-white/60 dark:bg-slate-900/40 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 transition">
+                        Kirim OTP via WhatsApp
+                    </button>
+                @endif
 
                 <x-loading />
 

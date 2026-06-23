@@ -9,8 +9,8 @@
     <ol class="space-y-3 text-sm text-slate-600 dark:text-slate-300">
         @foreach ([
             'Masukkan NIP Anda yang terdaftar.',
-            'Klik <b>Kirim OTP</b> untuk menerima kode verifikasi ke nomor WhatsApp Anda.',
-            'Periksa WhatsApp Anda dan pastikan kode OTP diterima.',
+            'Klik <b>Kirim OTP ke Email</b> untuk menerima kode verifikasi ke email Anda.',
+            'Periksa email Anda (termasuk folder <b>Spam/Promosi</b>) dan pastikan kode OTP diterima.',
             'Masukkan kode OTP dan klik <b>Verifikasi</b> untuk menyelesaikan proses.',
         ] as $i => $step)
             <li class="flex gap-3">
