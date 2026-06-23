@@ -192,9 +192,16 @@ class OtpForm extends Component
         }
 
         $ref = Str::uuid()->toString();
+        $mail = new OtpMail($otp, $this->otpTtlMinutes, $ref);
 
         try {
-            Mail::to($this->email)->send(new OtpMail($otp, $this->otpTtlMinutes, $ref));
+            // Kalau pool Gmail dikonfigurasi, kirim lewat akun acak + failover.
+            // Kalau tidak, jatuh ke mailer default Laravel (MAIL_* di .env).
+            if (!empty(config('services.gmail_pool.accounts'))) {
+                app(\App\Services\GmailPoolMailer::class)->send($this->email, $mail);
+            } else {
+                Mail::to($this->email)->send($mail);
+            }
         } catch (\Throwable $e) {
             self::setMessage('Gagal mengirim OTP via Email: ' . $e->getMessage(), 'error');
             \info('Gagal kirim OTP email user ' . $this->userId . ': ' . $e->getMessage());

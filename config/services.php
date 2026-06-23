@@ -52,4 +52,28 @@ return [
         'verification_enabled' => env('WHATSAPP_VERIFICATION_ENABLED', true),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Gmail SMTP pool (untuk pengiriman OTP email)
+    |--------------------------------------------------------------------------
+    | Daftar akun Gmail untuk kirim email OTP secara random + failover, agar
+    | tidak bergantung pada satu akun (kena limit harian / diblok).
+    |
+    | Isi MAIL_GMAIL_POOL di .env dengan JSON array. Tiap item:
+    |   { "user": "akun@gmail.com", "pass": "app-password-16char", "from": "akun@gmail.com", "name": "SSO ASN Ponorogo" }
+    | "pass" = Google App Password (butuh 2FA aktif), BUKAN password login biasa.
+    | "from" & "name" opsional (default ke user / nama global).
+    |
+    | Contoh (satu baris di .env):
+    |   MAIL_GMAIL_POOL='[{"user":"a@gmail.com","pass":"xxxx xxxx xxxx xxxx"},{"user":"b@gmail.com","pass":"yyyy yyyy yyyy yyyy"}]'
+    */
+    'gmail_pool' => [
+        'accounts' => array_values(array_filter(
+            json_decode((string) env('MAIL_GMAIL_POOL', '[]'), true) ?: [],
+            fn ($a) => is_array($a) && !empty($a['user']) && !empty($a['pass'])
+        )),
+        'host' => env('MAIL_GMAIL_HOST', 'smtp.gmail.com'),
+        'port' => (int) env('MAIL_GMAIL_PORT', 587),
+    ],
+
 ];
