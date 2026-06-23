@@ -14,4 +14,7 @@
 
     <livewire:shared-components.modal.session-modal />
 
+    {{-- Pengumuman: Reset MFA mandiri via Email (dismissible, "jangan tampilkan lagi") --}}
+    <x-announcement-mfa />
+
 </div>

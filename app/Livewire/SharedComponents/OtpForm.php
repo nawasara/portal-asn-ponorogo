@@ -1,12 +1,14 @@
 <?php
 namespace App\Livewire\SharedComponents;
 
+use App\Mail\OtpMail;
 use Livewire\Component;
 use Illuminate\Support\Str;
 use Livewire\Attributes\On;
 use App\Traits\SessionTrait;
 use App\Services\KeycloakService;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use App\Services\WaNotificationService;
@@ -26,6 +28,8 @@ class OtpForm extends Component
     public bool $showAlert = false;
 
     public $waNumber;
+    public ?string $email = null;
+    public string $channel = 'wa'; // 'wa' | 'email' — default wa agar flow lama tak berubah
     public $userId = null;
     public $keycloakIdToken;
     public $keycloakUser;
@@ -61,15 +65,29 @@ class OtpForm extends Component
     }
 
     #[On('send-otp')]
-    public function sendOtp($waNumber = null)
+    public function sendOtp($waNumber = null, $email = null, $channel = null)
     {
+        if ($channel) {
+            $this->channel = $channel;
+        }
         if ($waNumber) {
             $this->waNumber = $waNumber;
         }
-        
-        if (!$this->waNumber) {
-            $this->addError('otp', 'Nomor WhatsApp kosong.');
-            return;
+        if ($email) {
+            $this->email = $email;
+        }
+
+        // Pastikan target sesuai channel terisi.
+        if ($this->channel === 'email') {
+            if (!$this->email) {
+                $this->addError('otp', 'Alamat email kosong.');
+                return;
+            }
+        } else {
+            if (!$this->waNumber) {
+                $this->addError('otp', 'Nomor WhatsApp kosong.');
+                return;
+            }
         }
 
         // simple throttle: max 3 sends per 10 minutes
@@ -91,11 +109,19 @@ class OtpForm extends Component
         // increment attempts (expire 10 minutes)
         Cache::put($attemptsKey, $attempts + 1, now()->addMinutes(10));
 
-        $this->sendToWhatsapp($generatedOtp);
+        if ($this->channel === 'email') {
+            $sent = $this->sendToEmail($generatedOtp);
+            if ($sent === false) {
+                return; // pesan error sudah di-set di sendToEmail
+            }
+            self::setMessage("OTP telah dikirim ke email " . mask_email($this->email), 'success');
+        } else {
+            $this->sendToWhatsapp($generatedOtp);
+            self::setMessage("OTP telah dikirim ke nomor WhatsApp " . mask_phone($this->waNumber), 'success');
+        }
 
-        self::setMessage("OTP telah dikirim ke nomor WhatsApp ".mask_phone($this->waNumber), 'success');
         $this->showForm = true;
-        
+
         // emit event frontend supaya bisa autofocus ke OTP field
         $this->dispatch('otp-sent');
     }
@@ -130,6 +156,31 @@ class OtpForm extends Component
             self::setMessage('Gagal mengirim OTP via WhatsApp: ' . $e->getMessage(), 'error');
             return;
         }
+    }
+
+    /**
+     * Kirim OTP via email (Laravel Mailer). Return false bila gagal kirim
+     * (pesan error sudah di-set), true bila sukses.
+     */
+    public function sendToEmail($otp): bool
+    {
+        if (!$this->email) {
+            self::setMessage('Alamat email tidak ditemukan.', 'error');
+            \info('No email for user ' . $this->userId);
+            return false;
+        }
+
+        $ref = Str::uuid()->toString();
+
+        try {
+            Mail::to($this->email)->send(new OtpMail($otp, $this->otpTtlMinutes, $ref));
+        } catch (\Throwable $e) {
+            self::setMessage('Gagal mengirim OTP via Email: ' . $e->getMessage(), 'error');
+            \info('Gagal kirim OTP email user ' . $this->userId . ': ' . $e->getMessage());
+            return false;
+        }
+
+        return true;
     }
 
     public function resendOtp()

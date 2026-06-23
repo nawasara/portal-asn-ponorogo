@@ -99,6 +99,16 @@ class KeycloakService
     }
 
     /**
+     * Get email dari user profile Keycloak (field top-level standar).
+     */
+    public function getEmail($userId): ?string
+    {
+        $user = $this->getUser($userId);
+
+        return $user['email'] ?? null;
+    }
+
+    /**
      * Update WhatsApp Number user
      */
     public function updateWhatsappNumber($userId, $whatsappNumber)
