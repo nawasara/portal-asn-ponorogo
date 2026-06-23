@@ -112,6 +112,8 @@ class OtpForm extends Component
         if ($this->channel === 'email') {
             $sent = $this->sendToEmail($generatedOtp);
             if ($sent === false) {
+                // Kirim gagal — beri tahu parent agar form NIP ditampilkan lagi (tidak buntu).
+                $this->dispatch('otp-send-failed');
                 return; // pesan error sudah di-set di sendToEmail
             }
             self::setMessage("OTP telah dikirim ke email " . mask_email($this->email), 'success');

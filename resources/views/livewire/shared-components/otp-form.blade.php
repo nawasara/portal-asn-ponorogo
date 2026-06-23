@@ -1,16 +1,17 @@
 <div>
-    @if ($showForm)
-        @if ($infoMessage && $infoMessageType == 'success')
-            <div class="mb-4 text-sm bg-emerald-50/80 dark:bg-emerald-500/10 border border-emerald-200/60 dark:border-emerald-500/30 text-emerald-700 dark:text-emerald-300 p-3 rounded-xl backdrop-blur-sm">
-                {{ $infoMessage }}
-            </div>
-        @endif
-        @if ($infoMessage && $infoMessageType == 'error')
-            <div class="mb-4 text-sm bg-rose-50/80 dark:bg-rose-500/10 border border-rose-200/60 dark:border-rose-500/30 text-rose-700 dark:text-rose-300 p-3 rounded-xl backdrop-blur-sm">
-                {{ $infoMessage }}
-            </div>
-        @endif
+    {{-- Pesan info/error di LUAR guard showForm, supaya feedback (mis. gagal kirim) tetap terlihat --}}
+    @if ($infoMessage && $infoMessageType == 'success')
+        <div class="mb-4 text-sm bg-emerald-50/80 dark:bg-emerald-500/10 border border-emerald-200/60 dark:border-emerald-500/30 text-emerald-700 dark:text-emerald-300 p-3 rounded-xl backdrop-blur-sm">
+            {{ $infoMessage }}
+        </div>
+    @endif
+    @if ($infoMessage && $infoMessageType == 'error')
+        <div class="mb-4 text-sm bg-rose-50/80 dark:bg-rose-500/10 border border-rose-200/60 dark:border-rose-500/30 text-rose-700 dark:text-rose-300 p-3 rounded-xl backdrop-blur-sm">
+            {{ $infoMessage }}
+        </div>
+    @endif
 
+    @if ($showForm)
         <div class="mt-6 pt-5 border-t border-slate-200/60 dark:border-slate-700/40">
             <h3 class="text-sm font-semibold mb-3 text-slate-700 dark:text-slate-200">{{ $label }}</h3>
             <form wire:submit="verifyOtp" class="space-y-4">

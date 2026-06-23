@@ -48,7 +48,8 @@
                         <svg class="size-4 text-slate-400 group-hover:text-emerald-600 group-hover:translate-x-0.5 transition shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
                     </a>
 
-                    <a href="{{ route('mfa.reset') }}" wire:navigate.hover
+                    {{-- full page load (tanpa wire:navigate) supaya Alpine x-mask & form di /reset-mfa ke-init --}}
+                    <a href="{{ route('mfa.reset') }}"
                         class="flex items-center gap-4 p-4 hover:bg-white/40 dark:hover:bg-white/5 transition group">
                         <div class="size-10 shrink-0 rounded-xl bg-gradient-to-br from-sky-400 to-blue-600 grid place-items-center shadow-md shadow-sky-500/20">
                             <svg class="size-5 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

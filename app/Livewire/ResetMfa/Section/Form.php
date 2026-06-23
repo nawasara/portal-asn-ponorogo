@@ -158,7 +158,18 @@ class Form extends Component
     #[On('otp-reach-limit')]
     public function otpReachLimit()
     {
+        $this->showForm = true; // tampilkan lagi form NIP supaya user bisa coba lagi
         $this->addError('nip', 'Pengiriman OTP dibatasi 3 kali dalam 10 menit. Silakan coba lagi nanti.');
+    }
+
+    /**
+     * Pengiriman OTP gagal (mis. SMTP error) — tampilkan lagi form NIP agar user
+     * tidak buntu. Pesan error detail sudah ditampilkan oleh OtpForm.
+     */
+    #[On('otp-send-failed')]
+    public function otpSendFailed()
+    {
+        $this->showForm = true;
     }
 
     public function render()

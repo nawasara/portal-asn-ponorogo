@@ -82,7 +82,8 @@
                         </div>
 
                         <div class="mt-6 flex flex-col gap-2.5">
-                            <a href="{{ url('/reset-mfa') }}" wire:navigate
+                            {{-- full page load (tanpa wire:navigate) supaya Alpine x-mask & form di /reset-mfa ke-init dengan benar --}}
+                            <a href="{{ url('/reset-mfa') }}"
                                 class="relative inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold text-white overflow-hidden group">
                                 <span class="absolute inset-0 bg-gradient-to-br from-emerald-500 to-teal-600"></span>
                                 <span class="absolute -inset-1 bg-gradient-to-br from-emerald-400 to-sky-500 blur-lg opacity-40 group-hover:opacity-70 transition"></span>
