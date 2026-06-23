@@ -26,7 +26,7 @@
     @endif
 
     @if ($showForm)
-        <form wire:submit.prevent="sendOtp" class="space-y-5">
+        <form wire:submit="sendOtp" class="space-y-5">
             <div>
                 <label class="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">NIP</label>
                 <input type="text" inputmode="numeric" placeholder="Masukkan NIP Anda untuk verifikasi"
