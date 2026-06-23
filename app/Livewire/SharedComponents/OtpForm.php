@@ -22,7 +22,7 @@ class OtpForm extends Component
     public string $label = 'Masukkan OTP';
     public ?string $otp = null;
     public ?string $error = null;
-    public int $otpTtlMinutes = 5;
+    public int $otpTtlMinutes = 60; // OTP berlaku 1 jam (email bisa delay; berlaku utk semua channel)
     public bool $showResend = true;
     public bool $showForm = false;
     public bool $showAlert = false;
