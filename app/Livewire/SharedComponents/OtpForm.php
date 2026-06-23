@@ -96,6 +96,10 @@ class OtpForm extends Component
             $this->identity = $identity;
         }
 
+        // Bersihkan pesan lama supaya banner "OTP telah dikirim" dari percobaan
+        // sebelumnya tidak nyangkut saat percobaan ini gagal/ke-throttle.
+        $this->resetMessage();
+
         // Pastikan target sesuai channel terisi.
         if ($this->channel === 'email') {
             if (!$this->email) {
@@ -109,12 +113,12 @@ class OtpForm extends Component
             }
         }
 
-        // simple throttle: max 3 sends per 10 minutes
+        // Throttle: maksimal 3 pengiriman BERHASIL per 10 menit.
         $attemptsKey = $this->getOtpAttemptsKey();
-        $attempts = Cache::get($attemptsKey, 0);
+        $attempts = (int) Cache::get($attemptsKey, 0);
         if ($attempts >= 3) {
-            info('OTP send attempts exceeded for user ' . $this->userId);
-            $this->addError('otp', 'Mencapai batas pengiriman OTP. Coba lagi nanti.');
+            info('OTP send attempts exceeded for ' . $this->otpIdentity());
+            self::setMessage('Pengiriman OTP dibatasi 3 kali dalam 10 menit. Silakan coba lagi nanti.', 'error');
             $this->dispatch('otp-reach-limit');
             return;
         }
@@ -122,24 +126,25 @@ class OtpForm extends Component
         // Generate OTP 6 digit
         $generatedOtp = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
 
-        // Simpan ke cache
-        Cache::put($this->getOtpCacheKey(), $generatedOtp, now()->addMinutes($this->otpTtlMinutes));
-
-        // increment attempts (expire 10 minutes)
-        Cache::put($attemptsKey, $attempts + 1, now()->addMinutes(10));
-
+        // Kirim dulu; baru anggap sebagai 1 attempt kalau benar-benar terkirim.
         if ($this->channel === 'email') {
             $sent = $this->sendToEmail($generatedOtp);
             if ($sent === false) {
-                // Kirim gagal — beri tahu parent agar form NIP ditampilkan lagi (tidak buntu).
+                // Kirim gagal — JANGAN hitung attempt, JANGAN simpan OTP.
+                // Beri tahu parent agar form NIP ditampilkan lagi (tidak buntu).
                 $this->dispatch('otp-send-failed');
                 return; // pesan error sudah di-set di sendToEmail
             }
             self::setMessage("OTP telah dikirim ke email " . mask_email($this->email), 'success');
         } else {
             $this->sendToWhatsapp($generatedOtp);
+            // sendToWhatsapp men-set pesan error sendiri bila gagal; di sini anggap terkirim.
             self::setMessage("OTP telah dikirim ke nomor WhatsApp " . mask_phone($this->waNumber), 'success');
         }
+
+        // Simpan OTP + hitung attempt HANYA setelah kirim berhasil.
+        Cache::put($this->getOtpCacheKey(), $generatedOtp, now()->addMinutes($this->otpTtlMinutes));
+        Cache::put($attemptsKey, $attempts + 1, now()->addMinutes(10));
 
         $this->showForm = true;
 
