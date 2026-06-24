@@ -108,13 +108,13 @@
                     </svg>
                 </div>
 
-                <h3 class="relative text-lg font-bold tracking-tight mb-2 dark:text-white">Panduan PDF</h3>
+                <h3 class="relative text-lg font-bold tracking-tight mb-2 dark:text-white">Dokumentasi SSO</h3>
                 <p class="relative text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-5">
-                    Unduh panduan lengkap pengaktifan MFA SSO dalam format PDF.
+                    Folder dokumentasi lengkap: panduan pengaktifan MFA SSO dan materi terkait.
                 </p>
 
                 <div class="relative inline-flex items-center gap-1.5 text-sm font-semibold text-emerald-600 dark:text-emerald-400">
-                    Dapatkan panduan
+                    Buka dokumentasi
                     <svg class="size-4 group-hover:translate-x-1 transition" xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
                         stroke-linecap="round" stroke-linejoin="round">
