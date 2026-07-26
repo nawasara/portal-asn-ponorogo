@@ -1,5 +1,8 @@
 <div>
 
+    {{-- Ajakan daftar Passkey (muncul hanya kalau user belum punya passkey) --}}
+    <livewire:shared-components.passkey-banner />
+
     <livewire:dashboard.section.hero />
 
     <livewire:dashboard.section.app-list />

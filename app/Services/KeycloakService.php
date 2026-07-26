@@ -197,6 +197,46 @@ class KeycloakService
         return true;
     }
 
+    /**
+     * Cek apakah user sudah punya passkey (credential webauthn-passwordless)
+     * di Keycloak. Dipakai untuk menampilkan banner "Daftar Passkey" HANYA
+     * untuk user yang belum mendaftar.
+     */
+    public function hasPasskey(string $userId): bool
+    {
+        try {
+            $token = $this->getAdminToken();
+            $response = Http::withToken($token)
+                ->get("{$this->baseUrl}/admin/realms/{$this->realm}/users/{$userId}/credentials");
+
+            if ($response->failed()) {
+                return false; // gagal cek → jangan ganggu user dengan banner
+            }
+
+            foreach ($response->json() as $credential) {
+                if (($credential['type'] ?? null) === 'webauthn-passwordless') {
+                    return true;
+                }
+            }
+            return false;
+        } catch (\Throwable $e) {
+            info('Gagal cek passkey user: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * URL setup passkey via Account Console Keycloak (halaman "Signing in").
+     * User klik dari banner portal → diarahkan ke sini → daftar passkey →
+     * kembali ke portal.
+     */
+    public function passkeySetupUrl(): string
+    {
+        // Account console → security/signing-in (di situ ada opsi Passkey).
+        return rtrim($this->baseUrl, '/')
+            . "/realms/{$this->realm}/account/#/security/signing-in";
+    }
+
     /* logout keycloak url */
     public function logout()
     {
