@@ -1,8 +1,5 @@
 <div>
 
-    {{-- Ajakan daftar Passkey (muncul hanya kalau user belum punya passkey) --}}
-    <livewire:shared-components.passkey-banner />
-
     <livewire:dashboard.section.hero />
 
     <livewire:dashboard.section.app-list />
@@ -17,7 +14,8 @@
 
     <livewire:shared-components.modal.session-modal />
 
-    {{-- Pengumuman: Reset MFA mandiri via Email (dismissible, "jangan tampilkan lagi") --}}
-    <x-announcement-mfa />
+    {{-- Popup ajakan daftar Passkey (muncul hanya kalau user belum punya passkey,
+         dismissible). Menggantikan popup announcement reset-MFA. --}}
+    <livewire:shared-components.passkey-banner />
 
 </div>
