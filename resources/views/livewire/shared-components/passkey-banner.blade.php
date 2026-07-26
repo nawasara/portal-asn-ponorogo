@@ -86,7 +86,7 @@
                                     <p class="mt-2.5 text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
                                         Login lebih cepat &amp; aman <b>tanpa password</b> — cukup sidik jari,
                                         wajah, atau PIN perangkat Anda. Passkey berlaku untuk
-                                        <b>semua aplikasi Pemkab Ponorogo</b>.
+                                        <b>semua aplikasi Pemkab Ponorogo yang terhubung dengan Kisara SSO</b>.
                                     </p>
                                 </div>
 
