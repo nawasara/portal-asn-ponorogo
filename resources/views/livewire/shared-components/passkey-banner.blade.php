@@ -91,7 +91,7 @@
                                 </div>
 
                                 <div class="mt-6 flex flex-col gap-2.5">
-                                    <a href="{{ $setupUrl }}"
+                                    <a href="{{ route('passkey.register') }}"
                                         class="relative inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold text-white overflow-hidden group no-underline">
                                         <span class="absolute inset-0 bg-gradient-to-br from-red-500 to-rose-600"></span>
                                         <span class="absolute -inset-1 bg-gradient-to-br from-red-400 to-orange-500 blur-lg opacity-40 group-hover:opacity-70 transition"></span>

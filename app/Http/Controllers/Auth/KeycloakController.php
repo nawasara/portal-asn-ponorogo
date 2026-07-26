@@ -22,6 +22,22 @@ class KeycloakController extends \App\Http\Controllers\Controller
         return Socialite::driver('keycloak')->redirect();
     }
 
+    /**
+     * Arahkan user langsung ke halaman SETUP PASSKEY Keycloak (ber-theme asn-v2),
+     * TANPA lewat account console native. Pakai parameter OIDC `kc_action=
+     * webauthn-register-passwordless`: Keycloak jalankan required-action register
+     * passkey lalu redirect balik ke portal (callback biasa).
+     *
+     * User biasanya sudah punya sesi SSO aktif → Keycloak cukup memicu setup
+     * (kadang minta re-auth singkat), tidak login ulang penuh.
+     */
+    public function redirectToRegisterPasskey()
+    {
+        return Socialite::driver('keycloak')
+            ->with(['kc_action' => 'webauthn-register-passwordless'])
+            ->redirect();
+    }
+
     public function handleProviderCallback()
     {
         try {

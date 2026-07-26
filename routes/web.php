@@ -38,4 +38,7 @@ Route::get('/login', [KeycloakController::class, 'redirectToProvider'])->name('l
 Route::get('/login/keycloak/callback', [KeycloakController::class, 'handleProviderCallback'])->name('login.callback');
 Route::post('/logout', [KeycloakController::class, 'logout'])->name('logout');
 
+// Daftar passkey langsung (kc_action) — tanpa account console native Keycloak.
+Route::get('/register-passkey', [KeycloakController::class, 'redirectToRegisterPasskey'])->name('passkey.register');
+
 
