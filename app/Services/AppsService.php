@@ -47,8 +47,8 @@ class AppsService
                 'icon' => asset("img/sadap.png"),
                 'icon_type' => 'image',
                 'description' => 'Portal satu data Pemerintah Kabupaten Ponorogo',
-                'status' => 'coming soon',
-                'link' => '#'
+                'status' => 'connected',
+                'link' => 'https://sadap.ponorogo.go.id/sso'
             ],
         ];
     }
