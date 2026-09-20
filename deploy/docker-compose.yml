@@ -1,0 +1,54 @@
+name: asn-portal
+services:
+    # ---- Aplikasi (PHP-FPM) ----
+    app:
+        container_name: asn-portal-app
+        build:
+            context: ..
+            dockerfile: deploy/Dockerfile
+        image: asn-portal:latest
+        restart: unless-stopped
+        env_file:
+            - ../.env
+        # DB berada di host lain di VLAN yang sama; entri ini memudahkan bila
+        # suatu saat DB dipindah ke host Docker yang sama.
+        extra_hosts:
+            - "host.docker.internal:host-gateway"
+        volumes:
+            # Berkas yang diunggah harus bertahan antar deploy.
+            - app-storage:/var/www/html/storage/app
+            # Log dipisah supaya tetap ada setelah rebuild dan terbaca dari host.
+            # Hanya storage/logs yang di-mount, bukan storage/ utuh, sebab itu
+            # akan menimpa framework/{cache,sessions,views}.
+            - app-logs-storage:/var/www/html/storage/logs
+            # public/ dibagikan ke nginx, diisi entrypoint dari public-dist.
+            - public:/var/www/html/public
+        networks:
+            - internal
+        # Tidak ada ports: app tidak diekspos ke host, hanya lewat nginx.
+
+    # ---- Web server (Nginx) ----
+    web:
+        container_name: asn-portal-web
+        image: nginx:1.27-alpine
+        restart: unless-stopped
+        depends_on:
+            - app
+        volumes:
+            - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+            - public:/var/www/html/public:ro
+        # Loopback saja. cloudflared di host yang meneruskan trafik ke sini,
+        # jadi port ini tidak perlu terbuka ke jaringan.
+        ports:
+            - "127.0.0.1:${APP_HOST_PORT:-8100}:80"
+        networks:
+            - internal
+
+networks:
+    internal:
+        driver: bridge
+
+volumes:
+    app-storage:
+    app-logs-storage:
+    public:

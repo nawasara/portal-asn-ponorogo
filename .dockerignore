@@ -1,0 +1,16 @@
+.git
+.github
+node_modules
+vendor
+public/build
+storage/app/public/*
+storage/logs/*
+.env
+.env.bak-*
+
+# Cache hasil package discovery. Berkas ini dibuat saat paket dev masih
+# terpasang (era Laravel Sail), sehingga memuat PailServiceProvider yang tidak
+# ada di image produksi --no-dev. Membawanya masuk membuat Laravel gagal boot
+# dengan "Class Laravel\Pail\PailServiceProvider not found".
+# Laravel membangun ulang cache ini sendiri saat container start.
+bootstrap/cache/*.php
