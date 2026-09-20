@@ -25,6 +25,26 @@
     </script>
     --}}
 
+    {{-- Tema gelap, sama seperti layouts/app.blade.php.
+
+         Tata letak ini memakai kelas `dark:` tetapi sebelumnya tidak pernah
+         membaca pilihan tema sama sekali, sehingga halaman tamu selalu tampil
+         terang meskipun pengguna sudah memilih gelap di halaman lain. --}}
+    <script>
+        window.applyTheme = function () {
+            const tersimpan = localStorage.getItem('hs_theme');
+            const sukaGelap = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+            document.documentElement.classList.toggle(
+                'dark',
+                tersimpan === 'dark' || (!tersimpan && sukaGelap)
+            );
+        };
+
+        window.applyTheme();
+        document.addEventListener('livewire:navigated', () => window.applyTheme());
+    </script>
+
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/map.js'])
 
