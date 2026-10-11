@@ -25,25 +25,8 @@
 
     <title>{{ config('app.name', 'Laravel') }}</title>
 
-    {{-- Tema gelap, diterapkan SEBELUM gaya apa pun tergambar.
-
-         Harus di <head> dan tanpa `defer`: menaruhnya di akhir <body> membuat
-         halaman sempat tergambar terang lebih dulu, lalu berkedip jadi gelap.
-
-         Didaftarkan sebagai fungsi global supaya bisa dipanggil ulang setelah
-         wire:navigate, yang mengganti isi halaman tanpa memuat ulang dokumen
-         sehingga skrip sekali-jalan tidak pernah berjalan lagi. --}}
-    <script>
-        window.applyTheme = function () {
-            const tersimpan = localStorage.getItem('hs_theme');
-            const sukaGelap = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            const gelap = tersimpan === 'dark' || (!tersimpan && sukaGelap);
-
-            document.documentElement.classList.toggle('dark', gelap);
-        };
-
-        window.applyTheme();
-    </script>
+    {{-- Tema gelap: lihat components/theme-script.blade.php. --}}
+    <x-theme-script />
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -73,24 +56,6 @@
 
     @stack('modals')
     @livewireScripts
-
-    <script>
-        // Terapkan ulang tema setiap kali Livewire selesai berpindah halaman.
-        //
-        // wire:navigate menukar isi <body> tanpa memuat ulang dokumen, jadi
-        // skrip di <head> hanya berjalan sekali seumur kunjungan. Tanpa baris
-        // ini, mengklik logo di topbar (yang memakai wire:navigate.hover)
-        // membuat kelas `dark` hilang dan tampilan kembali terang, padahal
-        // pilihan pengguna di localStorage tidak berubah.
-        document.addEventListener('livewire:navigated', () => window.applyTheme());
-
-        // Ikuti perubahan tema sistem, tetapi hanya selama pengguna belum
-        // memilih sendiri. Sekali mereka menekan tombol, pilihan itu yang
-        // berlaku dan tidak boleh ditimpa saat sistem berganti mode.
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-            if (!localStorage.getItem('hs_theme')) window.applyTheme();
-        });
-    </script>
 
 </body>
 
