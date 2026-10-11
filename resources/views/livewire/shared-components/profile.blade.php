@@ -64,6 +64,30 @@
                         <svg class="size-4 text-slate-400 group-hover:text-sky-600 group-hover:translate-x-0.5 transition shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
                     </a>
 
+                    {{-- Jalan cadangan bila popup ajakan passkey tidak muncul. Full page
+                         load: tujuannya redirect ke halaman daftar passkey Keycloak. --}}
+                    <a href="{{ route('passkey.register') }}"
+                        class="flex items-center gap-4 p-4 hover:bg-white/40 dark:hover:bg-white/5 transition group">
+                        <div class="size-10 shrink-0 rounded-xl bg-gradient-to-br from-amber-400 to-orange-600 grid place-items-center shadow-md shadow-amber-500/20">
+                            <svg class="size-5 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M2 12C2 6.5 6.5 2 12 2a10 10 0 0 1 8 4"/>
+                                <path d="M5 19.5C5.5 18 6 15 6 12a6 6 0 0 1 .34-2"/>
+                                <path d="M17.29 21.02c.12-.6.43-2.3.5-3.02"/>
+                                <path d="M12 10a2 2 0 0 0-2 2c0 1.02-.1 2.51-.26 4"/>
+                                <path d="M8.65 22c.21-.66.45-1.32.57-2"/>
+                                <path d="M14 13.12c0 2.38 0 6.38-1 8.88"/>
+                                <path d="M2 16h.01"/>
+                                <path d="M21.8 16c.2-2 .131-5.354 0-6"/>
+                                <path d="M9 6.8a6 6 0 0 1 9 5.2c0 .47 0 1.17-.02 2"/>
+                            </svg>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="font-semibold dark:text-white">Tambah Passkey</div>
+                            <div class="text-xs text-slate-500 dark:text-slate-400">Masuk dengan sidik jari, wajah, atau PIN perangkat</div>
+                        </div>
+                        <svg class="size-4 text-slate-400 group-hover:text-amber-600 group-hover:translate-x-0.5 transition shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+                    </a>
+
                     {{-- Dark mode toggle --}}
                     <div class="flex items-center gap-4 p-4">
                         <div class="size-10 shrink-0 rounded-xl bg-gradient-to-br from-violet-400 to-fuchsia-600 grid place-items-center shadow-md shadow-violet-500/20">

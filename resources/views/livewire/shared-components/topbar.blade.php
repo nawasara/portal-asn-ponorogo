@@ -85,6 +85,27 @@
                                     Reset MFA
                                 </a>
 
+                                {{-- Jalan cadangan bila popup ajakan passkey tidak muncul (sudah
+                                     ditutup, atau tersimpan per-browser). Tanpa wire:navigate:
+                                     tujuannya redirect ke Keycloak, bukan halaman Livewire. --}}
+                                <a href="{{ route('passkey.register') }}"
+                                    class="flex w-full items-center gap-x-3 py-2 px-3 rounded-lg text-sm text-slate-700 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-white/5 transition">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" class="size-4 text-slate-500 dark:text-slate-400">
+                                        <path d="M2 12C2 6.5 6.5 2 12 2a10 10 0 0 1 8 4"/>
+                                        <path d="M5 19.5C5.5 18 6 15 6 12a6 6 0 0 1 .34-2"/>
+                                        <path d="M17.29 21.02c.12-.6.43-2.3.5-3.02"/>
+                                        <path d="M12 10a2 2 0 0 0-2 2c0 1.02-.1 2.51-.26 4"/>
+                                        <path d="M8.65 22c.21-.66.45-1.32.57-2"/>
+                                        <path d="M14 13.12c0 2.38 0 6.38-1 8.88"/>
+                                        <path d="M2 16h.01"/>
+                                        <path d="M21.8 16c.2-2 .131-5.354 0-6"/>
+                                        <path d="M9 6.8a6 6 0 0 1 9 5.2c0 .47 0 1.17-.02 2"/>
+                                    </svg>
+                                    Tambah Passkey
+                                </a>
+
                                 <div class="mt-1 pt-1 border-t border-slate-200/60 dark:border-slate-700/40">
                                     <form method="POST" action="{{ route('logout') }}">
                                         @csrf
