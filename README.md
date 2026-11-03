@@ -18,8 +18,8 @@ Visit at [https://asn.ponorogo.go.id](https://asn.ponorogo.go.id)
 This project implements an internal portal for ASN Ponorogo with features like:
 
 -   Keycloak SSO login/logout flows (Socialite driver)
--   User profile, dashboard and MFA/OTP flows using WhatsApp
--   Livewire components for OTP handling and interactive forms
+-   App catalog (from the Nawasara panel) and help pages
+-   Account management lives in Akun Kisara (asn-account.ponorogo.go.id); see below
 -   Tailwind-based responsive UI with dark mode support
 
 ## Prerequisites
@@ -72,10 +72,21 @@ Open your browser at the `APP_URL` value.
 -   Tailwind config is in `tailwind.config.js` and assets live in `resources/css` and `resources/js`.
 -   Dark mode is implemented using Tailwind's `class` strategy and a small script that reads `localStorage.theme`.
 
-## OTP / WhatsApp flow
+## Daftar aplikasi & Akun Kisara
 
--   The application sends OTP codes to WhatsApp numbers via an internal `WaNotificationService` (or similar). OTP state is cached with TTL and rate-limited.
--   The OTP UI is implemented as a reusable Livewire component at `app/Livewire/Components/OtpForm.php` and view `resources/views/livewire/components/otp-form.blade.php`.
+-   Daftar aplikasi **tidak lagi ditulis di kode**. `AppsService` mengambilnya dari katalog di panel Nawasara (`GET {NAWASARA_ASN_PORTAL_API}/public/apps`, paket `nawasara/asn-portal`), katalog yang sama dengan peluncur di Akun Kisara. Menambah atau mengubah aplikasi cukup lewat panel.
+-   Disimpan di cache 5 menit (`NAWASARA_APPS_TTL`). Kalau Nawasara tidak terjangkau, portal memakai daftar terakhir yang berhasil diambil, lalu daftar bawaan di `AppsService::FALLBACK`. Beranda tidak boleh kosong hanya karena Nawasara sedang bermasalah.
+-   Logo: `icon_url` dari katalog bila ada. Kalau kosong, dipakai logo lama di `public/img` (dipetakan lewat slug), lalu kotak singkatan dengan warna dari katalog.
+-   Isi katalog diketik staf, jadi tautan selain `http(s)` dibuang dan warna hanya diterima dalam bentuk hex.
+-   Menu **Kelola Akun Kisara** (dropdown pengguna dan halaman Profil) mengarah ke `ACCOUNT_URL`, bawaannya `https://asn-account.ponorogo.go.id`. Pengelolaan profil, keamanan, perangkat, email dinas, dan VPN dilakukan di sana.
+
+## Reset MFA, nomor WhatsApp, passkey: pindah ke Akun Kisara
+
+Sejak 3 November 2026 portal ini **tidak lagi mengirim kode OTP** dan tidak lagi punya halaman reset MFA, ganti nomor WhatsApp, atau daftar passkey. Semuanya ada di Akun Kisara, dan email kodenya dikirim Nawasara dari `kisara@ponorogo.go.id` (Vault grup `smtp-kisara`), alamat yang sama yang dulu dipakai portal ini.
+
+Alamat lama (`/reset-mfa`, `/update-whatsapp-number`, `/register-passkey`) dialihkan 301 ke halaman padanannya, karena sudah tersebar di bookmark, poster, dan pesan WhatsApp. Jangan hapus pengalihan itu.
+
+Paksaan mengisi nomor WhatsApp sebelum membuka beranda juga dihapus. Akun Kisara mengirim kode reset ke email lebih dulu, dan memaksa orang ke halaman WhatsApp selagi gateway WhatsApp mati hanya membuat mereka terkunci di luar beranda.
 
 ## Keycloak SSO
 
@@ -100,7 +111,6 @@ Open your browser at the `APP_URL` value.
 
 -   Dark mode not toggling: check `resources/views/components/layouts/app.blade.php` for the global dark-mode script and ensure no page-level scripts overwrite it.
 -   Missing Alpine features: Livewire may bundle Alpine; avoid loading conflicting Alpine versions.
--   OTP not sent: verify `WaNotificationService` credentials and that `cache` is writable.
 
 ## Contribution
 

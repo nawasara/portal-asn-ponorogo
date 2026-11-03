@@ -61,34 +61,6 @@ class KeycloakService
     }
 
     /**
-     * Get user by username
-     */
-    public function getUserByUsername(string $username)
-    {
-        $token = $this->getAdminToken();
-
-        // Gunakan parameter search agar fleksibel (tidak case-sensitive)
-        $response = Http::withToken($token)->get("{$this->baseUrl}/admin/realms/{$this->realm}/users", [
-            'username' => $username,
-            'exact' => true, // hanya user dengan username persis sama
-        ]);
-
-        if ($response->failed()) {
-            throw new \Exception('Gagal mencari user berdasarkan username di Keycloak');
-        }
-
-        $users = $response->json();
-
-        // Keycloak bisa mengembalikan array kosong jika user tidak ditemukan
-        if (empty($users)) {
-            return null;
-        }
-
-        // Ambil user pertama karena username seharusnya unik
-        return $users[0];
-    }
-
-    /**
      * Get WhatsApp Number dari user profile
      */
     public function getWhatsappNumber($userId)
@@ -109,44 +81,6 @@ class KeycloakService
     }
 
     /**
-     * Update WhatsApp Number user
-     */
-    public function updateWhatsappNumber($userId, $whatsappNumber)
-    {
-        $token = $this->getAdminToken();
-
-        // Ambil data user saat ini
-        $userResponse = Http::withToken($token)
-            ->get("{$this->baseUrl}/admin/realms/{$this->realm}/users/{$userId}");
-
-        if ($userResponse->failed()) {
-            throw new \Exception('Gagal mengambil data user dari Keycloak');
-        }
-
-        $userData = $userResponse->json();
-
-        // Pastikan attributes tidak null
-        $attributes = $userData['attributes'] ?? [];
-
-        // Update / tambah whatsapp_number
-        $attributes['whatsapp_number'] = [$whatsappNumber];
-        $attributes['whatsapp_verified_at'] = [now()->toDateTimeString()];
-
-        // Merge kembali ke data user
-        $userData['attributes'] = $attributes;
-
-        // Kirim update ke Keycloak
-        $response = Http::withToken($token)
-            ->put("{$this->baseUrl}/admin/realms/{$this->realm}/users/{$userId}", $userData);
-
-        if ($response->failed()) {
-            throw new \Exception('Gagal update nomor WhatsApp di Keycloak');
-        }
-
-        return true;
-    }
-
-    /**
      * Cek status login user berdasarkan access token 
      */
     public function checkLoginStatus(string $accessToken): array
@@ -162,39 +96,6 @@ class KeycloakService
         }
 
         return $response->json();
-    }
-
-    /**
-     * Reset OTP (MFA) user di Keycloak
-      */
-    public function resetOtp(string $userId): bool
-    {
-        $token = $this->getAdminToken();
-
-        // Ambil semua credential user
-        $response = Http::withToken($token)->get("{$this->baseUrl}/admin/realms/{$this->realm}/users/{$userId}/credentials");
-
-        if ($response->failed()) {
-            throw new \Exception('Gagal mengambil credential user');
-        }
-
-        $credentials = $response->json();
-
-        // Cari credential bertipe OTP (totp atau hotp)
-        foreach ($credentials as $credential) {
-            if (isset($credential['type']) && $credential['type'] === 'otp') {
-                $credentialId = $credential['id'];
-
-                // Hapus credential OTP
-                $delete = Http::withToken($token)->delete("{$this->baseUrl}/admin/realms/{$this->realm}/users/{$userId}/credentials/{$credentialId}");
-
-                if ($delete->failed()) {
-                    throw new \Exception('Gagal reset OTP untuk user');
-                }
-            }
-        }
-
-        return true;
     }
 
     /**
@@ -223,18 +124,6 @@ class KeycloakService
             info('Gagal cek passkey user: ' . $e->getMessage());
             return false;
         }
-    }
-
-    /**
-     * URL setup passkey via Account Console Keycloak (halaman "Signing in").
-     * User klik dari banner portal → diarahkan ke sini → daftar passkey →
-     * kembali ke portal.
-     */
-    public function passkeySetupUrl(): string
-    {
-        // Account console → security/signing-in (di situ ada opsi Passkey).
-        return rtrim($this->baseUrl, '/')
-            . "/realms/{$this->realm}/account/#/security/signing-in";
     }
 
     /* logout keycloak url */

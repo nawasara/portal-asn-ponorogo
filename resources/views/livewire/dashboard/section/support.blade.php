@@ -19,7 +19,7 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
             {{-- Reset MFA --}}
-            <a href="{{ route('mfa.reset') }}"
+            <a href="{{ account_url('/reset-mfa') }}"
                 class="tilt glass-card gradient-border rounded-3xl p-6 group relative block overflow-hidden"
                 data-aos="zoom-in" data-aos-duration="1000">
                 <div

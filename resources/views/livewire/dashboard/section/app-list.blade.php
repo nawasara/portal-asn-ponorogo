@@ -62,16 +62,24 @@
                 @foreach ($this->filteredApps as $app)
                     <a href="{{ $app['link'] }}"
                         class="tilt glass-card gradient-border rounded-3xl p-6 group relative block overflow-hidden"
-                        wire:key="app-{{ $loop->index }}-{{ $app['name'] }}">
+                        wire:key="app-{{ $loop->index }}-{{ $app['slug'] }}">
                         <div
                             class="absolute -top-20 -right-20 w-48 h-48 rounded-full bg-emerald-400/20 blur-3xl opacity-0 group-hover:opacity-100 transition duration-500">
                         </div>
 
                         <div class="relative flex items-start justify-between mb-6">
-                            <div class="size-14 rounded-2xl glass-card grid place-items-center p-2.5 shadow-inner">
-                                <img src="{{ $app['icon'] }}" alt="{{ $app['name'] }} Icon"
-                                    class="max-h-full max-w-full object-contain" loading="lazy" />
-                            </div>
+                            @if ($app['icon'])
+                                <div class="size-14 rounded-2xl glass-card grid place-items-center p-2.5 shadow-inner">
+                                    <img src="{{ $app['icon'] }}" alt="{{ $app['name'] }} Icon"
+                                        class="max-h-full max-w-full object-contain" loading="lazy" />
+                                </div>
+                            @else
+                                {{-- Aplikasi tanpa logo di katalog: singkatan + warna dari panel Nawasara --}}
+                                <div class="size-14 rounded-2xl grid place-items-center text-white text-lg font-bold shadow-inner"
+                                    style="background: {{ $app['color'] }}">
+                                    {{ $app['abbreviation'] }}
+                                </div>
+                            @endif
                             @if ($app['status'] === 'connected')
                                 <span
                                     class="inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-full bg-emerald-100/80 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300">

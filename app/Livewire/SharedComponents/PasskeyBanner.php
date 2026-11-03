@@ -17,7 +17,7 @@ use Livewire\Component;
  *
  * Alur rollout (ide "daftar setelah login, dipandu via portal"):
  *   login password normal → masuk portal → banner → klik "Daftar Passkey"
- *   → Account Console Keycloak (setup) → kembali → login berikutnya bisa passkey.
+ *   → halaman Passkey di Akun Kisara → login berikutnya bisa passkey.
  */
 class PasskeyBanner extends Component
 {
@@ -38,7 +38,7 @@ class PasskeyBanner extends Component
         $service = new KeycloakService();
         // Tampilkan banner hanya kalau user BELUM punya passkey.
         $this->show = ! $service->hasPasskey($userId);
-        $this->setupUrl = $service->passkeySetupUrl();
+        $this->setupUrl = account_url('/security/passkeys');
     }
 
     public function render()

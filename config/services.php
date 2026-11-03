@@ -42,38 +42,15 @@ return [
         'realms' => env('KEYCLOAK_REALM')         // Specify your keycloak realm
     ],
 
-    'whatsapp' => [
-        'api_url' => env('WHATSAPP_API_URL'),
-        'api_key' => env('WHATSAPP_API_KEY'),
-
-        // Saat WAGO tidak tersedia (mis. nomor kena ban), set false untuk
-        // melewati cek nomor + pengiriman OTP. Form input WA TETAP muncul
-        // dan nomor TETAP disimpan — hanya verifikasinya yang dilewati.
-        'verification_enabled' => env('WHATSAPP_VERIFICATION_ENABLED', true),
+    // Katalog aplikasi dikelola di panel Nawasara (nawasara/asn-portal).
+    'nawasara' => [
+        'api_url' => env('NAWASARA_ASN_PORTAL_API', 'https://nawasara.ponorogo.go.id/api/v1/asn-portal'),
+        'apps_ttl' => (int) env('NAWASARA_APPS_TTL', 300),
     ],
 
-    /*
-    |--------------------------------------------------------------------------
-    | Gmail SMTP pool (untuk pengiriman OTP email)
-    |--------------------------------------------------------------------------
-    | Daftar akun Gmail untuk kirim email OTP secara random + failover, agar
-    | tidak bergantung pada satu akun (kena limit harian / diblok).
-    |
-    | Isi MAIL_GMAIL_POOL di .env dengan JSON array. Tiap item:
-    |   { "user": "akun@gmail.com", "pass": "app-password-16char", "from": "akun@gmail.com", "name": "SSO ASN Ponorogo" }
-    | "pass" = Google App Password (butuh 2FA aktif), BUKAN password login biasa.
-    | "from" & "name" opsional (default ke user / nama global).
-    |
-    | Contoh (satu baris di .env):
-    |   MAIL_GMAIL_POOL='[{"user":"a@gmail.com","pass":"xxxx xxxx xxxx xxxx"},{"user":"b@gmail.com","pass":"yyyy yyyy yyyy yyyy"}]'
-    */
-    'gmail_pool' => [
-        'accounts' => array_values(array_filter(
-            json_decode((string) env('MAIL_GMAIL_POOL', '[]'), true) ?: [],
-            fn ($a) => is_array($a) && !empty($a['user']) && !empty($a['pass'])
-        )),
-        'host' => env('MAIL_GMAIL_HOST', 'smtp.gmail.com'),
-        'port' => (int) env('MAIL_GMAIL_PORT', 587),
+    // Pengelolaan akun (profil, keamanan, perangkat, layanan) pindah ke Akun Kisara.
+    'account' => [
+        'url' => env('ACCOUNT_URL', 'https://asn-account.ponorogo.go.id'),
     ],
 
 ];
