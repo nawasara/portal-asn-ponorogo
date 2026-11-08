@@ -58,7 +58,7 @@
                         </button>
 
                         {{-- Icon --}}
-                        <div class="mx-auto mb-5 size-14 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-600 grid place-items-center shadow-lg shadow-emerald-500/30">
+                        <div class="mx-auto mb-5 size-14 rounded-2xl bg-gradient-to-br from-teal-400 to-teal-600 grid place-items-center shadow-lg shadow-teal-500/30">
                             <svg class="size-7 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                 stroke-linejoin="round">
@@ -68,8 +68,8 @@
                         </div>
 
                         <div class="text-center">
-                            <span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-100 dark:bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 text-xs font-semibold px-3 py-1 mb-3">
-                                <span class="size-1.5 rounded-full bg-emerald-500"></span> Info Terbaru
+                            <span class="inline-flex items-center gap-1.5 rounded-full bg-teal-100 dark:bg-teal-500/15 text-teal-700 dark:text-teal-300 text-xs font-semibold px-3 py-1 mb-3">
+                                <span class="size-1.5 rounded-full bg-teal-500"></span> Info Terbaru
                             </span>
                             <h3 class="text-xl font-bold tracking-tight text-slate-800 dark:text-white">
                                 Reset MFA Kini Bisa via Email
@@ -85,8 +85,8 @@
                             {{-- full page load (tanpa wire:navigate) supaya Alpine x-mask & form di /reset-mfa ke-init dengan benar --}}
                             <a href="{{ url('/reset-mfa') }}"
                                 class="relative inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold text-white overflow-hidden group">
-                                <span class="absolute inset-0 bg-gradient-to-br from-emerald-500 to-teal-600"></span>
-                                <span class="absolute -inset-1 bg-gradient-to-br from-emerald-400 to-sky-500 blur-lg opacity-40 group-hover:opacity-70 transition"></span>
+                                <span class="absolute inset-0 bg-gradient-to-br from-teal-500 to-teal-600"></span>
+                                <span class="absolute -inset-1 bg-gradient-to-br from-teal-400 to-ks-blue blur-lg opacity-40 group-hover:opacity-70 transition"></span>
                                 <span class="relative">Reset MFA Sekarang</span>
                             </a>
 
@@ -99,7 +99,7 @@
                         {{-- Jangan tampilkan lagi --}}
                         <label class="mt-4 flex items-center justify-center gap-2 text-xs text-slate-500 dark:text-slate-400 cursor-pointer select-none">
                             <input type="checkbox" x-model="dontShow"
-                                class="rounded border-slate-300 dark:border-slate-600 text-emerald-600 focus:ring-emerald-500/40" />
+                                class="rounded border-slate-300 dark:border-slate-600 text-teal-600 focus:ring-teal-500/40" />
                             Jangan tampilkan pengumuman ini lagi
                         </label>
                     </div>

@@ -5,52 +5,43 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta name="theme-color" content="#ffffff">
+    <meta name="theme-color" content="#f8fafc">
 
-    <!-- Favicon untuk berbagai perangkat -->
-    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('favicon/apple-touch-icon.png') }}">
+    {{-- Logo Portal ASN — sistem logo Kisara v1 (nawasara-dev docs/brand/kisara-logo) --}}
+    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon/mark.svg') }}">
     <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon/favicon-32x32.png') }}">
     <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('favicon/favicon-16x16.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('favicon/apple-touch-icon.png') }}">
     <link rel="manifest" href="{{ asset('favicon/site.webmanifest') }}">
     <link rel="shortcut icon" href="{{ asset('favicon/favicon.ico') }}">
 
-    <!-- Untuk Android / PWA -->
-    <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('favicon/android-chrome-192x192.png') }}">
-    <link rel="icon" type="image/png" sizes="512x512" href="{{ asset('favicon/android-chrome-512x512.png') }}">
-    <!-- Favicon -->
-    <link rel="shortcut icon" href="{{ asset('favicon.png') }}">
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>{{ config('app.name', 'Portal ASN') }}</title>
 
     {{-- Tema gelap: lihat components/theme-script.blade.php. --}}
     <x-theme-script />
 
-    <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <script defer src="https://unpkg.com/@alpinejs/ui@3.15.0/dist/cdn.min.js"></script>
     <script defer src="https://unpkg.com/@alpinejs/focus@3.15.0/dist/cdn.min.js"></script>
 
-    <!-- Styles -->
     @livewireStyles
 </head>
 
-<body class="font-sans antialiased bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 overflow-x-hidden">
+<body class="font-sans antialiased bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200 overflow-x-hidden">
 
-    <x-aurora />
+    <div class="ks-strip"></div>
 
-    {{-- topbar desktop --}}
-    <div class="fixed top-0 inset-x-0 z-[10]">
-        <livewire:shared-components.topbar />
-    </div>
+    {{-- Bilah atas (desktop); di HP navigasi ada di bawah --}}
+    <livewire:shared-components.topbar />
 
-    {{-- mobile bottom navbar --}}
+    {{-- Navigasi bawah (HP) --}}
     <livewire:shared-components.navbar-mobile />
 
-    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-28 md:pb-8">
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 pb-28 md:pb-8">
         {{ $slot }}
     </main>
 

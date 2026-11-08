@@ -1,112 +1,67 @@
 <div>
-    <header class="hidden md:block px-4 pt-4">
-        <nav class="max-w-6xl mx-auto glass rounded-2xl shadow-sm shadow-slate-900/5">
-            <div class="flex items-center justify-between gap-x-6 px-5 py-3">
+    <header class="sticky top-0 z-30 border-b border-slate-200/80 bg-slate-50/85 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-950/85">
+        <nav class="mx-auto flex h-16 max-w-6xl items-center gap-6 px-4 sm:px-6">
 
-                <a href="/" wire:navigate.hover class="flex items-center gap-x-2.5 group">
-                    <span class="sr-only">Portal ASN Ponorogo</span>
-                    <div class="relative">
-                        <div class="absolute inset-0 bg-emerald-400 rounded-xl blur-md opacity-60 group-hover:opacity-90 transition"></div>
-                        <img src="{{ asset('img/logo.png') }}" alt="Portal ASN Ponorogo" class="relative h-10 w-auto drop-shadow" />
-                    </div>
-                    <div class="hidden sm:block">
-                        <div class="text-sm font-semibold tracking-tight dark:text-white">Portal ASN Ponorogo</div>
-                        <div class="text-[11px] text-slate-500 dark:text-slate-400">Satu akun, semua layanan</div>
-                    </div>
-                </a>
+            <a href="/" wire:navigate.hover class="flex items-center gap-2.5">
+                <x-kisara-mark name="portal-asn" class="size-9 shrink-0" />
+                <span class="leading-tight">
+                    <span class="block text-[17px] tracking-tight"><span class="text-slate-500 dark:text-slate-400">Kisara</span> <b class="font-semibold text-slate-900 dark:text-white">Portal ASN</b></span>
+                    <span class="hidden text-[11px] text-slate-500 sm:block dark:text-slate-400">Pemerintah Kabupaten Ponorogo</span>
+                </span>
+            </a>
 
-                <div class="hidden lg:flex items-center gap-1 glass-card rounded-full px-1.5 py-1.5 text-sm">
-                    @if (Route::is('index'))
-                        <a href="#app-lists"   class="px-4 py-1.5 rounded-full hover:bg-white/60 dark:hover:bg-white/5 transition dark:text-white">Aplikasi</a>
-                        <a href="#support"     class="px-4 py-1.5 rounded-full hover:bg-white/60 dark:hover:bg-white/5 transition dark:text-white">Bantuan</a>
-                        <a href="#integration" class="px-4 py-1.5 rounded-full hover:bg-white/60 dark:hover:bg-white/5 transition dark:text-white">Integrasi</a>
-                        <a href="#faq"         class="px-4 py-1.5 rounded-full hover:bg-white/60 dark:hover:bg-white/5 transition dark:text-white">FAQ</a>
-                    @else
-                        <a href="{{ route('apps') }}"         wire:navigate.hover class="px-4 py-1.5 rounded-full hover:bg-white/60 dark:hover:bg-white/5 transition dark:text-white">Aplikasi</a>
-                        <a href="{{ route('supports') }}"     wire:navigate.hover class="px-4 py-1.5 rounded-full hover:bg-white/60 dark:hover:bg-white/5 transition dark:text-white">Bantuan</a>
-                        <a href="{{ route('integrations') }}" wire:navigate.hover class="px-4 py-1.5 rounded-full hover:bg-white/60 dark:hover:bg-white/5 transition dark:text-white">Integrasi</a>
-                        <a href="{{ url('/#faq') }}"          class="px-4 py-1.5 rounded-full hover:bg-white/60 dark:hover:bg-white/5 transition dark:text-white">FAQ</a>
-                    @endif
-                </div>
+            <div class="ml-auto hidden items-center gap-1 text-sm font-medium text-slate-600 md:flex dark:text-slate-300">
+                @if (Route::is('index'))
+                    <a href="#app-lists" class="rounded-full px-3.5 py-2 hover:bg-slate-200/60 dark:hover:bg-slate-800">Aplikasi</a>
+                    <a href="#support" class="rounded-full px-3.5 py-2 hover:bg-slate-200/60 dark:hover:bg-slate-800">Bantuan</a>
+                    <a href="#integration" class="rounded-full px-3.5 py-2 hover:bg-slate-200/60 dark:hover:bg-slate-800">Integrasi</a>
+                    <a href="#faq" class="rounded-full px-3.5 py-2 hover:bg-slate-200/60 dark:hover:bg-slate-800">FAQ</a>
+                @else
+                    <a href="{{ route('apps') }}" wire:navigate.hover class="rounded-full px-3.5 py-2 hover:bg-slate-200/60 dark:hover:bg-slate-800">Aplikasi</a>
+                    <a href="{{ route('supports') }}" wire:navigate.hover class="rounded-full px-3.5 py-2 hover:bg-slate-200/60 dark:hover:bg-slate-800">Bantuan</a>
+                    <a href="{{ route('integrations') }}" wire:navigate.hover class="rounded-full px-3.5 py-2 hover:bg-slate-200/60 dark:hover:bg-slate-800">Integrasi</a>
+                    <a href="{{ url('/#faq') }}" class="rounded-full px-3.5 py-2 hover:bg-slate-200/60 dark:hover:bg-slate-800">FAQ</a>
+                @endif
+            </div>
 
-                <div class="flex items-center gap-x-1.5">
+            <div class="ml-auto flex items-center gap-1.5 md:ml-0">
+                <x-dark-mode />
 
-                    {{-- Dark mode toggle --}}
-                    <x-dark-mode />
+                @auth
+                    <div class="hs-dropdown relative inline-flex [--placement:bottom-right]">
+                        <button id="portal-user-dropdown" type="button"
+                            class="hs-dropdown-toggle flex h-10 cursor-pointer items-center gap-2 rounded-full py-1 pl-1 pr-3 hover:bg-slate-200/60 dark:hover:bg-slate-800"
+                            aria-haspopup="menu" aria-expanded="false" aria-label="Menu akun">
+                            <span class="grid size-8 place-items-center rounded-full bg-ks-teal text-xs font-semibold text-white">
+                                {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                            </span>
+                            <span class="hidden max-w-[10rem] truncate text-sm font-medium text-slate-700 sm:inline dark:text-slate-200">{{ auth()->user()->name }}</span>
+                            <svg class="hs-dropdown-open:rotate-180 size-4 text-slate-400 transition" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+                        </button>
 
-                    @auth
-                        <div class="hs-dropdown relative inline-flex [--placement:bottom-right]">
-                            <button id="portal-user-dropdown" type="button"
-                                class="hs-dropdown-toggle py-2 px-3 inline-flex items-center gap-x-2 text-sm cursor-pointer font-medium rounded-lg text-slate-700 hover:bg-slate-100 dark:text-white dark:hover:bg-white/10 transition"
-                                aria-haspopup="menu" aria-expanded="false" aria-label="Dropdown">
-                                <span class="size-7 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 grid place-items-center text-white text-xs font-bold">
-                                    {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
-                                </span>
-                                <span class="hidden sm:inline max-w-[10rem] truncate">{{ auth()->user()->name }}</span>
-                                <svg class="hs-dropdown-open:rotate-180 size-4 transition" xmlns="http://www.w3.org/2000/svg"
-                                    width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="m6 9 6 6 6-6" />
-                                </svg>
-                            </button>
-
-                            <div class="hs-dropdown-menu transition-[opacity,margin] mt-3 hs-dropdown-open:opacity-100 opacity-0 hidden min-w-64 glass rounded-2xl shadow-xl shadow-slate-900/10 p-2"
-                                role="menu" aria-orientation="vertical" aria-labelledby="portal-user-dropdown">
-
-                                <div class="px-3 py-3 mb-1 border-b border-slate-200/60 dark:border-slate-700/40">
-                                    <p class="text-[11px] text-slate-500 dark:text-slate-400">Login sebagai</p>
-                                    <p class="text-sm font-semibold text-slate-800 dark:text-white truncate">
-                                        {{ auth()->user()->name }}
-                                    </p>
-                                    <p class="text-xs text-slate-500 dark:text-slate-400 truncate">
-                                        {{ auth()->user()->email }}
-                                    </p>
-                                </div>
-
-                                {{-- Profil, keamanan, perangkat, dan layanan dikelola di Akun Kisara --}}
-                                <a href="{{ account_url() }}"
-                                    class="flex w-full items-center gap-x-3 py-2 px-3 rounded-lg text-sm font-semibold text-emerald-700 hover:bg-emerald-50 dark:text-emerald-300 dark:hover:bg-emerald-500/10 transition">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                        stroke-linejoin="round" class="size-4">
-                                        <circle cx="12" cy="12" r="10" />
-                                        <circle cx="12" cy="10" r="3" />
-                                        <path d="M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662" />
-                                    </svg>
-                                    Kelola Akun Kisara
-                                </a>
-
-                                <div class="mt-1 pt-1 border-t border-slate-200/60 dark:border-slate-700/40">
-                                    <form method="POST" action="{{ route('logout') }}">
-                                        @csrf
-                                        <button type="submit"
-                                            class="flex w-full items-center gap-x-3 py-2 px-3 rounded-lg text-sm text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                                stroke-linecap="round" stroke-linejoin="round" class="size-4">
-                                                <path d="m16 17 5-5-5-5" />
-                                                <path d="M21 12H9" />
-                                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                                            </svg>
-                                            Keluar
-                                        </button>
-                                    </form>
-                                </div>
+                        <div class="hs-dropdown-menu transition-[opacity,margin] mt-2 hs-dropdown-open:opacity-100 opacity-0 hidden w-72 rounded-2xl border border-slate-200 bg-white p-2 ks-card-shadow dark:border-slate-800 dark:bg-slate-900"
+                            role="menu" aria-orientation="vertical" aria-labelledby="portal-user-dropdown">
+                            <div class="border-b border-slate-100 px-3 pb-3 pt-2 dark:border-slate-800">
+                                <p class="text-xs text-slate-500">Masuk sebagai</p>
+                                <p class="truncate text-sm font-semibold text-slate-900 dark:text-white">{{ auth()->user()->name }}</p>
+                                <p class="truncate text-xs text-slate-500">{{ auth()->user()->email }}</p>
                             </div>
+                            {{-- Profil, keamanan, perangkat, dan layanan dikelola di Akun Kisara --}}
+                            <a href="{{ account_url() }}" class="mt-1 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-ks-teal hover:bg-ks-soft dark:text-teal-300 dark:hover:bg-teal-500/10">
+                                <x-kisara-mark name="akun-kisara" class="size-5" /> Kelola Akun Kisara
+                            </a>
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" class="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-rose-600 hover:bg-rose-50 dark:text-rose-400 dark:hover:bg-rose-500/10">
+                                    <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 17 5-5-5-5" /><path d="M21 12H9" /><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /></svg>
+                                    Keluar
+                                </button>
+                            </form>
                         </div>
-                    @else
-                        <a href="/login"
-                            class="relative inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold text-white overflow-hidden group">
-                            <span class="absolute inset-0 bg-gradient-to-br from-emerald-500 to-teal-600"></span>
-                            <span class="absolute inset-0 bg-gradient-to-br from-emerald-400 to-sky-500 opacity-0 group-hover:opacity-100 transition"></span>
-                            <span class="relative">Masuk</span>
-                            <svg class="relative size-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M5 12h14M13 5l7 7-7 7" />
-                            </svg>
-                        </a>
-                    @endauth
-                </div>
+                    </div>
+                @else
+                    <a href="/login" class="inline-flex h-10 items-center gap-2 rounded-full bg-ks-teal px-5 text-sm font-semibold text-white hover:bg-ks-teal-dark">Masuk</a>
+                @endauth
             </div>
         </nav>
     </header>

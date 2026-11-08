@@ -35,8 +35,8 @@
                             <div class="mt-6 flex flex-col gap-2.5">
                                 <a href="/login"
                                     class="relative inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold text-white overflow-hidden group">
-                                    <span class="absolute inset-0 bg-gradient-to-br from-emerald-500 to-teal-600"></span>
-                                    <span class="absolute -inset-1 bg-gradient-to-br from-emerald-400 to-sky-500 blur-lg opacity-40 group-hover:opacity-70 transition"></span>
+                                    <span class="absolute inset-0 bg-gradient-to-br from-teal-500 to-teal-600"></span>
+                                    <span class="absolute -inset-1 bg-gradient-to-br from-teal-400 to-ks-blue blur-lg opacity-40 group-hover:opacity-70 transition"></span>
                                     <svg class="relative size-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
                                         fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
                                         stroke-linejoin="round">

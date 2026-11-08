@@ -14,9 +14,16 @@
 [x-cloak] { display: none !important; }
 
 @theme {
-    --font-sans: "Instrument Sans", ui-sans-serif, system-ui, sans-serif,
+    /* Tema Kisara (sistem logo v1, 2026-11-08): Inter + empat warna merak. */
+    --font-sans: Inter, ui-sans-serif, system-ui, sans-serif,
         "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
         "Noto Color Emoji";
+    --color-ks-blue: #1f6fb2;
+    --color-ks-teal: #0f8b8d;
+    --color-ks-teal-dark: #0b6d6f;
+    --color-ks-green: #2f9e6b;
+    --color-ks-gold: #e0a82e;
+    --color-ks-soft: #e7f5f4;
 
     --animate-blob-slow: blob 18s ease-in-out infinite;
     --animate-blob-med:  blob 14s ease-in-out infinite;
@@ -39,7 +46,20 @@
     }
 }
 
-/* ===== Glassmorphism surfaces ===== */
+/* Garis empat warna Kisara (kepala halaman, kartu integrasi). */
+@layer components {
+    .ks-strip {
+        height: 4px;
+        background: linear-gradient(90deg, #1f6fb2 0 25%, #0f8b8d 25% 50%, #2f9e6b 50% 75%, #e0a82e 75% 100%);
+    }
+}
+
+/* @utility supaya bisa dipakai dengan varian (hover:ks-card-shadow). */
+@utility ks-card-shadow {
+    box-shadow: 0 12px 32px -16px rgb(15 23 42 / .3);
+}
+
+/* ===== Glassmorphism surfaces (tema lama; masih dipakai halaman profil) ===== */
 @layer components {
     .glass {
         background: rgba(255, 255, 255, 0.6);

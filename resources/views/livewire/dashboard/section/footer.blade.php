@@ -1,39 +1,28 @@
 <div>
-    <footer class="hidden md:block pt-8 pb-10 border-t border-slate-200 dark:border-slate-800 mt-8">
-        <div class="flex items-center justify-between gap-4 text-sm">
-            <div class="flex items-center gap-3">
-                <img src="{{ asset('img/logo.png') }}" alt="Logo" class="h-8 w-auto">
-                <div>
-                    <div class="font-semibold dark:text-white">Portal ASN Ponorogo</div>
-                    <div class="text-xs text-slate-500 dark:text-slate-400">
-                        Dikembangkan
-                        <a href="https://kominfo.ponorogo.go.id"
-                            class="hover:text-emerald-600 dark:hover:text-emerald-400 transition">Dinas Kominfo dan Statistik</a>
+    <footer class="mt-10 border-t border-slate-200 dark:border-slate-800">
+        <div class="py-10">
+            <div class="text-xs font-semibold uppercase tracking-wider text-slate-500">Ekosistem Kisara</div>
+            <div class="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+                @foreach ([
+                    ['kisara-sso', 'Kisara SSO', 'Satu akun, semua layanan'],
+                    ['akun-kisara', 'Akun Kisara', 'Kelola akun Anda'],
+                    ['kisara-mail', 'Kisara Mail', 'Email dinas ASN'],
+                    ['portal-asn', 'Portal ASN', 'Layanan ASN terpadu'],
+                    ['nawasara', 'Nawasara', 'Konsol layanan digital'],
+                    ['gasta', 'Gasta', 'Pantauan CCTV terpadu'],
+                ] as [$mark, $name, $tagline])
+                    <div class="flex items-center gap-2.5">
+                        <x-kisara-mark :name="$mark" class="size-8 shrink-0" />
+                        <div class="min-w-0 leading-tight">
+                            <div class="truncate text-sm font-semibold text-slate-800 dark:text-slate-100">{{ $name }}</div>
+                            <div class="truncate text-xs text-slate-500">{{ $tagline }}</div>
+                        </div>
                     </div>
-                </div>
+                @endforeach
             </div>
-            <div class="text-xs text-slate-500 dark:text-slate-400 text-right">
-                <div>© {{ date('Y') }} Pemerintah Kabupaten Ponorogo</div>
-                <div class="mt-1">Tim Pengembang A4 Bidang APTIKA</div>
-            </div>
-        </div>
-    </footer>
-
-    {{-- Mobile footer (compact) --}}
-    <footer class="md:hidden py-10 mt-6">
-        <div class="glass-card rounded-2xl p-6 text-center">
-            <div class="flex items-center justify-center gap-2.5 mb-3">
-                <img src="{{ asset('img/logo.png') }}" alt="Logo" class="h-8 w-auto">
-                <div class="text-sm font-semibold dark:text-white">Portal ASN Ponorogo</div>
-            </div>
-            <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed mb-4">
-                Dikembangkan oleh
-                <a href="https://kominfo.ponorogo.go.id"
-                    class="text-emerald-600 dark:text-emerald-400 font-semibold">Dinas Kominfo dan Statistik Kabupaten Ponorogo</a>
-            </p>
-            <div class="text-[11px] text-slate-500 dark:text-slate-400 space-y-0.5">
-                <div>© {{ date('Y') }} Pemerintah Kabupaten Ponorogo</div>
-                <div>Tim Pengembang A4 Bidang APTIKA</div>
+            <div class="mt-8 flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-slate-200 pt-6 text-xs text-slate-500 dark:border-slate-800">
+                <span>© {{ date('Y') }} Pemerintah Kabupaten Ponorogo</span>
+                <span>Dikembangkan <a href="https://kominfo.ponorogo.go.id" class="hover:text-ks-teal dark:hover:text-teal-300">Dinas Komunikasi, Informatika dan Statistik</a> — Tim A4 Bidang APTIKA</span>
             </div>
         </div>
     </footer>

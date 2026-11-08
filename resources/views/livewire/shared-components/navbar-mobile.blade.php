@@ -1,9 +1,9 @@
 <div>
-    <nav class="fixed bottom-3 inset-x-3 z-50 glass rounded-2xl shadow-xl shadow-slate-900/10 md:hidden">
+    <nav class="fixed bottom-3 inset-x-3 z-50 rounded-2xl border border-slate-200 bg-white/95 shadow-xl shadow-slate-900/10 backdrop-blur dark:border-slate-800 dark:bg-slate-900/95 md:hidden">
         <ul class="grid grid-cols-5 h-16 text-[10px] font-medium text-slate-600 dark:text-slate-300">
             <li>
                 <a @if (Route::is('index')) href="#hero" @else href="{{ url('/#hero') }}" wire:navigate.hover @endif
-                    class="flex flex-col items-center justify-center gap-1 h-full rounded-2xl hover:text-emerald-600 dark:hover:text-emerald-400 transition">
+                    class="flex flex-col items-center justify-center gap-1 h-full rounded-2xl hover:text-ks-teal dark:hover:text-teal-300 transition">
                     <svg class="size-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
@@ -15,7 +15,7 @@
 
             <li>
                 <a @if (Route::is('index')) href="#app-lists" @else href="{{ url('/apps') }}" wire:navigate.hover @endif
-                    class="flex flex-col items-center justify-center gap-1 h-full rounded-2xl hover:text-emerald-600 dark:hover:text-emerald-400 transition">
+                    class="flex flex-col items-center justify-center gap-1 h-full rounded-2xl hover:text-ks-teal dark:hover:text-teal-300 transition">
                     <svg class="size-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <rect x="3" y="3" width="7" height="7" />
@@ -29,7 +29,7 @@
 
             <li>
                 <a @if (Route::is('index')) href="#support" @else href="{{ url('/supports') }}" wire:navigate.hover @endif
-                    class="flex flex-col items-center justify-center gap-1 h-full rounded-2xl hover:text-emerald-600 dark:hover:text-emerald-400 transition">
+                    class="flex flex-col items-center justify-center gap-1 h-full rounded-2xl hover:text-ks-teal dark:hover:text-teal-300 transition">
                     <svg @click="$dispatch('set-arrow');" class="size-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="12" cy="12" r="10" />
@@ -45,7 +45,7 @@
 
             <li>
                 <a @if (Route::is('index')) href="#integration" @else href="/integrations" wire:navigate.hover @endif
-                    class="flex flex-col items-center justify-center gap-1 h-full rounded-2xl hover:text-emerald-600 dark:hover:text-emerald-400 transition">
+                    class="flex flex-col items-center justify-center gap-1 h-full rounded-2xl hover:text-ks-teal dark:hover:text-teal-300 transition">
                     <svg class="size-5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <rect width="18" height="12" x="3" y="8" rx="1" />
@@ -59,7 +59,7 @@
             <li>
                 @auth
                     <a href="/profiles" wire:navigate.hover
-                        class="flex flex-col items-center justify-center gap-1 h-full rounded-2xl hover:text-emerald-600 dark:hover:text-emerald-400 transition">
+                        class="flex flex-col items-center justify-center gap-1 h-full rounded-2xl hover:text-ks-teal dark:hover:text-teal-300 transition">
                         <svg class="size-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M20 21v-2a4 4 0 0 0-3-3.87" />
@@ -70,7 +70,7 @@
                     </a>
                 @else
                     <a href="/login"
-                        class="flex flex-col items-center justify-center gap-1 h-full rounded-2xl hover:text-emerald-600 dark:hover:text-emerald-400 transition">
+                        class="flex flex-col items-center justify-center gap-1 h-full rounded-2xl hover:text-ks-teal dark:hover:text-teal-300 transition">
                         <svg class="size-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
                             stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M10 17l5-5-5-5" />

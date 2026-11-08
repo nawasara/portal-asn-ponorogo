@@ -1,118 +1,68 @@
 <div>
-    <section id="app-lists" class="py-12 lg:py-16">
+    <section id="app-lists" class="scroll-mt-24 py-10">
 
         @if (Route::is('apps'))
-            <div class="flex items-center justify-center gap-x-3 md:hidden mb-6">
-                <img src="{{ asset('img/logo.png') }}" alt="Portal ASN Ponorogo" class="size-6 w-auto" loading="lazy" />
-                <span class="dark:text-white text-slate-700 font-semibold">Aplikasi Terintegrasi SSO Kisara</span>
+            <div class="mb-6 flex items-center gap-2 md:hidden">
+                <x-kisara-mark name="portal-asn" class="size-6" />
+                <span class="font-semibold text-slate-700 dark:text-white">Aplikasi terhubung Kisara SSO</span>
             </div>
         @endif
 
-        <div class="flex items-end justify-between flex-wrap gap-4 mb-8" data-aos="fade-up" data-aos-duration="1000">
+        <div class="flex flex-wrap items-end justify-between gap-4">
             <div>
-                <div class="flex items-baseline gap-3 mb-1">
-                    <h2 class="text-3xl md:text-4xl font-bold tracking-tight dark:text-white">Daftar Aplikasi</h2>
-                    <span class="text-sm font-semibold text-emerald-600 dark:text-emerald-400">
-                        {{ count($this->filteredApps) }} {{ $query ? 'hasil' : 'tersedia' }}
-                    </span>
-                </div>
-                <p class="text-sm text-slate-500 dark:text-slate-400">Pilih aplikasi untuk melanjutkan dengan sesi SSO Anda.</p>
+                <h2 class="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl dark:text-white">
+                    Aplikasi
+                    <span class="ml-1 align-middle text-sm font-semibold text-ks-teal dark:text-teal-300">{{ count($this->filteredApps) }} {{ $query ? 'hasil' : 'tersedia' }}</span>
+                </h2>
+                <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Pilih aplikasi untuk melanjutkan dengan sesi Kisara SSO Anda.</p>
             </div>
 
-            <div class="relative glass-card rounded-full flex items-center gap-2 px-4 py-2.5 w-full sm:w-72">
-                <svg class="size-4 text-slate-400 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="11" cy="11" r="8" />
-                    <path d="M21 21l-4.3-4.3" />
-                </svg>
-                <input type="text"
-                    wire:model.live.debounce.200ms="query"
-                    placeholder="Cari aplikasi..."
-                    class="bg-transparent outline-none text-sm w-full placeholder:text-slate-400 dark:text-white" />
+            <label class="flex h-11 w-full items-center gap-2 rounded-full border border-slate-300 bg-white px-4 sm:w-72 dark:border-slate-700 dark:bg-slate-900">
+                <svg class="size-4 shrink-0 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>
+                <input type="text" wire:model.live.debounce.200ms="query" placeholder="Cari aplikasi..."
+                    class="w-full bg-transparent text-sm outline-none placeholder:text-slate-400 dark:text-white" />
                 @if ($query)
-                    <button type="button" wire:click="$set('query', '')"
-                        class="shrink-0 size-5 rounded-full grid place-items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition"
-                        aria-label="Hapus pencarian">
-                        <svg class="size-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M18 6 6 18" /><path d="m6 6 12 12" />
-                        </svg>
+                    <button type="button" wire:click="$set('query', '')" class="grid size-5 shrink-0 place-items-center rounded-full text-slate-400 hover:text-slate-600 dark:hover:text-slate-200" aria-label="Hapus pencarian">
+                        <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
                     </button>
                 @endif
-            </div>
+            </label>
         </div>
 
         @if (count($this->filteredApps) === 0)
-            <div class="glass-card rounded-2xl p-10 text-center" data-aos="fade-up">
-                <svg class="size-12 mx-auto text-slate-300 dark:text-slate-600 mb-3" xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                    stroke-linejoin="round">
-                    <circle cx="11" cy="11" r="8" />
-                    <path d="M21 21l-4.3-4.3" />
-                </svg>
+            <div class="mt-6 rounded-3xl border border-slate-200 bg-white p-10 text-center dark:border-slate-800 dark:bg-slate-900">
+                <svg class="mx-auto mb-3 size-12 text-slate-300 dark:text-slate-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8" /><path d="M21 21l-4.3-4.3" /></svg>
                 <h3 class="font-semibold text-slate-700 dark:text-slate-200">Tidak ada aplikasi ditemukan</h3>
-                <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Coba kata kunci lain atau
-                    <button type="button" wire:click="$set('query', '')"
-                        class="text-emerald-600 dark:text-emerald-400 font-semibold hover:underline">kosongkan pencarian</button>.
+                <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Coba kata kunci lain atau
+                    <button type="button" wire:click="$set('query', '')" class="font-semibold text-ks-teal hover:underline dark:text-teal-300">kosongkan pencarian</button>.
                 </p>
             </div>
         @else
-            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" data-aos="fade-up"
-                data-aos-duration="1000">
+            <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 @foreach ($this->filteredApps as $app)
-                    <a href="{{ $app['link'] }}"
-                        class="tilt glass-card gradient-border rounded-3xl p-6 group relative block overflow-hidden"
-                        wire:key="app-{{ $loop->index }}-{{ $app['slug'] }}">
-                        <div
-                            class="absolute -top-20 -right-20 w-48 h-48 rounded-full bg-emerald-400/20 blur-3xl opacity-0 group-hover:opacity-100 transition duration-500">
-                        </div>
-
-                        <div class="relative flex items-start justify-between mb-6">
+                    <a href="{{ $app['link'] }}" wire:key="app-{{ $loop->index }}-{{ $app['slug'] }}"
+                        class="group flex flex-col rounded-3xl border border-slate-200 bg-white p-5 transition hover:-translate-y-0.5 hover:border-ks-teal/40 hover:ks-card-shadow dark:border-slate-800 dark:bg-slate-900">
+                        <div class="flex items-start justify-between">
                             @if ($app['icon'])
-                                <div class="size-14 rounded-2xl glass-card grid place-items-center p-2.5 shadow-inner">
-                                    <img src="{{ $app['icon'] }}" alt="{{ $app['name'] }} Icon"
-                                        class="max-h-full max-w-full object-contain" loading="lazy" />
-                                </div>
+                                <span class="grid size-12 place-items-center rounded-2xl bg-white p-2 ring-1 ring-slate-200 dark:bg-slate-800 dark:ring-slate-700">
+                                    <img src="{{ $app['icon'] }}" alt="" class="max-h-full max-w-full object-contain" loading="lazy" />
+                                </span>
                             @else
                                 {{-- Aplikasi tanpa logo di katalog: singkatan + warna dari panel Nawasara --}}
-                                <div class="size-14 rounded-2xl grid place-items-center text-white text-lg font-bold shadow-inner"
-                                    style="background: {{ $app['color'] }}">
-                                    {{ $app['abbreviation'] }}
-                                </div>
+                                <span class="grid size-12 place-items-center rounded-2xl text-base font-bold text-white" style="background: {{ $app['color'] ?: '#0f8b8d' }}">{{ $app['abbreviation'] }}</span>
                             @endif
                             @if ($app['status'] === 'connected')
-                                <span
-                                    class="inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-full bg-emerald-100/80 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300">
-                                    <span class="size-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                                    Terhubung
-                                </span>
+                                <span class="inline-flex items-center gap-1.5 rounded-full bg-ks-soft px-2.5 py-1 text-[11px] font-semibold text-ks-teal-dark dark:bg-teal-500/15 dark:text-teal-300"><span class="size-1.5 rounded-full bg-ks-teal"></span>Terhubung</span>
                             @else
-                                <span
-                                    class="text-[11px] font-semibold px-2.5 py-1 rounded-full bg-amber-100/80 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300">
-                                    Segera Hadir
-                                </span>
+                                <span class="rounded-full bg-amber-100/80 px-2.5 py-1 text-[11px] font-semibold text-amber-700 dark:bg-amber-500/15 dark:text-amber-300">Segera hadir</span>
                             @endif
                         </div>
-
-                        <h3 class="relative text-xl font-bold tracking-tight mb-2 dark:text-white">
-                            {{ $app['name'] }}
-                        </h3>
-                        <p class="relative text-sm text-slate-600 dark:text-slate-400 leading-relaxed line-clamp-2">
-                            {{ $app['description'] }}
-                        </p>
-
-                        <div
-                            class="relative mt-6 pt-4 border-t border-slate-200/60 dark:border-slate-700/40 flex items-center justify-between text-sm">
-                            <span class="font-medium text-slate-500 dark:text-slate-400">Buka aplikasi</span>
-                            <span
-                                class="size-8 grid place-items-center rounded-full bg-slate-900 text-white dark:bg-white dark:text-slate-900 group-hover:translate-x-1 transition">
-                                <svg class="size-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
-                                    stroke-linejoin="round">
-                                    <path d="M5 12h14M13 5l7 7-7 7" />
-                                </svg>
-                            </span>
-                        </div>
+                        <h3 class="mt-4 text-[17px] font-semibold tracking-tight text-slate-900 dark:text-white">{{ $app['name'] }}</h3>
+                        <p class="mt-1 line-clamp-2 text-sm leading-relaxed text-slate-500 dark:text-slate-400">{{ $app['description'] }}</p>
+                        <span class="mt-auto inline-flex items-center gap-1.5 pt-4 text-sm font-semibold text-ks-teal dark:text-teal-300">
+                            Buka aplikasi
+                            <svg class="size-4 transition group-hover:translate-x-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7" /></svg>
+                        </span>
                     </a>
                 @endforeach
             </div>

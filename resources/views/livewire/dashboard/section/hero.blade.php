@@ -1,127 +1,85 @@
 <div>
-    <section id="hero" class="pt-28 pb-12 lg:pt-36 lg:pb-16">
-        <div class="grid lg:grid-cols-[1.2fr_1fr] gap-10 lg:gap-16 items-center">
-        <div data-aos="fade-up" data-aos-duration="1000">
-            <div class="inline-flex items-center gap-2 glass-card rounded-full px-4 py-1.5 text-xs font-medium mb-6">
-                <span class="size-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                @auth
-                    Terhubung sebagai <span class="font-semibold text-emerald-600 dark:text-emerald-400">ASN</span>
-                @else
-                    Tersambung dengan <span class="font-semibold text-emerald-600 dark:text-emerald-400">Keycloak SSO</span>
-                @endauth
-            </div>
+    <section id="hero" class="grid items-center gap-10 py-14 lg:grid-cols-[1.15fr_.85fr] lg:py-20">
+        <div>
+            <span class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-medium text-slate-600 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300">
+                <x-kisara-mark name="kisara-sso" class="size-4" />
+                @auth Sesi Kisara SSO aktif @else Masuk sekali dengan Kisara SSO @endauth
+            </span>
 
-            <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.1]">
+            <h1 class="mt-5 text-4xl font-semibold leading-[1.1] tracking-tight text-slate-900 sm:text-5xl dark:text-white">
                 @auth
-                    <span class="dark:text-white">Selamat datang,</span>
-                    <br>
-                    <span class="text-gradient">{{ auth()->user()->name }}</span>
+                    Selamat datang,<br>{{ \Illuminate\Support\Str::of(auth()->user()->name)->before(' ') }}.
                 @else
-                    <span class="dark:text-white">Satu portal,</span>
-                    <br>
-                    <span class="text-gradient">banyak layanan</span>
+                    Satu akun,<br>semua layanan ASN.
                 @endauth
             </h1>
 
-            <p class="mt-6 max-w-xl text-base md:text-lg text-slate-600 dark:text-slate-300 leading-relaxed">
+            <p class="mt-4 max-w-xl text-lg leading-relaxed text-slate-600 dark:text-slate-400">
                 @auth
-                    Sekarang Anda dapat mengakses
+                    Semua aplikasi di bawah langsung terbuka dengan sesi Anda — tanpa masuk lagi.
                 @else
-                    Akses
+                    Buka seluruh aplikasi ASN Pemerintah Kabupaten Ponorogo dari satu tempat, dengan NIP dan kata sandi yang sama.
                 @endauth
-                seluruh aplikasi ASN Pemerintah Kabupaten Ponorogo dalam satu tempat —
-                <span class="font-semibold text-slate-800 dark:text-slate-100">cepat, aman, terintegrasi.</span>
             </p>
 
-            <div class="mt-8 flex flex-col sm:flex-row gap-3">
+            <div class="mt-7 flex flex-wrap gap-3">
                 @auth
-                    <a href="#app-lists"
-                        class="relative inline-flex items-center justify-center gap-2 rounded-2xl px-6 py-3.5 text-base font-semibold text-white overflow-hidden group">
-                        <span class="absolute inset-0 bg-gradient-to-br from-emerald-500 to-teal-600"></span>
-                        <span class="absolute -inset-1 bg-gradient-to-br from-emerald-400 to-sky-500 blur-xl opacity-50 group-hover:opacity-80 transition"></span>
-                        <svg class="relative size-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-                            fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
-                            stroke-linejoin="round">
-                            <circle cx="11" cy="11" r="8" />
-                            <path d="m21 21-4.34-4.34" />
-                        </svg>
-                        <span class="relative">Cari Aplikasi</span>
+                    <a href="#app-lists" class="inline-flex h-12 items-center gap-2 rounded-full bg-ks-teal px-6 text-[15px] font-semibold text-white shadow-sm hover:bg-ks-teal-dark">
+                        Buka aplikasi
+                        <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7" /></svg>
                     </a>
                 @else
-                    <a href="/login"
-                        class="relative inline-flex items-center justify-center gap-2 rounded-2xl px-6 py-3.5 text-base font-semibold text-white overflow-hidden group">
-                        <span class="absolute inset-0 bg-gradient-to-br from-emerald-500 to-teal-600"></span>
-                        <span class="absolute -inset-1 bg-gradient-to-br from-emerald-400 to-sky-500 blur-xl opacity-50 group-hover:opacity-80 transition"></span>
-                        <svg class="relative size-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-                            fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
-                            stroke-linejoin="round">
-                            <path d="m10 17 5-5-5-5" />
-                            <path d="M15 12H3" />
-                            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
-                        </svg>
-                        <span class="relative">Masuk Sekarang</span>
+                    <a href="/login" class="inline-flex h-12 items-center gap-2 rounded-full bg-ks-teal px-6 text-[15px] font-semibold text-white shadow-sm hover:bg-ks-teal-dark">
+                        Masuk dengan Kisara SSO
+                        <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7" /></svg>
                     </a>
                 @endauth
-
-                <a href="#support" @click="$dispatch('set-arrow');"
-                    class="inline-flex items-center justify-center gap-2 glass-card rounded-2xl px-6 py-3.5 text-base font-semibold hover:bg-white/80 dark:hover:bg-white/10 transition dark:text-white">
-                    <svg class="size-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="10" />
-                        <path d="M12 16v-4" />
-                        <path d="M12 8h.01" />
-                    </svg>
-                    Bantuan
+                <a href="{{ auth()->check() ? '#support' : '#app-lists' }}" @click="$dispatch('set-arrow');"
+                    class="inline-flex h-12 items-center rounded-full border border-slate-300 bg-white px-6 text-[15px] font-semibold text-slate-800 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800">
+                    @auth Pusat bantuan @else Lihat aplikasi @endauth
                 </a>
             </div>
         </div>
 
-        {{-- Floating card stack --}}
-        <div class="relative hidden lg:block animate-float" data-aos="fade-up" data-aos-duration="1500"
-            data-aos-delay="100">
-            <div class="relative glass-card gradient-border rounded-3xl p-6 shadow-2xl shadow-emerald-500/10">
-                <div class="flex items-center gap-3 mb-5">
-                    <div class="size-10 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-600 grid place-items-center text-white font-bold">S</div>
-                    <div>
-                        <div class="font-semibold dark:text-white">Simashebat</div>
-                        <div class="text-xs text-slate-500 dark:text-slate-400">Sistem Manajemen ASN</div>
+        @auth
+            {{-- Ringkasan akun: tautan ke Akun Kisara, tempat semua pengaturan akun berada --}}
+            <div class="rounded-[28px] border border-slate-200 bg-white p-6 shadow-[0_24px_60px_-28px_rgb(15_23_42/.3)] dark:border-slate-800 dark:bg-slate-900">
+                <div class="flex items-center gap-4">
+                    <span class="rounded-full p-[2px]" style="background:linear-gradient(100deg,#1f6fb2,#0f8b8d 40%,#2f9e6b 70%,#e0a82e)">
+                        <span class="grid size-14 place-items-center rounded-full bg-ks-teal text-lg font-semibold text-white ring-4 ring-white dark:ring-slate-900">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</span>
+                    </span>
+                    <div class="min-w-0">
+                        <div class="truncate text-lg font-semibold text-slate-900 dark:text-white">{{ auth()->user()->name }}</div>
+                        <div class="truncate text-sm text-slate-500">{{ auth()->user()->email }}</div>
                     </div>
-                    <span class="ml-auto text-[10px] font-semibold px-2 py-1 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300">Live</span>
                 </div>
-                <div class="space-y-2">
-                    <div class="h-2 rounded-full bg-slate-200/70 dark:bg-slate-700/50 overflow-hidden">
-                        <div class="h-full w-3/4 bg-gradient-to-r from-emerald-400 to-sky-500 rounded-full"></div>
-                    </div>
-                    <div class="h-2 rounded-full bg-slate-200/70 dark:bg-slate-700/50 overflow-hidden">
-                        <div class="h-full w-1/2 bg-gradient-to-r from-emerald-400 to-sky-500 rounded-full"></div>
-                    </div>
+                <div class="mt-5 divide-y divide-slate-100 rounded-2xl border border-slate-200 text-sm dark:divide-slate-800 dark:border-slate-800">
+                    @foreach ([
+                        ['Keamanan & verifikasi dua langkah', account_url('/security')],
+                        ['Passkey', account_url('/security/passkeys')],
+                        ['Email dinas & layanan', account_url('/services')],
+                    ] as [$label, $href])
+                        <a href="{{ $href }}" class="flex items-center justify-between gap-3 px-4 py-3 text-slate-700 hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800/60">
+                            {{ $label }}
+                            <svg class="size-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg>
+                        </a>
+                    @endforeach
+                </div>
+                <a href="{{ account_url() }}" class="mt-4 inline-flex h-11 w-full items-center justify-center gap-2 rounded-full border border-slate-300 text-sm font-semibold text-slate-800 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-100 dark:hover:bg-slate-800">
+                    <x-kisara-mark name="akun-kisara" class="size-5" /> Kelola Akun Kisara
+                </a>
+            </div>
+        @else
+            <div class="relative hidden h-[360px] place-items-center lg:grid" aria-hidden="true">
+                <div class="absolute size-[340px] rounded-full border border-dashed border-slate-300 dark:border-slate-700"></div>
+                <div class="absolute size-[250px] rounded-full border border-slate-200 dark:border-slate-800"></div>
+                <div class="absolute left-10 top-10 size-24 rounded-full bg-ks-blue/15 blur-2xl"></div>
+                <div class="absolute bottom-8 right-12 size-28 rounded-full bg-ks-gold/20 blur-2xl"></div>
+                <div class="absolute right-16 top-16 size-20 rounded-full bg-ks-green/15 blur-2xl"></div>
+                <div class="relative grid size-44 place-items-center rounded-[40px] bg-white shadow-[0_24px_60px_-24px_rgb(15_23_42/.35)] ring-1 ring-slate-200 dark:bg-slate-900 dark:ring-slate-800">
+                    <x-kisara-mark name="portal-asn" class="size-28" />
                 </div>
             </div>
-
-            <div class="absolute -bottom-8 -left-6 glass-card rounded-2xl p-4 w-56 shadow-xl rotate-[-6deg]">
-                <div class="flex items-center gap-3">
-                    <div class="size-9 rounded-lg bg-gradient-to-br from-sky-400 to-blue-600 grid place-items-center">
-                        <svg class="size-4 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                    </div>
-                    <div>
-                        <div class="text-xs font-semibold dark:text-white">Rakaca</div>
-                        <div class="text-[10px] text-slate-500 dark:text-slate-400">Tersambung</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="absolute -top-6 -right-4 glass-card rounded-2xl p-4 w-52 shadow-xl rotate-[5deg]">
-                <div class="flex items-center gap-3">
-                    <div class="size-9 rounded-lg bg-gradient-to-br from-violet-400 to-fuchsia-600 grid place-items-center">
-                        <svg class="size-4 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-                    </div>
-                    <div>
-                        <div class="text-xs font-semibold dark:text-white">MFA Aktif</div>
-                        <div class="text-[10px] text-slate-500 dark:text-slate-400">WhatsApp OTP</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        </div>
+        @endauth
     </section>
 </div>
