@@ -6,7 +6,11 @@ services:
         build:
             context: ..
             dockerfile: deploy/Dockerfile
-        image: asn-portal:latest
+        # Produksi menarik image dari GHCR (GitHub Actions saat push ke main);
+        # watchtower di LXC 142 memasangnya. `build:` di atas hanya untuk lokal.
+        image: ghcr.io/nawasara/portal-asn-ponorogo:main
+        labels:
+            - com.centurylinklabs.watchtower.enable=true
         restart: unless-stopped
         env_file:
             - ../.env
