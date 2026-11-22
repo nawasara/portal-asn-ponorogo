@@ -20,6 +20,12 @@
     @case('kisara-mail')
         <g fill="none" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"><line x1="11" y1="36" x2="11" y2="13" stroke="#1f6fb2"/><line x1="11" y1="13" x2="24" y2="26" stroke="#0f8b8d"/><line x1="24" y1="26" x2="37" y2="13" stroke="#2f9e6b"/><line x1="37" y1="13" x2="37" y2="36" stroke="#e0a82e"/></g>
         @break
+    @case('kisara-workspace')
+        <g fill="none" stroke-width="6" stroke-linecap="round"><line x1="11" y1="13" x2="37" y2="13" stroke="#1f6fb2"/><line x1="11" y1="24" x2="37" y2="24" stroke="#0f8b8d"/><line x1="11" y1="35" x2="25" y2="35" stroke="#2f9e6b"/></g><circle cx="35" cy="35" r="4" fill="#e0a82e"/>
+        @break
+    @case('kisara-pdf')
+        <g fill="none" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><path d="M28 7H11v34h26V16z" stroke="#1f6fb2"/><path d="M28 7v9h9" stroke="#0f8b8d"/><line x1="17" y1="25" x2="31" y2="25" stroke="#2f9e6b"/><line x1="17" y1="33" x2="23" y2="33" stroke="#0f8b8d"/></g><circle cx="31" cy="33" r="3.5" fill="#e0a82e"/>
+        @break
     @case('nawasara')
         <g fill="none" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"><line x1="9" y1="37" x2="9" y2="18" stroke="#1f6fb2"/><path d="M9 18C9 6 20 5 22 15" stroke="#1f6fb2"/><line x1="22" y1="15" x2="26" y2="33" stroke="#0f8b8d"/><path d="M26 33C28 43 39 42 39 30" stroke="#e0a82e"/><line x1="39" y1="30" x2="39" y2="11" stroke="#e0a82e"/></g>
         @break

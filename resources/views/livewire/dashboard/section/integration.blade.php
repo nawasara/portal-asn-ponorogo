@@ -36,6 +36,7 @@
                         ['nawasara', 'bottom:22%;right:0'],
                         ['gasta', 'bottom:0;left:50%;transform:translateX(-50%)'],
                         ['portal-asn', 'bottom:22%;left:0'],
+                        ['kisara-workspace', 'top:22%;left:0'],
                     ] as [$mark, $pos])
                         <div class="absolute grid size-14 place-items-center rounded-2xl bg-white shadow-sm ring-1 ring-slate-200 dark:bg-slate-800 dark:ring-slate-700" style="{{ $pos }}">
                             <x-kisara-mark :name="$mark" class="size-8" />
