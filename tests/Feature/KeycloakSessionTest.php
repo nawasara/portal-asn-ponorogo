@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 use Laravel\Socialite\Facades\Socialite;
 use Laravel\Socialite\Two\User as SocialiteUser;
@@ -238,6 +239,7 @@ class KeycloakSessionTest extends TestCase
     {
         Http::fake([self::TOKEN_URL => Http::response('Service Unavailable', 503)]);
         $this->signedInWithExpiredToken();
+        Log::spy();
 
         $this->assertSame(['active' => true], (new Topbar())->checkKeycloakSession());
         $this->assertTrue(Auth::check());
@@ -251,6 +253,10 @@ class KeycloakSessionTest extends TestCase
         $this->travel(KeycloakSession::REFRESH_RETRY_S + 1)->seconds();
         $this->tokens()->ensureFresh();
         Http::assertSentCount(2);
+
+        // An outage is a warning, not an error.
+        Log::shouldHaveReceived('log')->with('warning', 'session.refresh_failed', \Mockery::any());
+        Log::shouldNotHaveReceived('log', ['error', 'session.refresh_failed', \Mockery::any()]);
     }
 
     public function test_a_network_error_keeps_the_employee_signed_in(): void
@@ -279,9 +285,14 @@ class KeycloakSessionTest extends TestCase
     {
         Http::fake([self::TOKEN_URL => Http::response(['error' => 'invalid_client'], 401)]);
         $this->signedInWithExpiredToken();
+        Log::spy();
 
         $this->assertSame(KeycloakSession::ACTIVE, $this->tokens()->ensureFresh());
         $this->assertTrue(Auth::check());
+        // A rotated client secret must surface: logged as an error, not a warning.
+        Log::shouldHaveReceived('log')->with('error', 'session.refresh_failed', \Mockery::on(
+            fn ($context) => $context['reason'] === 'http_401_invalid_client'
+        ));
     }
 
     public function test_pages_render_for_signed_in_employees_while_keycloak_is_down(): void

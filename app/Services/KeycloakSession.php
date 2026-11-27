@@ -129,7 +129,11 @@ class KeycloakSession
             return self::ENDED;
         }
 
-        Log::warning('session.refresh_failed', ['user_id' => auth()->id(), 'reason' => $result['reason']]);
+        // 401 / invalid_client is not an outage but our own configuration
+        // (for example a rotated client secret): every refresh will fail
+        // until it is fixed, so it is logged as an error to be noticed.
+        $level = self::isClientMisconfigured($result['reason']) ? 'error' : 'warning';
+        Log::log($level, 'session.refresh_failed', ['user_id' => auth()->id(), 'reason' => $result['reason']]);
         // Remember the failure; the session itself is not touched.
         Session::put(self::KEY_RETRY_AT, now()->addSeconds(self::REFRESH_RETRY_S)->timestamp);
 
@@ -175,6 +179,12 @@ class KeycloakSession
             // retry later, never a 500.
             return ['outcome' => 'failed', 'reason' => 'lock_'.class_basename($e)];
         }
+    }
+
+    /** True for a refresh failure caused by our client credentials rather than Keycloak being unreachable. */
+    public static function isClientMisconfigured(string $reason): bool
+    {
+        return str_starts_with($reason, 'http_401') || str_contains($reason, 'invalid_client');
     }
 
     /** The result another request cached for this token, or null when there is none or it cannot be read. */
@@ -227,7 +237,9 @@ class KeycloakSession
             return ['outcome' => 'rejected'];
         }
 
-        return ['outcome' => 'failed', 'reason' => 'http_'.$response->status()];
+        $error = $response->json('error');
+
+        return ['outcome' => 'failed', 'reason' => 'http_'.$response->status().(is_string($error) ? '_'.$error : '')];
     }
 
     /**
