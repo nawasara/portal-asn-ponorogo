@@ -32,7 +32,11 @@ return [
     |
     */
 
-    'lifetime' => (int) env('SESSION_LIFETIME', 120),
+    // 30 days (43200 minutes), sliding: every request pushes it forward. The
+    // session holds a Keycloak offline token (App\Services\KeycloakSession),
+    // and the realm's Offline Session Idle is 30 days, so a longer lifetime
+    // would outlive the token behind it. Larger values are capped.
+    'lifetime' => min((int) env('SESSION_LIFETIME', 43200), 43200),
 
     'expire_on_close' => env('SESSION_EXPIRE_ON_CLOSE', false),
 

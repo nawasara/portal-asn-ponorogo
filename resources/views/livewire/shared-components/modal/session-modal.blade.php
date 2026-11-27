@@ -26,10 +26,10 @@
                             </div>
 
                             <h3 class="text-xl font-bold tracking-tight text-slate-800 dark:text-white">
-                                Sesi SSO berakhir
+                                Sesi Anda berakhir
                             </h3>
                             <p class="mt-2 text-sm text-slate-600 dark:text-slate-400 max-w-sm mx-auto leading-relaxed">
-                                Anda telah logout dari Kisara SSO. Apakah Anda ingin melakukan login ulang?
+                                Kisara SSO tidak lagi mengenali sesi Anda, misalnya karena Anda keluar dari semua perangkat atau akun Anda diubah. Ingin masuk lagi?
                             </p>
 
                             <div class="mt-6 flex flex-col gap-2.5">

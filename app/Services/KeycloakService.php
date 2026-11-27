@@ -81,24 +81,6 @@ class KeycloakService
     }
 
     /**
-     * Cek status login user berdasarkan access token 
-     */
-    public function checkLoginStatus(string $accessToken): array
-    {
-        $response = Http::asForm()->post("{$this->baseUrl}/realms/{$this->realm}/protocol/openid-connect/token/introspect", [
-            'client_id' => $this->clientId,
-            'client_secret' => $this->clientSecret,
-            'token' => $accessToken,
-        ]);
-
-        if ($response->failed()) {
-            throw new \Exception('Gagal cek status login di Keycloak');
-        }
-
-        return $response->json();
-    }
-
-    /**
      * Cek apakah user sudah punya passkey (credential webauthn-passwordless)
      * di Keycloak. Dipakai untuk menampilkan banner "Daftar Passkey" HANYA
      * untuk user yang belum mendaftar.

@@ -1,0 +1,351 @@
+<?php
+
+namespace Tests\Feature;
+
+use App\Livewire\SharedComponents\Topbar;
+use App\Models\User;
+use App\Services\KeycloakSession;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Session;
+use Laravel\Socialite\Facades\Socialite;
+use Laravel\Socialite\Two\User as SocialiteUser;
+use Tests\TestCase;
+
+/**
+ * FR-01..FR-04 of the 30-day session (docs/plan/sesi-30-hari.md in nawasara-dev).
+ */
+class KeycloakSessionTest extends TestCase
+{
+    use RefreshDatabase;
+
+    private const BASE = 'https://sso.test';
+    private const TOKEN_URL = 'https://sso.test/realms/asn-productions/protocol/openid-connect/token';
+    private const REVOKE_URL = 'https://sso.test/realms/asn-productions/protocol/openid-connect/revoke';
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        Cache::flush();
+        config([
+            'services.keycloak.base_url' => self::BASE,
+            'services.keycloak.realms' => 'asn-productions',
+            'services.keycloak.client_id' => 'asn-portal-production',
+            'services.keycloak.client_secret' => 'test-secret',
+            'services.keycloak.redirect' => 'http://localhost/login/keycloak/callback',
+        ]);
+    }
+
+    /** A signed-in employee whose access token expired a minute ago. */
+    private function signedInWithExpiredToken(string $refreshToken = 'rt-old'): void
+    {
+        Auth::login(User::factory()->create());
+        Session::put([
+            KeycloakSession::KEY_ACCESS_TOKEN => 'at-old',
+            KeycloakSession::KEY_REFRESH_TOKEN => $refreshToken,
+            KeycloakSession::KEY_ID_TOKEN => 'id-old',
+            KeycloakSession::KEY_EXPIRES_AT => now()->subMinute()->timestamp,
+        ]);
+    }
+
+    private function tokens(): KeycloakSession
+    {
+        return app(KeycloakSession::class);
+    }
+
+    // ---- FR-01: refresh when near expiry ----
+
+    public function test_a_fresh_access_token_does_not_call_keycloak(): void
+    {
+        Http::fake();
+        $this->signedInWithExpiredToken();
+        Session::put(KeycloakSession::KEY_EXPIRES_AT, now()->addMinutes(5)->timestamp);
+
+        $this->assertSame(KeycloakSession::ACTIVE, $this->tokens()->ensureFresh());
+        Http::assertNothingSent();
+    }
+
+    public function test_an_expiring_access_token_is_refreshed_with_the_stored_refresh_token(): void
+    {
+        Http::fake([self::TOKEN_URL => Http::response([
+            'access_token' => 'at-new', 'expires_in' => 300, 'refresh_token' => 'rt-new', 'refresh_expires_in' => 0,
+        ])]);
+        $this->signedInWithExpiredToken();
+
+        $this->assertSame(KeycloakSession::ACTIVE, $this->tokens()->ensureFresh());
+
+        Http::assertSent(fn (Request $r) => $r->url() === self::TOKEN_URL
+            && $r['grant_type'] === 'refresh_token'
+            && $r['refresh_token'] === 'rt-old'
+            && $r['client_id'] === 'asn-portal-production');
+        $this->assertSame('at-new', Session::get(KeycloakSession::KEY_ACCESS_TOKEN));
+        $this->assertSame('rt-new', Session::get(KeycloakSession::KEY_REFRESH_TOKEN));
+        // Keycloak sent no new id_token: the old one is kept for end-session.
+        $this->assertSame('id-old', Session::get(KeycloakSession::KEY_ID_TOKEN));
+        $this->assertGreaterThan(now()->timestamp + 200, Session::get(KeycloakSession::KEY_EXPIRES_AT));
+    }
+
+    public function test_parallel_requests_with_the_same_refresh_token_refresh_once(): void
+    {
+        Http::fake([self::TOKEN_URL => Http::response(['access_token' => 'at-new', 'expires_in' => 300, 'refresh_token' => 'rt-new'])]);
+
+        $this->signedInWithExpiredToken();
+        $this->tokens()->ensureFresh();
+        // A second request that read the session before the first one saved it.
+        $this->signedInWithExpiredToken();
+        $this->assertSame(KeycloakSession::ACTIVE, $this->tokens()->ensureFresh());
+
+        Http::assertSentCount(1);
+        $this->assertSame('rt-new', Session::get(KeycloakSession::KEY_REFRESH_TOKEN));
+    }
+
+    public function test_the_session_lifetime_is_thirty_days_and_capped_there(): void
+    {
+        $this->assertSame(43200, $this->sessionLifetimeWith(null));
+        $this->assertSame(43200, $this->sessionLifetimeWith('525600'));
+        $this->assertSame(120, $this->sessionLifetimeWith('120'));
+    }
+
+    /** config/session.php's lifetime when SESSION_LIFETIME is $value (null: not set). */
+    private function sessionLifetimeWith(?string $value): int
+    {
+        $saved = [getenv('SESSION_LIFETIME'), $_ENV['SESSION_LIFETIME'] ?? null, $_SERVER['SESSION_LIFETIME'] ?? null];
+        try {
+            if ($value === null) {
+                putenv('SESSION_LIFETIME');
+                unset($_ENV['SESSION_LIFETIME'], $_SERVER['SESSION_LIFETIME']);
+            } else {
+                putenv("SESSION_LIFETIME={$value}");
+                $_ENV['SESSION_LIFETIME'] = $_SERVER['SESSION_LIFETIME'] = $value;
+            }
+
+            return (require base_path('config/session.php'))['lifetime'];
+        } finally {
+            $saved[0] === false ? putenv('SESSION_LIFETIME') : putenv('SESSION_LIFETIME='.$saved[0]);
+            if ($saved[1] === null) {
+                unset($_ENV['SESSION_LIFETIME']);
+            } else {
+                $_ENV['SESSION_LIFETIME'] = $saved[1];
+            }
+            if ($saved[2] === null) {
+                unset($_SERVER['SESSION_LIFETIME']);
+            } else {
+                $_SERVER['SESSION_LIFETIME'] = $saved[2];
+            }
+        }
+    }
+
+    // ---- FR-02: only invalid_grant ends the session ----
+
+    public function test_invalid_grant_signs_the_employee_out(): void
+    {
+        Http::fake([self::TOKEN_URL => Http::response(['error' => 'invalid_grant', 'error_description' => 'Offline user session not found'], 400)]);
+        $this->signedInWithExpiredToken();
+
+        $component = new Topbar();
+        $this->assertSame(['active' => false], $component->checkKeycloakSession());
+
+        $this->assertFalse(Auth::check());
+        $this->assertNull(Session::get(KeycloakSession::KEY_REFRESH_TOKEN));
+    }
+
+    public function test_a_keycloak_outage_keeps_the_employee_signed_in_and_retries_later(): void
+    {
+        Http::fake([self::TOKEN_URL => Http::response('Service Unavailable', 503)]);
+        $this->signedInWithExpiredToken();
+
+        $this->assertSame(['active' => true], (new Topbar())->checkKeycloakSession());
+        $this->assertTrue(Auth::check());
+        $this->assertSame('rt-old', Session::get(KeycloakSession::KEY_REFRESH_TOKEN));
+
+        // Within the retry window Keycloak is left alone.
+        $this->tokens()->ensureFresh();
+        Http::assertSentCount(1);
+
+        // After it, the refresh is tried again.
+        $this->travel(KeycloakSession::REFRESH_RETRY_S + 1)->seconds();
+        $this->tokens()->ensureFresh();
+        Http::assertSentCount(2);
+    }
+
+    public function test_a_network_error_keeps_the_employee_signed_in(): void
+    {
+        Http::fake(fn () => throw new ConnectionException('Connection refused'));
+        $this->signedInWithExpiredToken();
+
+        $this->assertSame(KeycloakSession::ACTIVE, $this->tokens()->ensureFresh());
+        $this->assertTrue(Auth::check());
+        $this->assertNotNull(Session::get(KeycloakSession::KEY_RETRY_AT));
+    }
+
+    public function test_other_oauth_errors_do_not_sign_the_employee_out(): void
+    {
+        Http::fake([self::TOKEN_URL => Http::response(['error' => 'invalid_client'], 401)]);
+        $this->signedInWithExpiredToken();
+
+        $this->assertSame(KeycloakSession::ACTIVE, $this->tokens()->ensureFresh());
+        $this->assertTrue(Auth::check());
+    }
+
+    public function test_a_session_without_a_refresh_token_is_ended(): void
+    {
+        Http::fake();
+        Auth::login(User::factory()->create());
+
+        $this->assertSame(['active' => false], (new Topbar())->checkKeycloakSession());
+        $this->assertFalse(Auth::check());
+        Http::assertNothingSent();
+    }
+
+    // ---- FR-03: Keluar revokes, then end-session, then clears the session ----
+
+    public function test_logout_revokes_the_refresh_token_and_ends_the_keycloak_session(): void
+    {
+        Http::fake([self::REVOKE_URL => Http::response('', 200)]);
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)
+            ->withSession([
+                KeycloakSession::KEY_REFRESH_TOKEN => 'rt-current',
+                KeycloakSession::KEY_ID_TOKEN => 'id-current',
+            ])
+            ->post('/logout');
+
+        Http::assertSent(fn (Request $r) => $r->url() === self::REVOKE_URL
+            && $r['token'] === 'rt-current'
+            && $r['token_type_hint'] === 'refresh_token'
+            && $r['client_id'] === 'asn-portal-production');
+
+        $location = $response->headers->get('Location');
+        $this->assertStringStartsWith(self::BASE.'/realms/asn-productions/protocol/openid-connect/logout?', $location);
+        $this->assertStringContainsString('id_token_hint=id-current', $location);
+        $this->assertGuest();
+        $this->assertNull(Session::get(KeycloakSession::KEY_REFRESH_TOKEN));
+    }
+
+    public function test_logout_still_signs_out_when_revocation_fails(): void
+    {
+        Http::fake(fn () => throw new ConnectionException('timed out'));
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)
+            ->withSession([
+                KeycloakSession::KEY_REFRESH_TOKEN => 'rt-current',
+                KeycloakSession::KEY_ID_TOKEN => 'id-current',
+            ])
+            ->post('/logout');
+
+        $response->assertRedirect();
+        $this->assertStringContainsString('/protocol/openid-connect/logout?', $response->headers->get('Location'));
+        $this->assertGuest();
+    }
+
+    // ---- FR-01 / FR-04: sign-in asks for offline_access, revokes the replaced token, no remember-me ----
+
+    public function test_sign_in_asks_for_offline_access(): void
+    {
+        $location = $this->get('/login')->headers->get('Location');
+
+        $this->assertStringStartsWith(self::BASE.'/realms/asn-productions/protocol/openid-connect/auth?', $location);
+        parse_str(parse_url($location, PHP_URL_QUERY), $query);
+        $this->assertContains('offline_access', explode(' ', $query['scope']));
+        $this->assertContains('openid', explode(' ', $query['scope']));
+    }
+
+    public function test_a_new_sign_in_revokes_the_replaced_token_of_another_session_and_sets_no_remember_cookie(): void
+    {
+        Http::fake([self::REVOKE_URL => Http::response('', 200)]);
+        $fresh = $this->fakeKeycloakUser('sid-new');
+        $previous = self::jwt(['typ' => 'Offline', 'sid' => 'sid-old']);
+
+        $response = $this->withSession([KeycloakSession::KEY_REFRESH_TOKEN => $previous])
+            ->get('/login/keycloak/callback?code=x&state=y');
+
+        $response->assertRedirect('/');
+        Http::assertSent(fn (Request $r) => $r->url() === self::REVOKE_URL && $r['token'] === $previous);
+        Http::assertSentCount(1);
+        $this->assertAuthenticated();
+        $response->assertCookieMissing(Auth::guard()->getRecallerName());
+        $this->assertSame($fresh, Session::get(KeycloakSession::KEY_REFRESH_TOKEN));
+        $this->assertSame('id-fresh', Session::get(KeycloakSession::KEY_ID_TOKEN));
+        $this->assertSame('kc-sub-1', Session::get(KeycloakSession::KEY_USER_ID));
+    }
+
+    public function test_a_replaced_token_of_the_same_keycloak_session_is_not_revoked(): void
+    {
+        // Keycloak 26 revokes per session: this would also end the new token.
+        Http::fake();
+        $this->fakeKeycloakUser('sid-same');
+
+        $this->withSession([KeycloakSession::KEY_REFRESH_TOKEN => self::jwt(['typ' => 'Offline', 'sid' => 'sid-same'])])
+            ->get('/login/keycloak/callback?code=x&state=y')
+            ->assertRedirect('/');
+
+        Http::assertNothingSent();
+        $this->assertAuthenticated();
+    }
+
+    public function test_a_replaced_token_without_a_readable_session_is_not_revoked(): void
+    {
+        Http::fake();
+        $this->fakeKeycloakUser('sid-new');
+
+        $this->withSession([KeycloakSession::KEY_REFRESH_TOKEN => 'opaque-token'])
+            ->get('/login/keycloak/callback?code=x&state=y')
+            ->assertRedirect('/');
+
+        Http::assertNothingSent();
+    }
+
+    public function test_a_failed_revocation_never_blocks_sign_in(): void
+    {
+        Http::fake([self::REVOKE_URL => Http::response('', 503)]);
+        $fresh = $this->fakeKeycloakUser('sid-new');
+
+        $this->withSession([KeycloakSession::KEY_REFRESH_TOKEN => self::jwt(['sid' => 'sid-old'])])
+            ->get('/login/keycloak/callback?code=x&state=y')
+            ->assertRedirect('/');
+
+        $this->assertAuthenticated();
+        $this->assertSame($fresh, Session::get(KeycloakSession::KEY_REFRESH_TOKEN));
+    }
+
+    public function test_a_first_sign_in_has_nothing_to_revoke(): void
+    {
+        Http::fake();
+        $this->fakeKeycloakUser('sid-new');
+
+        $this->get('/login/keycloak/callback?code=x&state=y')->assertRedirect('/');
+
+        Http::assertNothingSent();
+        $this->assertAuthenticated();
+    }
+
+    /** An unsigned JWT-shaped token: only the payload matters to the code under test. */
+    private static function jwt(array $payload): string
+    {
+        return 'h.'.rtrim(strtr(base64_encode(json_encode($payload)), '+/', '-_'), '=').'.s';
+    }
+
+    /** Fakes the Socialite callback; returns the new refresh token. */
+    private function fakeKeycloakUser(string $sid): string
+    {
+        $refreshToken = self::jwt(['typ' => 'Offline', 'sid' => $sid]);
+        $user = (new SocialiteUser())
+            ->map(['id' => 'kc-sub-1', 'name' => 'Pegawai Uji', 'email' => 'pegawai@ponorogo.go.id']);
+        $user->accessTokenResponseBody = [
+            'access_token' => 'at-fresh',
+            'expires_in' => 300,
+            'refresh_token' => $refreshToken,
+            'id_token' => 'id-fresh',
+        ];
+
+        Socialite::shouldReceive('driver->user')->andReturn($user);
+
+        return $refreshToken;
+    }
+}
