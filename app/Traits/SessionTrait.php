@@ -44,16 +44,6 @@ trait SessionTrait
         }
     }
 
-    public function getNumber()
-    {
-        $token = Session::get('keycloak_id_user');
-
-        $service = new KeycloakService();
-        $number = $service->getWhatsappNumber($token);
-        if (!$number) info("get number null");
-        return $number ?? null;
-    }
-
     public function logoutLaravel()
     {
         Auth::logout();

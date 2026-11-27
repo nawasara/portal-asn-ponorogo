@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Livewire\SharedComponents\NavbarMobile;
 use App\Livewire\SharedComponents\Topbar;
 use App\Models\User;
 use App\Services\KeycloakSession;
@@ -15,6 +16,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Session;
 use Laravel\Socialite\Facades\Socialite;
 use Laravel\Socialite\Two\User as SocialiteUser;
+use Livewire\Livewire;
 use Tests\TestCase;
 
 /**
@@ -239,6 +241,19 @@ class KeycloakSessionTest extends TestCase
         $this->signedInWithExpiredToken();
 
         $this->assertSame(KeycloakSession::ACTIVE, $this->tokens()->ensureFresh());
+        $this->assertTrue(Auth::check());
+    }
+
+    public function test_pages_render_for_signed_in_employees_while_keycloak_is_down(): void
+    {
+        // Every Keycloak call fails, including the admin API the top bar
+        // used to call on each page for a number it never displayed.
+        Http::fake(fn () => throw new ConnectionException('Connection refused'));
+        $this->signedInWithExpiredToken();
+
+        Livewire::test(Topbar::class)->assertOk()->assertNotDispatched('set-modal-session');
+        Livewire::test(NavbarMobile::class)->assertOk()->assertNotDispatched('set-modal-session');
+
         $this->assertTrue(Auth::check());
     }
 

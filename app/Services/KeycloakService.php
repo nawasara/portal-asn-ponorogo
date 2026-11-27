@@ -61,16 +61,6 @@ class KeycloakService
     }
 
     /**
-     * Get WhatsApp Number dari user profile
-     */
-    public function getWhatsappNumber($userId)
-    {
-        $user = $this->getUser($userId);
-
-        return $user['attributes']['whatsapp_number'][0] ?? null;
-    }
-
-    /**
      * Get email dari user profile Keycloak (field top-level standar).
      */
     public function getEmail($userId): ?string
