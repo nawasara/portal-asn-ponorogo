@@ -4,6 +4,7 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Session;
@@ -61,16 +62,6 @@ class KeycloakService
     }
 
     /**
-     * Get WhatsApp Number dari user profile
-     */
-    public function getWhatsappNumber($userId)
-    {
-        $user = $this->getUser($userId);
-
-        return $user['attributes']['whatsapp_number'][0] ?? null;
-    }
-
-    /**
      * Get email dari user profile Keycloak (field top-level standar).
      */
     public function getEmail($userId): ?string
@@ -81,37 +72,25 @@ class KeycloakService
     }
 
     /**
-     * Cek status login user berdasarkan access token 
+     * Apakah user sudah punya passkey (credential webauthn-passwordless) di
+     * Keycloak. Dipakai banner "Daftar Passkey" (PasskeyBanner).
+     *
+     * Mengembalikan null bila Keycloak tidak bisa ditanya (jaringan, 5xx,
+     * token admin gagal). Pemanggil wajib memperlakukan null sebagai "tidak
+     * tahu": jangan tampilkan banner dan jangan simpan hasilnya di cache.
      */
-    public function checkLoginStatus(string $accessToken): array
-    {
-        $response = Http::asForm()->post("{$this->baseUrl}/realms/{$this->realm}/protocol/openid-connect/token/introspect", [
-            'client_id' => $this->clientId,
-            'client_secret' => $this->clientSecret,
-            'token' => $accessToken,
-        ]);
-
-        if ($response->failed()) {
-            throw new \Exception('Gagal cek status login di Keycloak');
-        }
-
-        return $response->json();
-    }
-
-    /**
-     * Cek apakah user sudah punya passkey (credential webauthn-passwordless)
-     * di Keycloak. Dipakai untuk menampilkan banner "Daftar Passkey" HANYA
-     * untuk user yang belum mendaftar.
-     */
-    public function hasPasskey(string $userId): bool
+    public function passkeyStatus(string $userId): ?bool
     {
         try {
             $token = $this->getAdminToken();
             $response = Http::withToken($token)
+                ->timeout(5)
                 ->get("{$this->baseUrl}/admin/realms/{$this->realm}/users/{$userId}/credentials");
 
-            if ($response->failed()) {
-                return false; // gagal cek → jangan ganggu user dengan banner
+            if ($response->failed() || ! is_array($response->json())) {
+                Log::warning('passkey.check_failed', ['reason' => 'http_'.$response->status()]);
+
+                return null;
             }
 
             foreach ($response->json() as $credential) {
@@ -119,10 +98,12 @@ class KeycloakService
                     return true;
                 }
             }
+
             return false;
         } catch (\Throwable $e) {
-            info('Gagal cek passkey user: ' . $e->getMessage());
-            return false;
+            Log::warning('passkey.check_failed', ['reason' => class_basename($e)]);
+
+            return null;
         }
     }
 

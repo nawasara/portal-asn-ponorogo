@@ -13,6 +13,12 @@ use App\Traits\SessionTrait;
  * Tujuan utama komponen ini adalah memastikan bahwa sesi pengguna di Keycloak masih aktif.
  * Jika sesi tidak aktif, modal akan ditampilkan dan pengguna otomatis dikeluarkan (logout).
  *
+ * Sejak sesi 30 hari (token offline_access, lihat App\Services\KeycloakSession),
+ * "tidak aktif" berarti Keycloak menolak refresh token dengan invalid_grant:
+ * token dicabut, keluar dari semua perangkat, akun dinonaktifkan. Keluar dari
+ * aplikasi lain atau SSO idle 30 menit TIDAK lagi memunculkan modal ini, dan
+ * galat jaringan atau Keycloak yang sedang restart juga tidak.
+ *
  * Alur logika:
  * - Ketika event `set-modal-session` diterima, fungsi `modalSession()` dipanggil.
  * - Fungsi ini memeriksa status Keycloak dan menentukan apakah modal harus tampil.

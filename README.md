@@ -93,6 +93,42 @@ Paksaan mengisi nomor WhatsApp sebelum membuka beranda juga dihapus. Akun Kisara
 -   Login/Logout flow is centralized in `app/Http/Controllers/Auth/KeycloakController.php`.
 -   Logout uses `id_token_hint` and `post_logout_redirect_uri` to redirect the user back to the portal after logging out of Keycloak.
 
+## Sesi 30 hari (token offline)
+
+Pegawai yang membuka portal dalam 30 hari terakhir tidak diminta masuk lagi, seperti di Kisara Mail dan Kisara Workspace. Rencana dan keputusannya ada di `docs/plan/sesi-30-hari.md` (repo nawasara-dev, tugas S-04). Logikanya di `app/Services/KeycloakSession.php`.
+
+-   Saat masuk, portal meminta scope `offline_access` (client scope Optional di klien `asn-portal-production`). Refresh token yang didapat adalah token **offline**, yang tidak ikut berakhir saat sesi SSO realm `asn-productions` habis (idle 30 menit). Batasnya adalah Offline Session Idle realm: 30 hari.
+-   Token hanya disimpan di sesi Laravel di server (driver `database`), tidak pernah di cookie yang terbaca JavaScript. Isi sesi dienkripsi dengan kunci aplikasi (`SESSION_ENCRYPT=true`, juga bawaan config), karena token offline berlaku 30 hari dan tanpa enkripsi tersimpan apa adanya di tabel `sessions`. Hasil refresh yang dibagi antar-permintaan paralel (cache 60 detik) juga dienkripsi dan hanya memuat field yang dipakai.
+-   Sesi Laravel hidup 30 hari dan bergeser setiap kali portal dibuka (`SESSION_LIFETIME=43200` menit, juga nilai bawaan di `config/session.php`). Nilai yang lebih besar dipotong ke 43200, sebab sesi yang lebih panjang dari Offline Session Idle hanya akan memegang token yang sudah mati.
+-   Access token diperbarui bila tinggal 30 detik atau sudah kedaluwarsa. **Hanya `invalid_grant` dari Keycloak yang mengeluarkan pegawai** (token dicabut, keluar dari semua perangkat, akun dinonaktifkan, idle lewat 30 hari). Galat jaringan, 5xx, atau Keycloak yang sedang restart tidak: pegawai tetap masuk dan pembaruan dicoba lagi 60 detik kemudian. Dulu portal memeriksa sesi lewat introspeksi dan ikut mengeluarkan pegawai bila introspeksi menjawab tidak aktif; pemeriksaan itu dihapus karena aturan ini.
+-   Permintaan Livewire yang berjalan bersamaan memakai satu kali pembaruan per refresh token (kunci cache). Tanpa itu, bila realm memutar refresh token, permintaan kedua akan mendapat `invalid_grant` dan mengeluarkan pegawai yang sebenarnya masih sah. Hasil pembaruan pertama disimpan 60 detik (terenkripsi) dan dipakai ulang permintaan yang menunggu. Bila cache itu sendiri rusak, pembaruan dianggap gagal biasa (tetap masuk, coba lagi 60 detik), bukan galat 500.
+-   **Asumsi: realm `asn-productions` mematikan "Revoke Refresh Token"** (diperiksa di prod 27 Nov 2026: `revokeRefreshToken=false`). Karena itu refresh token lama tetap sah setelah dipakai, dan hasil bersama 60 detik di atas sudah cukup untuk permintaan yang datang terlambat. Kalau pengaturan itu dinyalakan, permintaan yang membaca sesi sebelum pembaruan tersimpan dan datang setelah 60 detik bisa mendapat `invalid_grant` dan mengeluarkan pegawai; periksa ulang aturan ini sebelum menyalakannya.
+-   **Keluar** mencabut refresh token di `/protocol/openid-connect/revoke`, lalu menghapus sesi Laravel, lalu mengarahkan ke end-session Keycloak. End-session saja tidak cukup: ia mengakhiri sesi SSO, sedangkan sesi offline tetap hidup. Pencabutan dibatasi 3 detik dan kegagalannya hanya dicatat di log, tidak pernah menahan pegawai tetap masuk.
+-   **Masuk ulang** di peramban yang sama mencabut refresh token lama yang digantikan, **hanya bila token lama milik sesi Keycloak lain** (`sid` keduanya terbaca dan berbeda). Keycloak 26 mencabut per sesi (`sid`), jadi mencabut token lama dari sesi yang sama (masuk ulang saat sesi SSO masih hidup) ikut mematikan token yang baru diterbitkan dan pegawai keluar diam-diam pada refresh berikutnya. Bila `sid` sama atau tak terbaca, token lama dibiarkan (dicatat `login.replaced_token_kept`); Keycloak menyimpan satu sesi offline per sesi SSO dan klien, jadi tidak menumpuk. Pencabutan ini upaya terbaik dan tidak pernah menghalangi login. Aturannya sama dengan `replacedTokenStep` di kisara-workspace-web.
+-   **Remember-me Laravel dihapus.** Token offline dan sesi 30 hari sudah menjadi kredensial jangka panjangnya; cookie remember-me akan menjadi kredensial kedua yang tidak ikut berakhir saat Keluar. Sesi yang dipulihkan dari cookie remember-me lama tidak membawa refresh token, jadi pemeriksaan sesi langsung mengeluarkannya dan Laravel menghapus cookie itu.
+-   Modal "Sesi Anda berakhir" (`SessionModal`) kini muncul hanya ketika Keycloak menolak refresh token. Keluar dari aplikasi lain di realm yang sama atau SSO idle 30 menit tidak lagi mengeluarkan pegawai dari portal; itu konsekuensi yang diterima pemilik. Di komputer bersama pegawai wajib menekan Keluar.
+
+Log yang perlu dipantau: `session.ended` (invalid_grant), `session.refresh_failed` (level warning: Keycloak tak terjangkau, coba lagi; level **error** bila alasannya `http_401` atau `invalid_client`, artinya rahasia klien berubah dan setiap pembaruan akan gagal sampai `KEYCLOAK_CLIENT_SECRET` diperbaiki), `passkey.check_failed` (banner passkey tidak tampil sementara), `logout.revoke_failed` dan `login.revoke_failed` (pencabutan gagal, token tetap hidup sampai idle 30 hari), serta `login.succeeded` dengan `offline=false` (scope `offline_access` tidak diberikan, berarti klien atau peran `offline_access` di Keycloak berubah).
+
+### Saat deploy
+
+1.  Di `.env` server, setel dua nilai ini:
+    -   `SESSION_LIFETIME=43200` (sekarang `120`, yang membuat sesi tetap berakhir setelah 2 jam tanpa aktivitas). Kalau barisnya dihapus, bawaan config juga 43200.
+    -   `SESSION_ENCRYPT=true` (sekarang `false`).
+2.  `.env` di-bind-mount ke container. Sunting berkasnya **di tempat** (jangan `sed -i`, yang mengganti inode sehingga mount masih menunjuk berkas lama), lalu jalankan `docker compose --env-file .env -f deploy/docker-compose.yml up -d`. `docker compose restart` **tidak** membaca ulang `.env`.
+3.  Sekali saat deploy, kosongkan token remember-me lama supaya cookie remember-me yang masih tersimpan di peramban tidak bisa dipakai lagi:
+
+    ```bash
+    docker compose -f deploy/docker-compose.yml exec app php artisan tinker --execute="App\Models\User::query()->update(['remember_token' => null]);"
+    ```
+
+    Tanpa langkah ini cookie lama memang tetap dikeluarkan oleh pemeriksaan sesi (tidak ada refresh token), tetapi baru setelah halaman dibuka.
+4.  **Semua pegawai diminta masuk sekali saat deploy**, karena sesi lama yang belum terenkripsi tidak bisa dibaca lagi. Itu bertepatan dengan masuk ulang yang memang diperlukan sekali untuk mendapat token offline: sesi lama hanya memegang refresh token biasa yang mati bersama sesi SSO 30 menit. Setelah masuk ulang itu sesinya 30 hari.
+
+Catatan lain:
+
+-   Tabel `sessions` menampung baris sampai 30 hari; pembersihannya tetap lewat lotre sesi bawaan Laravel.
+
 ## Tests
 
 -   Run PHPUnit tests with:

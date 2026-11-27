@@ -26,9 +26,6 @@ class NavbarMobile extends Component
         // Ambil status sesi Keycloak dari trait
         $keycloakSession = $this->checkKeycloakSession();
 
-        // Ambil data nomor telepon
-        $this->getNumber();
-
         // Jika sesi tidak aktif, kirim event untuk menampilkan modal sesi
         if (empty($keycloakSession['active'])) {
             $this->dispatch('set-modal-session', show: true);
