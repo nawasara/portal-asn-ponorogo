@@ -4,6 +4,7 @@ namespace App\Services;
 
 use Illuminate\Contracts\Cache\LockTimeoutException;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
@@ -142,6 +143,10 @@ class KeycloakSession
      * one would get invalid_grant and sign the employee out. The winner's
      * result is cached briefly under the old token, so the others reuse it.
      *
+     * The cached result holds live tokens and the cache store is a plain
+     * database table, so only the fields store() needs are kept, and they
+     * are encrypted with the app key. The key is a hash of the old token.
+     *
      * @return array{outcome: 'ok'|'rejected'|'failed', tokens?: array, reason?: string}
      */
     protected function refreshOnce(string $refreshToken): array
@@ -151,13 +156,13 @@ class KeycloakSession
         try {
             return Cache::lock($key.':lock', self::REFRESH_TIMEOUT_S + 5)
                 ->block(self::REFRESH_TIMEOUT_S + 2, function () use ($key, $refreshToken) {
-                    $done = Cache::get($key);
-                    if (is_array($done)) {
+                    $done = $this->cachedResult($key);
+                    if ($done !== null) {
                         return $done;
                     }
                     $result = $this->requestRefresh($refreshToken);
                     if ($result['outcome'] !== 'failed') {
-                        Cache::put($key, $result, 60);
+                        Cache::put($key, Crypt::encrypt(self::cacheable($result)), 60);
                     }
 
                     return $result;
@@ -165,6 +170,33 @@ class KeycloakSession
         } catch (LockTimeoutException) {
             return ['outcome' => 'failed', 'reason' => 'lock_timeout'];
         }
+    }
+
+    /** The result another request cached for this token, or null when there is none or it cannot be read. */
+    protected function cachedResult(string $key): ?array
+    {
+        $sealed = Cache::get($key);
+        if (! is_string($sealed)) {
+            return null;
+        }
+        try {
+            $result = Crypt::decrypt($sealed);
+        } catch (\Throwable) {
+            return null;
+        }
+
+        return is_array($result) ? $result : null;
+    }
+
+    /** Only what store() reads; Keycloak's response also carries scope, session_state and the like. */
+    protected static function cacheable(array $result): array
+    {
+        if ($result['outcome'] !== 'ok') {
+            return ['outcome' => $result['outcome']];
+        }
+        $tokens = array_intersect_key($result['tokens'], array_flip(['access_token', 'expires_in', 'refresh_token', 'id_token']));
+
+        return ['outcome' => 'ok', 'tokens' => $tokens];
     }
 
     /** @return array{outcome: 'ok'|'rejected'|'failed', tokens?: array, reason?: string} */

@@ -51,7 +51,10 @@ return [
     |
     */
 
-    'encrypt' => env('SESSION_ENCRYPT', false),
+    // On by default: the session holds a Keycloak offline token that stays
+    // valid for 30 days, and the database driver would otherwise keep it in
+    // plain text in the sessions table.
+    'encrypt' => env('SESSION_ENCRYPT', true),
 
     /*
     |--------------------------------------------------------------------------

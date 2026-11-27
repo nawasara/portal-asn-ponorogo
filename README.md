@@ -98,7 +98,7 @@ Paksaan mengisi nomor WhatsApp sebelum membuka beranda juga dihapus. Akun Kisara
 Pegawai yang membuka portal dalam 30 hari terakhir tidak diminta masuk lagi, seperti di Kisara Mail dan Kisara Workspace. Rencana dan keputusannya ada di `docs/plan/sesi-30-hari.md` (repo nawasara-dev, tugas S-04). Logikanya di `app/Services/KeycloakSession.php`.
 
 -   Saat masuk, portal meminta scope `offline_access` (client scope Optional di klien `asn-portal-production`). Refresh token yang didapat adalah token **offline**, yang tidak ikut berakhir saat sesi SSO realm `asn-productions` habis (idle 30 menit). Batasnya adalah Offline Session Idle realm: 30 hari.
--   Token hanya disimpan di sesi Laravel di server (driver `database`), tidak pernah di cookie yang terbaca JavaScript.
+-   Token hanya disimpan di sesi Laravel di server (driver `database`), tidak pernah di cookie yang terbaca JavaScript. Isi sesi dienkripsi dengan kunci aplikasi (`SESSION_ENCRYPT=true`, juga bawaan config), karena token offline berlaku 30 hari dan tanpa enkripsi tersimpan apa adanya di tabel `sessions`. Hasil refresh yang dibagi antar-permintaan paralel (cache 60 detik) juga dienkripsi dan hanya memuat field yang dipakai.
 -   Sesi Laravel hidup 30 hari dan bergeser setiap kali portal dibuka (`SESSION_LIFETIME=43200` menit, juga nilai bawaan di `config/session.php`). Nilai yang lebih besar dipotong ke 43200, sebab sesi yang lebih panjang dari Offline Session Idle hanya akan memegang token yang sudah mati.
 -   Access token diperbarui bila tinggal 30 detik atau sudah kedaluwarsa. **Hanya `invalid_grant` dari Keycloak yang mengeluarkan pegawai** (token dicabut, keluar dari semua perangkat, akun dinonaktifkan, idle lewat 30 hari). Galat jaringan, 5xx, atau Keycloak yang sedang restart tidak: pegawai tetap masuk dan pembaruan dicoba lagi 60 detik kemudian. Dulu portal memeriksa sesi lewat introspeksi dan ikut mengeluarkan pegawai bila introspeksi menjawab tidak aktif; pemeriksaan itu dihapus karena aturan ini.
 -   Permintaan Livewire yang berjalan bersamaan memakai satu kali pembaruan per refresh token (kunci cache). Tanpa itu, bila realm memutar refresh token, permintaan kedua akan mendapat `invalid_grant` dan mengeluarkan pegawai yang sebenarnya masih sah.
@@ -112,7 +112,7 @@ Log yang perlu dipantau: `session.ended` (invalid_grant), `session.refresh_faile
 ### Saat deploy
 
 -   Ubah `.env` produksi: `SESSION_LIFETIME=43200`. Nilai lama `120` membuat sesi tetap berakhir setelah 2 jam tanpa aktivitas. Kalau barisnya dihapus, bawaan config juga 43200.
--   Pegawai yang sedang masuk saat deploy masih memegang refresh token biasa. Mereka diminta masuk sekali lagi ketika sesi SSO lamanya habis; setelah itu sesinya 30 hari.
+-   Ubah juga `SESSION_ENCRYPT=true` (sekarang `false`). Sesi lama yang belum terenkripsi tidak bisa dibaca lagi, jadi **semua pegawai diminta masuk sekali saat deploy**. Itu bertepatan dengan masuk ulang yang memang diperlukan sekali untuk mendapat token offline: sesi lama hanya memegang refresh token biasa yang mati bersama sesi SSO 30 menit. Setelah masuk ulang itu sesinya 30 hari.
 -   Tabel `sessions` menampung baris sampai 30 hari; pembersihannya tetap lewat lotre sesi bawaan Laravel.
 
 ## Tests

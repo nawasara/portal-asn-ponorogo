@@ -10,6 +10,7 @@ use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Session;
 use Laravel\Socialite\Facades\Socialite;
@@ -101,6 +102,56 @@ class KeycloakSessionTest extends TestCase
 
         Http::assertSentCount(1);
         $this->assertSame('rt-new', Session::get(KeycloakSession::KEY_REFRESH_TOKEN));
+    }
+
+    public function test_the_shared_refresh_result_is_cached_encrypted_and_trimmed(): void
+    {
+        Http::fake([self::TOKEN_URL => Http::response([
+            'access_token' => 'at-new', 'expires_in' => 300, 'refresh_token' => 'rt-new',
+            'scope' => 'openid offline_access', 'session_state' => 'sid-1',
+        ])]);
+        $this->signedInWithExpiredToken();
+        $this->tokens()->ensureFresh();
+
+        $sealed = Cache::get('kc:refresh:'.hash('sha256', 'rt-old'));
+        $this->assertIsString($sealed);
+        $this->assertStringNotContainsString('rt-new', $sealed);
+        $this->assertStringNotContainsString('at-new', $sealed);
+        $this->assertSame(
+            ['outcome' => 'ok', 'tokens' => ['access_token' => 'at-new', 'expires_in' => 300, 'refresh_token' => 'rt-new']],
+            Crypt::decrypt($sealed),
+        );
+    }
+
+    public function test_an_unreadable_cached_result_falls_back_to_a_real_refresh(): void
+    {
+        Http::fake([self::TOKEN_URL => Http::response(['access_token' => 'at-new', 'expires_in' => 300, 'refresh_token' => 'rt-new'])]);
+        Cache::put('kc:refresh:'.hash('sha256', 'rt-old'), 'not-encrypted', 60);
+        $this->signedInWithExpiredToken();
+
+        $this->assertSame(KeycloakSession::ACTIVE, $this->tokens()->ensureFresh());
+        Http::assertSentCount(1);
+        $this->assertSame('rt-new', Session::get(KeycloakSession::KEY_REFRESH_TOKEN));
+    }
+
+    public function test_session_data_is_encrypted_by_default(): void
+    {
+        $saved = [getenv('SESSION_ENCRYPT'), $_ENV['SESSION_ENCRYPT'] ?? null, $_SERVER['SESSION_ENCRYPT'] ?? null];
+        putenv('SESSION_ENCRYPT');
+        unset($_ENV['SESSION_ENCRYPT'], $_SERVER['SESSION_ENCRYPT']);
+        try {
+            $this->assertTrue((require base_path('config/session.php'))['encrypt']);
+        } finally {
+            if ($saved[0] !== false) {
+                putenv('SESSION_ENCRYPT='.$saved[0]);
+            }
+            if ($saved[1] !== null) {
+                $_ENV['SESSION_ENCRYPT'] = $saved[1];
+            }
+            if ($saved[2] !== null) {
+                $_SERVER['SESSION_ENCRYPT'] = $saved[2];
+            }
+        }
     }
 
     public function test_the_session_lifetime_is_thirty_days_and_capped_there(): void
