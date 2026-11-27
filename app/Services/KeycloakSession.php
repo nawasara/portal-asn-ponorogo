@@ -169,6 +169,11 @@ class KeycloakSession
                 });
         } catch (LockTimeoutException) {
             return ['outcome' => 'failed', 'reason' => 'lock_timeout'];
+        } catch (\Throwable $e) {
+            // The cache store behind the lock is down (database or file
+            // problem). Not the employee's fault: keep them signed in and
+            // retry later, never a 500.
+            return ['outcome' => 'failed', 'reason' => 'lock_'.class_basename($e)];
         }
     }
 

@@ -263,6 +263,18 @@ class KeycloakSessionTest extends TestCase
         $this->assertNotNull(Session::get(KeycloakSession::KEY_RETRY_AT));
     }
 
+    public function test_a_broken_cache_store_keeps_the_employee_signed_in(): void
+    {
+        Http::fake();
+        $this->signedInWithExpiredToken();
+        Cache::shouldReceive('lock')->andThrow(new \RuntimeException('cache table unreachable'));
+
+        $this->assertSame(KeycloakSession::ACTIVE, $this->tokens()->ensureFresh());
+        $this->assertTrue(Auth::check());
+        $this->assertNotNull(Session::get(KeycloakSession::KEY_RETRY_AT));
+        Http::assertNothingSent();
+    }
+
     public function test_other_oauth_errors_do_not_sign_the_employee_out(): void
     {
         Http::fake([self::TOKEN_URL => Http::response(['error' => 'invalid_client'], 401)]);
