@@ -206,6 +206,34 @@ class KeycloakSessionTest extends TestCase
         $this->assertNull(Session::get(KeycloakSession::KEY_REFRESH_TOKEN));
     }
 
+    public function test_signing_out_destroys_the_old_session_record(): void
+    {
+        // A cookie copied from a shared computer must not work after Keluar.
+        $this->signedInWithExpiredToken();
+        Session::save();
+        $oldId = Session::getId();
+        $handler = Session::getHandler();
+        $this->assertNotSame('', $handler->read($oldId));
+
+        (new Topbar())->logoutLaravel();
+
+        $this->assertSame('', $handler->read($oldId));
+        $this->assertNotSame($oldId, Session::getId());
+        $this->assertFalse(Auth::check());
+    }
+
+    public function test_invalid_grant_destroys_the_old_session_record(): void
+    {
+        Http::fake([self::TOKEN_URL => Http::response(['error' => 'invalid_grant'], 400)]);
+        $this->signedInWithExpiredToken();
+        Session::save();
+        $oldId = Session::getId();
+
+        (new Topbar())->checkKeycloakSession();
+
+        $this->assertSame('', Session::getHandler()->read($oldId));
+    }
+
     public function test_a_keycloak_outage_keeps_the_employee_signed_in_and_retries_later(): void
     {
         Http::fake([self::TOKEN_URL => Http::response('Service Unavailable', 503)]);

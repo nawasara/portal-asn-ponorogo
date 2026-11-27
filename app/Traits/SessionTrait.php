@@ -44,11 +44,16 @@ trait SessionTrait
         }
     }
 
+    /**
+     * End the portal session. invalidate() also DESTROYS the old row in the
+     * session store; flush() + regenerate() only moved to a new id and left
+     * the old row (user + Keycloak tokens) behind, so a cookie copied from a
+     * shared computer kept working after Keluar for up to 30 days.
+     */
     public function logoutLaravel()
     {
         Auth::logout();
-        Session::flush();
-        Session::regenerate();
-        return;
+        Session::invalidate();
+        Session::regenerateToken();
     }
 }
