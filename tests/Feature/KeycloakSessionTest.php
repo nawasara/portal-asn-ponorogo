@@ -363,13 +363,16 @@ class KeycloakSessionTest extends TestCase
 
     // ---- FR-01 / FR-04: sign-in asks for offline_access, revokes the replaced token, no remember-me ----
 
-    public function test_sign_in_asks_for_offline_access(): void
+    public function test_sign_in_does_not_ask_for_offline_access(): void
     {
+        // An offline code exchanged by the first app of an SSO session makes
+        // Keycloak 26 drop the online session: every other app then asks for
+        // the password again (KeycloakSession::SCOPES).
         $location = $this->get('/login')->headers->get('Location');
 
         $this->assertStringStartsWith(self::BASE.'/realms/asn-productions/protocol/openid-connect/auth?', $location);
         parse_str(parse_url($location, PHP_URL_QUERY), $query);
-        $this->assertContains('offline_access', explode(' ', $query['scope']));
+        $this->assertNotContains('offline_access', explode(' ', $query['scope']));
         $this->assertContains('openid', explode(' ', $query['scope']));
     }
 
