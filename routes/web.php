@@ -28,4 +28,5 @@ Route::get('register-passkey', fn () => redirect()->away(account_url('/security/
 
 Route::get('/login', [KeycloakController::class, 'redirectToProvider'])->name('login');
 Route::get('/login/keycloak/callback', [KeycloakController::class, 'handleProviderCallback'])->name('login.callback');
+Route::get('/login/offline', [KeycloakController::class, 'redirectForOfflineToken'])->name('login.offline');
 Route::post('/logout', [KeycloakController::class, 'logout'])->name('logout');

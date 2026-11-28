@@ -19,9 +19,9 @@ use App\Traits\SessionTrait;
  * aplikasi lain atau SSO idle 30 menit TIDAK memunculkan modal ini, dan
  * galat jaringan atau Keycloak yang sedang restart juga tidak.
  *
- * Sejak 28 Nov 2026 login tidak meminta offline_access (lihat
- * KeycloakSession::SCOPES), sehingga refresh token-nya token online dan SSO
- * idle 30 menit KEMBALI memunculkan modal ini.
+ * Pengecualian: bila putaran senyap token offline gagal saat login (lihat
+ * KeycloakController), sesi memegang token online dan SSO idle 30 menit
+ * memunculkan modal ini.
  *
  * Alur logika:
  * - Ketika event `set-modal-session` diterima, fungsi `modalSession()` dipanggil.
