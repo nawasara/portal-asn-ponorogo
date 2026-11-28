@@ -19,6 +19,11 @@ class KeycloakController extends \App\Http\Controllers\Controller
 
     public function redirectToProvider()
     {
+        // Already signed in (a launcher tile points here): just continue.
+        if (Auth::check()) {
+            return redirect('/');
+        }
+
         // Round 1, online. No offline_access here: as the first app of an SSO
         // session it would end that session for every other app.
         // See KeycloakSession::SCOPES. A new sign-in drops any half-done

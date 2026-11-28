@@ -78,7 +78,7 @@ Open your browser at the `APP_URL` value.
 -   Disimpan di cache 5 menit (`NAWASARA_APPS_TTL`). Kalau Nawasara tidak terjangkau, portal memakai daftar terakhir yang berhasil diambil, lalu daftar bawaan di `AppsService::FALLBACK`. Beranda tidak boleh kosong hanya karena Nawasara sedang bermasalah.
 -   Logo: `icon_url` dari katalog bila ada. Kalau kosong, dipakai logo lama di `public/img` (dipetakan lewat slug), lalu kotak singkatan dengan warna dari katalog.
 -   Isi katalog diketik staf, jadi tautan selain `http(s)` dibuang dan warna hanya diterima dalam bentuk hex.
--   Menu **Kelola Akun Kisara** (dropdown pengguna dan halaman Profil) mengarah ke `ACCOUNT_URL`, bawaannya `https://asn-account.ponorogo.go.id`. Pengelolaan profil, keamanan, perangkat, email dinas, dan VPN dilakukan di sana.
+-   Menu **Kelola Akun Kisara** (dropdown pengguna dan halaman Profil) mengarah ke `ACCOUNT_URL` + `/home`, bawaannya `https://asn-account.ponorogo.go.id/home`. Bukan akar situs: akar Akun Kisara adalah landing untuk tamu, sedangkan `/home` otomatis masuk lewat SSO. Pengelolaan profil, keamanan, perangkat, email dinas, dan VPN dilakukan di sana.
 
 ## Reset MFA, nomor WhatsApp, passkey: pindah ke Akun Kisara
 

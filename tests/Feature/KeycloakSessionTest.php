@@ -566,6 +566,22 @@ class KeycloakSessionTest extends TestCase
             ->assertRedirect('/login/offline');
     }
 
+    public function test_login_continues_when_already_signed_in(): void
+    {
+        // Launcher tiles point at /login: a signed-in employee must not be sent through Keycloak again.
+        $this->actingAs(User::factory()->create());
+
+        $this->get('/login')->assertRedirect('/');
+    }
+
+    public function test_account_links_open_the_signed_in_home_not_the_landing(): void
+    {
+        config(['services.account.url' => 'https://akun.test/']);
+
+        $this->assertSame('https://akun.test/home', account_url());
+        $this->assertSame('https://akun.test/security', account_url('/security'));
+    }
+
     public function test_a_new_sign_in_drops_a_half_done_silent_round(): void
     {
         $this->withSession([KeycloakSession::KEY_OFFLINE_PENDING => now()->timestamp] + $this->roundFlag())->get('/login');
