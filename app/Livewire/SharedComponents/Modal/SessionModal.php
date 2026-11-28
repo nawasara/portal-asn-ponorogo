@@ -16,8 +16,12 @@ use App\Traits\SessionTrait;
  * Sejak sesi 30 hari (token offline_access, lihat App\Services\KeycloakSession),
  * "tidak aktif" berarti Keycloak menolak refresh token dengan invalid_grant:
  * token dicabut, keluar dari semua perangkat, akun dinonaktifkan. Keluar dari
- * aplikasi lain atau SSO idle 30 menit TIDAK lagi memunculkan modal ini, dan
+ * aplikasi lain atau SSO idle 30 menit TIDAK memunculkan modal ini, dan
  * galat jaringan atau Keycloak yang sedang restart juga tidak.
+ *
+ * Sejak 28 Nov 2026 login tidak meminta offline_access (lihat
+ * KeycloakSession::SCOPES), sehingga refresh token-nya token online dan SSO
+ * idle 30 menit KEMBALI memunculkan modal ini.
  *
  * Alur logika:
  * - Ketika event `set-modal-session` diterima, fungsi `modalSession()` dipanggil.

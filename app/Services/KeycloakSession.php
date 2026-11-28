@@ -13,6 +13,11 @@ use Illuminate\Support\Facades\Session;
  * Keycloak tokens of the signed-in employee, kept in the Laravel session
  * (server side, never in a cookie the browser can read).
  *
+ * NOTE: since 28 Nov 2026 sign-in does not ask for offline_access (SCOPES),
+ * so new sessions hold an ONLINE token that dies with the 30-minute SSO idle.
+ * The rest of this class (refresh, revoke, replaced-token rules) is written
+ * for the offline design and works unchanged with online tokens.
+ *
  * The session is backed by a Keycloak OFFLINE token (scope offline_access),
  * like Kisara Mail and Kisara Workspace. The realm asn-productions ends an
  * ordinary SSO session after 30 minutes idle; its offline session idle is

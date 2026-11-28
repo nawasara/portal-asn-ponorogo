@@ -361,7 +361,7 @@ class KeycloakSessionTest extends TestCase
         $this->assertGuest();
     }
 
-    // ---- FR-01 / FR-04: sign-in asks for offline_access, revokes the replaced token, no remember-me ----
+    // ---- FR-01 / FR-04: sign-in does NOT ask for offline_access (BUG-001), revokes the replaced token, no remember-me ----
 
     public function test_sign_in_does_not_ask_for_offline_access(): void
     {
