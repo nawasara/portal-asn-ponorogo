@@ -21,7 +21,10 @@ class KeycloakController extends \App\Http\Controllers\Controller
     {
         // Round 1, online. No offline_access here: as the first app of an SSO
         // session it would end that session for every other app.
-        // See KeycloakSession::SCOPES.
+        // See KeycloakSession::SCOPES. A new sign-in drops any half-done
+        // silent round, so its flag can never take over this callback.
+        Session::forget([KeycloakSession::KEY_OFFLINE_PENDING, KeycloakSession::KEY_OFFLINE_ROUND]);
+
         return Socialite::driver('keycloak')->scopes(KeycloakSession::SCOPES)->redirect();
     }
 
@@ -37,17 +40,23 @@ class KeycloakController extends \App\Http\Controllers\Controller
             return redirect('/');
         }
 
-        Session::put(KeycloakSession::KEY_OFFLINE_ROUND, now()->timestamp);
-
-        return Socialite::driver('keycloak')
+        $redirect = Socialite::driver('keycloak')
             ->scopes(KeycloakSession::OFFLINE_SCOPES)
             ->with(['prompt' => 'none'])
             ->redirect();
+
+        // Tied to THIS authorization request: only the callback carrying the
+        // same state is the silent round's answer.
+        Session::put(KeycloakSession::KEY_OFFLINE_ROUND, ['at' => now()->timestamp, 'state' => Session::get('state')]);
+
+        return $redirect;
     }
 
     public function handleProviderCallback(Request $request, KeycloakSession $tokens)
     {
-        if (self::isFreshFlag(Session::pull(KeycloakSession::KEY_OFFLINE_ROUND)) && Auth::check()) {
+        $round = Session::pull(KeycloakSession::KEY_OFFLINE_ROUND);
+        if (is_array($round) && self::isFreshFlag($round['at'] ?? null)
+            && is_string($round['state'] ?? null) && hash_equals($round['state'], self::queryString($request, 'state', 256))) {
             return $this->finishOfflineRound($request, $tokens);
         }
 
@@ -108,10 +117,21 @@ class KeycloakController extends \App\Http\Controllers\Controller
     protected function finishOfflineRound(Request $request, KeycloakSession $tokens)
     {
         $userId = Auth::id();
+        if ($userId === null) {
+            Log::warning('login.offline_skipped', ['reason' => 'not_signed_in']);
 
-        if ($request->filled('error')) {
+            return redirect('/');
+        }
+
+        $error = self::queryString($request, 'error', 64);
+        if ($error !== '') {
             // login_required: the SSO session ended between the rounds.
-            Log::info('login.offline_skipped', ['user_id' => $userId, 'reason' => (string) $request->query('error')]);
+            // invalid_scope: offline_access is no longer on the client.
+            Log::info('login.offline_skipped', [
+                'user_id' => $userId,
+                'reason' => $error,
+                'description' => self::queryString($request, 'error_description', 160),
+            ]);
 
             return redirect('/');
         }
@@ -140,6 +160,14 @@ class KeycloakController extends \App\Http\Controllers\Controller
         ]);
 
         return redirect('/');
+    }
+
+    /** A query parameter as a bounded string; anything else (an array) is empty. */
+    private static function queryString(Request $request, string $key, int $max): string
+    {
+        $value = $request->query($key);
+
+        return is_string($value) ? Str::limit($value, $max, '') : '';
     }
 
     private static function isFreshFlag(mixed $since): bool

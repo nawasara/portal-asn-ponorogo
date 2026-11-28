@@ -471,7 +471,7 @@ class KeycloakSessionTest extends TestCase
         $this->assertContains('offline_access', explode(' ', $query['scope']));
         $this->assertContains('openid', explode(' ', $query['scope']));
         $this->assertNull(Session::get(KeycloakSession::KEY_OFFLINE_PENDING));
-        $this->assertIsInt(Session::get(KeycloakSession::KEY_OFFLINE_ROUND));
+        $this->assertIsArray(Session::get(KeycloakSession::KEY_OFFLINE_ROUND));
     }
 
     public function test_the_silent_round_runs_only_once_right_after_a_sign_in(): void
@@ -496,10 +496,10 @@ class KeycloakSessionTest extends TestCase
     public function test_the_silent_round_swaps_in_the_offline_token_without_revoking(): void
     {
         Http::fake();
-        $offline = $this->fakeKeycloakUser('sid-same');
+        $offline = $this->fakeKeycloakUser('sid-same', 'Offline');
         $this->actingAs(User::factory()->create());
 
-        $this->withSession($this->onlineSession() + [KeycloakSession::KEY_OFFLINE_ROUND => now()->timestamp])
+        $this->withSession($this->onlineSession() + $this->roundFlag())
             ->get('/login/keycloak/callback?code=x&state=y')
             ->assertRedirect('/');
 
@@ -516,7 +516,7 @@ class KeycloakSessionTest extends TestCase
         $this->actingAs(User::factory()->create());
         $session = $this->onlineSession();
 
-        $this->withSession($session + [KeycloakSession::KEY_OFFLINE_ROUND => now()->timestamp])
+        $this->withSession($session + $this->roundFlag())
             ->get('/login/keycloak/callback?error=login_required&state=y')
             ->assertRedirect('/');
 
@@ -530,7 +530,7 @@ class KeycloakSessionTest extends TestCase
         $this->actingAs(User::factory()->create());
         $session = $this->onlineSession();
 
-        $this->withSession($session + [KeycloakSession::KEY_OFFLINE_ROUND => now()->timestamp])
+        $this->withSession($session + $this->roundFlag())
             ->get('/login/keycloak/callback?code=x&state=y')
             ->assertRedirect('/');
 
@@ -545,11 +545,44 @@ class KeycloakSessionTest extends TestCase
         $this->actingAs(User::factory()->create());
         $session = [KeycloakSession::KEY_USER_ID => 'kc-sub-someone-else'] + $this->onlineSession();
 
-        $this->withSession($session + [KeycloakSession::KEY_OFFLINE_ROUND => now()->timestamp])
+        $this->withSession($session + $this->roundFlag())
             ->get('/login/keycloak/callback?code=x&state=y')
             ->assertRedirect('/');
 
+        $this->assertAuthenticated();
         $this->assertSame($session[KeycloakSession::KEY_REFRESH_TOKEN], Session::get(KeycloakSession::KEY_REFRESH_TOKEN));
+    }
+
+    public function test_a_round_flag_for_another_request_does_not_take_over_a_new_sign_in(): void
+    {
+        // Silent round abandoned, then someone signs in again within the TTL:
+        // the callback carries another state, so it is a normal sign-in.
+        Http::fake();
+        $this->fakeKeycloakUser('sid-new');
+        $this->actingAs(User::factory()->create());
+
+        $this->withSession($this->onlineSession() + [KeycloakSession::KEY_OFFLINE_ROUND => ['at' => now()->timestamp, 'state' => 'state-of-the-silent-round']])
+            ->get('/login/keycloak/callback?code=x&state=y')
+            ->assertRedirect('/login/offline');
+    }
+
+    public function test_a_new_sign_in_drops_a_half_done_silent_round(): void
+    {
+        $this->withSession([KeycloakSession::KEY_OFFLINE_PENDING => now()->timestamp] + $this->roundFlag())->get('/login');
+
+        $this->assertNull(Session::get(KeycloakSession::KEY_OFFLINE_PENDING));
+        $this->assertNull(Session::get(KeycloakSession::KEY_OFFLINE_ROUND));
+    }
+
+    public function test_a_malformed_error_in_the_silent_round_does_not_fail(): void
+    {
+        $this->actingAs(User::factory()->create());
+
+        $this->withSession($this->onlineSession() + $this->roundFlag())
+            ->get('/login/keycloak/callback?error[]=x&state=y')
+            ->assertRedirect('/');
+
+        $this->assertAuthenticated();
     }
 
     public function test_a_stale_round_flag_makes_the_callback_a_normal_sign_in(): void
@@ -557,9 +590,15 @@ class KeycloakSessionTest extends TestCase
         Http::fake();
         $this->fakeKeycloakUser('sid-new');
 
-        $this->withSession([KeycloakSession::KEY_OFFLINE_ROUND => now()->timestamp - KeycloakSession::OFFLINE_ROUND_TTL_S - 1])
+        $this->withSession($this->roundFlag(now()->timestamp - KeycloakSession::OFFLINE_ROUND_TTL_S - 1))
             ->get('/login/keycloak/callback?code=x&state=y')
             ->assertRedirect('/login/offline');
+    }
+
+    /** Flag set by /login/offline for the authorization request with state `y`. */
+    private function roundFlag(?int $at = null): array
+    {
+        return [KeycloakSession::KEY_OFFLINE_ROUND => ['at' => $at ?? now()->timestamp, 'state' => 'y']];
     }
 
     /** Session of an employee signed in on round 1's online token. */
@@ -580,9 +619,9 @@ class KeycloakSessionTest extends TestCase
     }
 
     /** Fakes the Socialite callback; returns the new refresh token. */
-    private function fakeKeycloakUser(string $sid): string
+    private function fakeKeycloakUser(string $sid, string $typ = 'Refresh'): string
     {
-        $refreshToken = self::jwt(['typ' => 'Offline', 'sid' => $sid]);
+        $refreshToken = self::jwt(['typ' => $typ, 'sid' => $sid]);
         $user = (new SocialiteUser())
             ->map(['id' => 'kc-sub-1', 'name' => 'Pegawai Uji', 'email' => 'pegawai@ponorogo.go.id']);
         $user->accessTokenResponseBody = [
