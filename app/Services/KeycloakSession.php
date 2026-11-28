@@ -13,6 +13,11 @@ use Illuminate\Support\Facades\Session;
  * Keycloak tokens of the signed-in employee, kept in the Laravel session
  * (server side, never in a cookie the browser can read).
  *
+ * NOTE: since 28 Nov 2026 sign-in does not ask for offline_access (SCOPES),
+ * so new sessions hold an ONLINE token that dies with the 30-minute SSO idle.
+ * The rest of this class (refresh, revoke, replaced-token rules) is written
+ * for the offline design and works unchanged with online tokens.
+ *
  * The session is backed by a Keycloak OFFLINE token (scope offline_access),
  * like Kisara Mail and Kisara Workspace. The realm asn-productions ends an
  * ordinary SSO session after 30 minutes idle; its offline session idle is
@@ -42,8 +47,17 @@ class KeycloakSession
     /** The token endpoint gets this long before the refresh counts as a network failure. */
     public const REFRESH_TIMEOUT_S = 10;
 
-    /** Scope added to the provider's default `openid`. */
-    public const SCOPES = ['offline_access'];
+    /**
+     * Scopes added to the provider's default `openid`. Deliberately NOT
+     * offline_access (for now): when the first app of a fresh SSO session
+     * exchanges an offline code, Keycloak 26 removes the online session, so
+     * the SSO cookie matches nothing and every other Kisara app asks for the
+     * password again. Portal ASN is the usual first app of the day. Measured
+     * on Keycloak 26.8.1, 28 Nov 2026. Bringing offline_access back needs an
+     * online sign-in first and a silent prompt=none round for the offline
+     * token after it.
+     */
+    public const SCOPES = [];
 
     /** Results of ensureFresh(). */
     public const ACTIVE = 'active';

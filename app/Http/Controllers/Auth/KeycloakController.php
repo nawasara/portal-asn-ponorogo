@@ -19,8 +19,8 @@ class KeycloakController extends \App\Http\Controllers\Controller
 
     public function redirectToProvider()
     {
-        // offline_access: a session that outlives the realm's 30-minute SSO
-        // idle, like Kisara Mail. It lasts SESSION_LIFETIME (30 days), sliding.
+        // No offline_access: it ends the SSO session for every other app.
+        // See KeycloakSession::SCOPES.
         return Socialite::driver('keycloak')->scopes(KeycloakSession::SCOPES)->redirect();
     }
 
