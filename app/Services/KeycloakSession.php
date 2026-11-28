@@ -13,10 +13,10 @@ use Illuminate\Support\Facades\Session;
  * Keycloak tokens of the signed-in employee, kept in the Laravel session
  * (server side, never in a cookie the browser can read).
  *
- * NOTE: since 28 Nov 2026 sign-in does not ask for offline_access (SCOPES),
- * so new sessions hold an ONLINE token that dies with the 30-minute SSO idle.
- * The rest of this class (refresh, revoke, replaced-token rules) is written
- * for the offline design and works unchanged with online tokens.
+ * Sign-in takes two rounds (BUG-001): an online one (SCOPES), then a silent
+ * prompt=none round for the offline token (OFFLINE_SCOPES), see
+ * KeycloakController. When the silent round fails the session holds an
+ * online token, which the rules below handle unchanged.
  *
  * The session is backed by a Keycloak OFFLINE token (scope offline_access),
  * like Kisara Mail and Kisara Workspace. The realm asn-productions ends an
@@ -48,16 +48,33 @@ class KeycloakSession
     public const REFRESH_TIMEOUT_S = 10;
 
     /**
-     * Scopes added to the provider's default `openid`. Deliberately NOT
-     * offline_access (for now): when the first app of a fresh SSO session
-     * exchanges an offline code, Keycloak 26 removes the online session, so
-     * the SSO cookie matches nothing and every other Kisara app asks for the
-     * password again. Portal ASN is the usual first app of the day. Measured
-     * on Keycloak 26.8.1, 28 Nov 2026. Bringing offline_access back needs an
-     * online sign-in first and a silent prompt=none round for the offline
-     * token after it.
+     * Scopes of the FIRST sign-in round, added to the provider's default
+     * `openid`. Deliberately NOT offline_access: when the first app of a fresh
+     * SSO session exchanges an offline code, Keycloak 26 removes the online
+     * session, so the SSO cookie matches nothing and every other Kisara app
+     * asks for the password again (BUG-001, measured on Keycloak 26.8.1,
+     * 28 Nov 2026). Portal ASN is the usual first app of the day.
      */
     public const SCOPES = [];
+
+    /**
+     * Scopes of the SECOND, silent round (prompt=none) that turns the online
+     * sign-in into an offline token. By then this client already has an
+     * online session in the SSO session, and Keycloak keeps the SSO session
+     * alive when the offline code is exchanged.
+     */
+    public const OFFLINE_SCOPES = ['offline_access'];
+
+    /**
+     * Session flags of the two-round sign-in, unix seconds. PENDING is set by
+     * the first callback, ROUND by /login/offline just before it redirects.
+     * Each is pulled once, so the silent round can never loop.
+     */
+    public const KEY_OFFLINE_PENDING = 'keycloak_offline_pending';
+    public const KEY_OFFLINE_ROUND = 'keycloak_offline_round';
+
+    /** A flag older than this is ignored (an abandoned round). */
+    public const OFFLINE_ROUND_TTL_S = 300;
 
     /** Results of ensureFresh(). */
     public const ACTIVE = 'active';
